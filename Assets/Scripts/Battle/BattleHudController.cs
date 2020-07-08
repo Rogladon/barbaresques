@@ -5,30 +5,33 @@ using UnityEngine.EventSystems;
 
 namespace Barbaresques.Battle {
 	public class BattleHudController : MonoBehaviour {
-		[SerializeField]
-		private GameObject clickArea;
-
 		void Start() {
 			StartCoroutine(TryInitialize());
 		}
 
 		void Initialize() {
-			var et = clickArea.AddComponent<EventTrigger>();
-			var clickEntry = new EventTrigger.Entry();
-			clickEntry.eventID = EventTriggerType.PointerUp;
-			clickEntry.callback.AddListener((data) => Click());
-			et.triggers.Add(clickEntry);
+			Debug.Log("Initializing HUD");
 		}
 
 		IEnumerator TryInitialize() {
-			if (BattleGame.instance != null) {
-				Initialize();
-			} else {
-				yield return null;
+			while (true) {
+				if (BattleGame.instance != null) {
+					Initialize();
+					break;
+				} else {
+					yield return null;
+				}
 			}
 		}
 
-		void Click() {
+		public void Click(Transform clickArea) {
+			Debug.Log("Click");
+			foreach (var hit in Physics.RaycastAll(Camera.main.ViewportPointToRay(Input.mousePosition))) {
+				if (hit.transform == clickArea.transform) {
+					Debug.Log(hit.point);
+					break;
+				}
+			}
 		}
 	}
 }

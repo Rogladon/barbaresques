@@ -175,7 +175,35 @@ MonoBehaviour:
   - eventID: 3
     callback:
       m_PersistentCalls:
-        m_Calls: []
+        m_Calls:
+        - m_Target: {fileID: 367144504}
+          m_TargetAssemblyTypeName: Barbaresques.Battle.BattleHudController, Assembly-CSharp
+          m_MethodName: Click
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 686409670}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Transform, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 367144504}
+          m_TargetAssemblyTypeName: Barbaresques.Battle.BattleHudController, Assembly-CSharp
+          m_MethodName: Click
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 686409670}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Transform, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &367144499
 GameObject:
   m_ObjectHideFlags: 0
@@ -288,7 +316,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d086e5bde22234e6c9b4447317767a2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clickArea: {fileID: 0}
 --- !u!1 &686409666
 GameObject:
   m_ObjectHideFlags: 0
