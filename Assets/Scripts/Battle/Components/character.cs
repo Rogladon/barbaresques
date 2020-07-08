@@ -8,4 +8,8 @@ namespace Barbaresques.Battle {
 	public struct MaxHealth : IComponentData {
 		public int value;
 	}
+
+	public struct Died : IComponentData {
+
+	}
 }

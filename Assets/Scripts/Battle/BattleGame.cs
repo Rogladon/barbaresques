@@ -4,10 +4,14 @@ using Unity.Transforms;
 using Unity.Collections;
 using Unity.Mathematics;
 using Unity.Rendering;
-using Barbaresques;
+using Unity.Physics;
+using Material = UnityEngine.Material;
+using Mesh = UnityEngine.Mesh;
 
 namespace Barbaresques.Battle {
 	public class BattleGame {
+		public static BattleGame instance { get; private set; } = null;
+
 		public World world;
 		public EntityManager entities => world.EntityManager;
 
@@ -17,6 +21,8 @@ namespace Barbaresques.Battle {
 
 		public Mesh warriorAppearanceMesh;
 		public Material warriorAppearanceMaterial;
+		public Material warriorAppearanceMaterialA;
+		public Material warriorAppearanceMaterialB;
 
 		public void Initialize() {
 			Debug.Log("Initializing BattleGame");
@@ -31,6 +37,7 @@ namespace Barbaresques.Battle {
 				typeof(MaxHealth),
 
 				typeof(Translation),
+				typeof(Rotation),
 				typeof(LocalToWorld),
 			});
 
@@ -43,15 +50,15 @@ namespace Barbaresques.Battle {
 				typeof(RenderMesh),
 			});
 
-			Entity realmGreen = entities.CreateEntity(archetypeRealm);
-			entities.SetName(realmGreen, "Realm green");
-			entities.SetComponentData(realmGreen, new Realm() { color = Color.green });
+			Entity realmA = entities.CreateEntity(archetypeRealm);
+			entities.SetName(realmA, "Realm A");
+			entities.SetComponentData(realmA, new Realm() { color = Color.green });
 
-			Entity realmRed = entities.CreateEntity(archetypeRealm);
-			entities.SetName(realmRed, "Realm red");
-			entities.SetComponentData(realmRed, new Realm() { color = Color.red });
+			Entity realmB = entities.CreateEntity(archetypeRealm);
+			entities.SetName(realmB, "Realm B");
+			entities.SetComponentData(realmB, new Realm() { color = Color.red });
 
-			int counts = 32;
+			int counts = 256;
 
 			NativeArray<Entity> warriors = new NativeArray<Entity>(counts, Allocator.Temp);
 			entities.CreateEntity(archetypeWarrior, warriors);
@@ -60,30 +67,37 @@ namespace Barbaresques.Battle {
 
 			for (int i = 0; i < warriors.Length; i++) {
 				entities.SetName(warriors[i], $"Warrior #{i}");
-				ConfigureWarrior(warriors[i], (i & 1) == 0 ? realmGreen : realmRed);
+				ConfigureWarrior(warriors[i], (i & 1) == 0 ? realmA : realmB, (i & 1) == 0);
 
 				entities.SetName(appearances[i], $"Warrior appearance #{i}");
-				ConfigureWarriorAppearance(appearances[i], warriors[i]);
+				ConfigureWarriorAppearance(appearances[i], warriors[i], (i & 1) == 0 ? warriorAppearanceMaterialA : warriorAppearanceMaterialB);
 			}
 
 			appearances.Dispose();
 			warriors.Dispose();
+
+			instance = this;
 		}
 
-		void ConfigureWarrior(Entity warrior, Entity owner) {
+		void ConfigureWarrior(Entity warrior, Entity owner, bool otherSide) {
 			entities.SetComponentData(warrior, new OwnedByRealm() { owner = owner });
 			entities.SetComponentData(warrior, new Health() { value = 95 });
 			entities.SetComponentData(warrior, new MaxHealth() { value = 100 });
 
-			entities.SetComponentData(warrior, new Translation() { Value = new float3(UnityEngine.Random.Range(-20.0f, 20.0f), 0, UnityEngine.Random.Range(-20.0f, 20.0f)) });
+			entities.SetComponentData(warrior, new Translation() {
+				Value = new float3(
+					(otherSide ? 1 : -1) * UnityEngine.Random.Range(1.0f, 32.0f),
+					0,
+					UnityEngine.Random.Range(-32.0f, 32.0f)),
+			});
 		}
 
-		void ConfigureWarriorAppearance(Entity appearance, Entity warrior) {
+		void ConfigureWarriorAppearance(Entity appearance, Entity warrior, Material material) {
 			entities.SetComponentData(appearance, new Parent() { Value = warrior });
 			entities.SetComponentData(appearance, new RenderBounds() { Value = warriorAppearanceMesh.bounds.ToAABB() });
 			entities.SetSharedComponentData(appearance, new RenderMesh() {
 				mesh = warriorAppearanceMesh,
-				material = warriorAppearanceMaterial,
+				material = material,
 			});
 		}
 	}

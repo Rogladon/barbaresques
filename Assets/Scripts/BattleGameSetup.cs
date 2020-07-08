@@ -9,11 +9,15 @@ namespace Barbaresques {
 
 		public Mesh warriorAppearanceMesh;
 		public Material warriorAppearanceMaterial;
+		public Material warriorAppearanceMaterialA;
+		public Material warriorAppearanceMaterialB;
 
 		void Start() {
 			game = new BattleGame();
 			game.warriorAppearanceMesh = warriorAppearanceMesh;
 			game.warriorAppearanceMaterial = warriorAppearanceMaterial;
+			game.warriorAppearanceMaterialA = warriorAppearanceMaterialA;
+			game.warriorAppearanceMaterialB = warriorAppearanceMaterialB;
 			game.Initialize();
 		}
 	}
