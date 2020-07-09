@@ -40,6 +40,8 @@ namespace Barbaresques.Battle {
 				typeof(Health),
 				typeof(MaxHealth),
 
+				typeof(Speed),
+
 				typeof(Translation),
 				typeof(Rotation),
 				typeof(LocalToWorld),
@@ -67,7 +69,7 @@ namespace Barbaresques.Battle {
 			entities.SetName(realmB, "Realm B");
 			entities.SetComponentData(realmB, new Realm() { color = Color.yellow });
 
-			int counts = 64; // просто так
+			int counts = 8; // просто так
 
 			NativeArray<Entity> warriors = new NativeArray<Entity>(counts, Allocator.Temp);
 			entities.CreateEntity(archetypeWarrior, warriors);
@@ -96,8 +98,10 @@ namespace Barbaresques.Battle {
 
 		void ConfigureWarrior(Entity warrior, Entity owner, bool otherSide, BlobAssetReference<Collider> collider) {
 			entities.SetComponentData(warrior, new OwnedByRealm() { owner = owner });
+
 			entities.SetComponentData(warrior, new Health() { value = 95 });
 			entities.SetComponentData(warrior, new MaxHealth() { value = 100 });
+			entities.SetComponentData(warrior, new Speed() { value = 3.0f });
 
 			entities.SetComponentData(warrior, new Translation() {
 				Value = new float3(
@@ -111,6 +115,7 @@ namespace Barbaresques.Battle {
 
 		void ConfigureWarriorAppearance(Entity appearance, Entity warrior, Material material) {
 			entities.SetComponentData(appearance, new Parent() { Value = warrior });
+			entities.SetComponentData(appearance, new Translation() { Value = new float3(0, 1f, 0) });
 			entities.SetComponentData(appearance, new RenderBounds() { Value = warriorAppearanceMesh.bounds.ToAABB() });
 			entities.SetSharedComponentData(appearance, new RenderMesh() {
 				mesh = warriorAppearanceMesh,

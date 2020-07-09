@@ -1,7 +1,7 @@
 using Unity.Entities;
 
 namespace Barbaresques.Battle {
-	[UpdateInGroup(typeof(BattleSystemGroup))]
+	[UpdateInGroup(typeof(BattleGameSystemGroup))]
 	public class LevelSimulationSystemGroup : ComponentSystemGroup {
 	}
 }

@@ -1,7 +1,7 @@
 using Unity.Entities;
 
 namespace Barbaresques.Battle {
-	[UpdateInGroup(typeof(LevelSimulationSystemGroup)), UpdateAfter(typeof(UnitSystemGroup))]
+	[UpdateInGroup(typeof(LevelSimulationSystemGroup)), UpdateBefore(typeof(UnitSystemGroup))]
 	public class AiSystemGroup : ComponentSystemGroup {
 	}
 }

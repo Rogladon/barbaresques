@@ -4,7 +4,7 @@
 
 * Взаимодействие с пользователем (`UserInteractionSystemGroup`):
 	* Ввод нажатий
-	* Анализ команд &mdash; *клик по карте &rarr; смена цели юнитов*
+	* Анализ команд &mdash; *клик по карте &rArr; смена цели юнитов*
 	* Выполнение команд
 * Симуляция мира (`LevelSimulationSystemGroup`):
 	* AI  (`AiSystemGroup`):
