@@ -2,13 +2,15 @@
 
 ### Порядок работы систем
 
-* Взаимодействие с пользователем (`UserInteractionSystemGroup`):
+* Взаимодействие с пользователем &emsp; `UserInteractionSystemGroup`:
 	* Ввод нажатий
 	* Анализ команд &mdash; *клик по карте &rArr; смена цели юнитов*
 	* Выполнение команд
-* Симуляция мира (`LevelSimulationSystemGroup`):
-	* AI  (`AiSystemGroup`):
-	* Обработка юнитов (`UnitSystemGroup`):
+* Симуляция мира &emsp; `LevelSimulationSystemGroup`:
+	* AI &emsp; `AiSystemGroup`:
+		* Инициализация и переключение состояний &emsp; `UnitAiManagementSystem`
+		* [Системы конкретных состояний]
+	* Обработка юнитов &emsp; `UnitSystemGroup`:
 		* Действия &mdash; *движение, атака*;
 		* Параметры &mdash; *здоровье, бафы*;
 		* Состояния &mdash; *убит, отдыхает*;

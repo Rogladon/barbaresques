@@ -69,7 +69,7 @@ namespace Barbaresques.Battle {
 			entities.SetName(realmB, "Realm B");
 			entities.SetComponentData(realmB, new Realm() { color = Color.yellow });
 
-			int counts = 8; // просто так
+			int counts = 32; // просто так
 
 			NativeArray<Entity> warriors = new NativeArray<Entity>(counts, Allocator.Temp);
 			entities.CreateEntity(archetypeWarrior, warriors);
