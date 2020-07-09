@@ -17,8 +17,8 @@ namespace Barbaresques.Battle {
 		public EntityManager entities => world.EntityManager;
 
 		public EntityArchetype archetypeRealm;
-		public EntityArchetype archetypeWarrior;
-		public EntityArchetype archetypeWarriorAppearance;
+		public EntityArchetype archetypeUnit;
+		public EntityArchetype archetypeUnitAppearance;
 
 		public Mesh warriorAppearanceMesh;
 		public Material warriorAppearanceMaterial;
@@ -32,7 +32,7 @@ namespace Barbaresques.Battle {
 
 			archetypeRealm = entities.CreateArchetype(typeof(Realm));
 
-			archetypeWarrior = entities.CreateArchetype(new ComponentType[] {
+			archetypeUnit = entities.CreateArchetype(new ComponentType[] {
 				typeof(OwnedByRealm),
 
 				typeof(UnitAi),
@@ -52,7 +52,7 @@ namespace Barbaresques.Battle {
 				// typeof(PhysicsDamping),
 			});
 
-			archetypeWarriorAppearance = entities.CreateArchetype(new ComponentType[] {
+			archetypeUnitAppearance = entities.CreateArchetype(new ComponentType[] {
 				typeof(Translation),
 				typeof(Parent),
 				typeof(LocalToParent),
@@ -71,50 +71,50 @@ namespace Barbaresques.Battle {
 
 			int counts = 32; // просто так
 
-			NativeArray<Entity> warriors = new NativeArray<Entity>(counts, Allocator.Temp);
-			entities.CreateEntity(archetypeWarrior, warriors);
+			NativeArray<Entity> units = new NativeArray<Entity>(counts, Allocator.Temp);
+			entities.CreateEntity(archetypeUnit, units);
 			NativeArray<Entity> appearances = new NativeArray<Entity>(counts, Allocator.Temp);
-			entities.CreateEntity(archetypeWarriorAppearance, appearances);
+			entities.CreateEntity(archetypeUnitAppearance, appearances);
 
-			BlobAssetReference<Collider> warriorCollider = CylinderCollider.Create(new CylinderGeometry() {
+			BlobAssetReference<Collider> unitCollider = CylinderCollider.Create(new CylinderGeometry() {
 				Orientation = quaternion.identity,
 				SideCount = 8,
 				Radius = 0.5f,
 			});
 
-			for (int i = 0; i < warriors.Length; i++) {
-				entities.SetName(warriors[i], $"Warrior #{i}");
-				ConfigureWarrior(warriors[i], (i & 1) == 0 ? realmA : realmB, (i & 1) == 0, warriorCollider);
+			for (int i = 0; i < units.Length; i++) {
+				entities.SetName(units[i], $"Unit #{i}");
+				ConfigureUnit(units[i], (i & 1) == 0 ? realmA : realmB, (i & 1) == 0, unitCollider);
 
-				entities.SetName(appearances[i], $"Warrior appearance #{i}");
-				ConfigureWarriorAppearance(appearances[i], warriors[i], (i & 1) == 0 ? warriorAppearanceMaterialA : warriorAppearanceMaterialB);
+				entities.SetName(appearances[i], $"Unit appearance #{i}");
+				ConfigureUnitAppearance(appearances[i], units[i], (i & 1) == 0 ? warriorAppearanceMaterialA : warriorAppearanceMaterialB);
 			}
 
 			appearances.Dispose();
-			warriors.Dispose();
+			units.Dispose();
 
 			instance = this;
 		}
 
-		void ConfigureWarrior(Entity warrior, Entity owner, bool otherSide, BlobAssetReference<Collider> collider) {
-			entities.SetComponentData(warrior, new OwnedByRealm() { owner = owner });
+		void ConfigureUnit(Entity unit, Entity owner, bool otherSide, BlobAssetReference<Collider> collider) {
+			entities.SetComponentData(unit, new OwnedByRealm() { owner = owner });
 
-			entities.SetComponentData(warrior, new Health() { value = 95 });
-			entities.SetComponentData(warrior, new MaxHealth() { value = 100 });
-			entities.SetComponentData(warrior, new Speed() { value = 3.0f });
+			entities.SetComponentData(unit, new Health() { value = 95 });
+			entities.SetComponentData(unit, new MaxHealth() { value = 100 });
+			entities.SetComponentData(unit, new Speed() { value = 3.0f });
 
-			entities.SetComponentData(warrior, new Translation() {
+			entities.SetComponentData(unit, new Translation() {
 				Value = new float3(
 					(otherSide ? 1 : -1) * UnityEngine.Random.Range(1.0f, 16.0f),
 					0,
 					UnityEngine.Random.Range(-16.0f, 16.0f)),
 			});
 
-			entities.SetComponentData(warrior, new PhysicsCollider() { Value = collider });
+			entities.SetComponentData(unit, new PhysicsCollider() { Value = collider });
 		}
 
-		void ConfigureWarriorAppearance(Entity appearance, Entity warrior, Material material) {
-			entities.SetComponentData(appearance, new Parent() { Value = warrior });
+		void ConfigureUnitAppearance(Entity appearance, Entity unit, Material material) {
+			entities.SetComponentData(appearance, new Parent() { Value = unit });
 			entities.SetComponentData(appearance, new Translation() { Value = new float3(0, 1f, 0) });
 			entities.SetComponentData(appearance, new RenderBounds() { Value = warriorAppearanceMesh.bounds.ToAABB() });
 			entities.SetSharedComponentData(appearance, new RenderMesh() {
