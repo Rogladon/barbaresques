@@ -1,9 +1,9 @@
 using Unity.Entities;
 
 namespace Barbaresques.Battle {
-	[UpdateInGroup(typeof(CharacterSystemGroup)), UpdateAfter(typeof(HealthSystem))]
+	[UpdateInGroup(typeof(UnitSystemGroup)), UpdateAfter(typeof(HealthSystem))]
 	public class DieSystem : SystemBase {
-		EndSimulationEntityCommandBufferSystem _endSimulationEcbSystem;
+		private EndSimulationEntityCommandBufferSystem _endSimulationEcbSystem;
 
 		protected override void OnCreate() {
 			base.OnCreate();

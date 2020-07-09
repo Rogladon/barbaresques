@@ -1,7 +1,7 @@
 using Unity.Entities;
 
 namespace Barbaresques.Battle {
-	[UpdateInGroup(typeof(CharacterSystemGroup))]
+	[UpdateInGroup(typeof(UnitSystemGroup))]
 	public class HealthSystem : SystemBase {
 		protected override void OnUpdate() {
 			Entities
