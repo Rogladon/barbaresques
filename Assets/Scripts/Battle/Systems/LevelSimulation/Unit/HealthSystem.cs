@@ -7,10 +7,11 @@ namespace Barbaresques.Battle {
 			Entities
 				.WithNone<Died>()
 				.ForEach((ref Health h, in MaxHealth m) => {
-				if (h.value > m.value) {
-					h.value = m.value;
-				}
-			}).ScheduleParallel();
+					if (h.value > m.value) {
+						h.value = m.value;
+					}
+				})
+				.ScheduleParallel();
 		}
 	}
 }
