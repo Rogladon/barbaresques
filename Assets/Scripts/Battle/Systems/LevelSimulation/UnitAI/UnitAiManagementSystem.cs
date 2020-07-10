@@ -9,7 +9,7 @@ namespace Barbaresques.Battle {
 	/// <br/>
 	/// Должен исполняться первым в группе!
 	/// </summary>
-	[UpdateInGroup(typeof(AiSystemGroup))]
+	[UpdateInGroup(typeof(UnitAiSystemGroup))]
 	public class UnitAiManagementSystem : SystemBase {
 		private EndSimulationEntityCommandBufferSystem _endSimulationEcbSystem;
 

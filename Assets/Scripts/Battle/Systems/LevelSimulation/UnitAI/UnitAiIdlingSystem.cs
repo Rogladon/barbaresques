@@ -4,7 +4,7 @@ using Unity.Mathematics;
 using Unity.Collections;
 
 namespace Barbaresques.Battle {
-	[UpdateInGroup(typeof(AiSystemGroup)), UpdateAfter(typeof(UnitAiManagementSystem))]
+	[UpdateInGroup(typeof(UnitAiSystemGroup)), UpdateAfter(typeof(UnitAiManagementSystem))]
 	public class UnitAiIdlingSystem : SystemBase {
 		private EndSimulationEntityCommandBufferSystem _endSimulationEcbSystem;
 		private RandomSystem _randomSystem;
