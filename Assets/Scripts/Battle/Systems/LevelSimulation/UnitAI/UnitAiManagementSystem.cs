@@ -36,6 +36,14 @@ namespace Barbaresques.Battle {
 				})
 				.ScheduleParallel();
 
+			Entities.WithName("UnitAI_crowdish_job")
+				.WithAll<UnitAi, CrowdMember>()
+				.WithNone<UnitAiStateFollowCrowd, UnitAiStateSwitched>()
+				.ForEach((int entityInQueryIndex, Entity e, in UnitAiState ai) => {
+					ecb.AddComponent(entityInQueryIndex, e, new UnitAiStateSwitched() { previousState = ai.state, newState = UnitAiStates.FOLLOW_CROWD });
+				})
+				.ScheduleParallel(); 
+
 			// Переключаем состояния
 			Entities.WithName("UnitAI_switch")
 				.WithAll<UnitAi, UnitAiState>()

@@ -8,6 +8,8 @@ namespace Barbaresques.Battle {
 	public enum UnitAiStates {
 		[AssociatedComponent(typeof(UnitAiStateIdle))]
 		IDLE,
+		[AssociatedComponent(typeof(UnitAiStateFollowCrowd))]
+		FOLLOW_CROWD,
 	}
 
 	public struct UnitAiState : ISystemStateComponentData {
@@ -24,7 +26,7 @@ namespace Barbaresques.Battle {
 		public bool initialization => previousState == newState;
 	}
 
-	public struct UnitAiStateIdle : ISystemStateComponentData {
+	public struct UnitAiStateIdle : ISystemStateComponentData {}
 
-	}
+	public struct UnitAiStateFollowCrowd : ISystemStateComponentData {}
 }
