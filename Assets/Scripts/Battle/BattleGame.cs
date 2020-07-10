@@ -87,7 +87,7 @@ namespace Barbaresques.Battle {
 
 			for (int i = 0; i < crowds.Length; i++) {
 				entities.SetName(crowds[i], $"Crowd #{i}");
-				entities.SetComponentData(crowds[i], new Crowd() { targetLocation = new float3(UnityEngine.Random.Range(-10.0f, 10.0f), 0, UnityEngine.Random.Range(-10.0f, 10.0f)) });
+				entities.SetComponentData(crowds[i], new Crowd() { targetLocation = new float3(UnityEngine.Random.Range(-16.0f, 16.0f), 0, UnityEngine.Random.Range(-16.0f, 16.0f)) });
 				entities.SetComponentData(crowds[i], new OwnedByRealm() { owner = realms[i] });
 			}
 

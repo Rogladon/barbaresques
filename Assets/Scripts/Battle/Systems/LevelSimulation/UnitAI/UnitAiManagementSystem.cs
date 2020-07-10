@@ -36,6 +36,8 @@ namespace Barbaresques.Battle {
 				})
 				.ScheduleParallel();
 
+			// Работа с толпами
+			// Мб в отдельную систему вынести?
 			Entities.WithName("UnitAI_crowdish_job")
 				.WithAll<UnitAi, CrowdMember>()
 				.WithNone<UnitAiStateFollowCrowd, UnitAiStateSwitched>()
