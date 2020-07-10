@@ -7,7 +7,8 @@
 	* Анализ команд &mdash; *клик по карте &rArr; смена цели юнитов*
 	* Выполнение команд
 * Симуляция мира &emsp; `LevelSimulationSystemGroup`:
-	* AI &emsp; `AiSystemGroup`:
+	* Контроль толп &emsp; `CrowdSystemGroup`
+	* AI юнитов &emsp; `AiSystemGroup`:
 		* Инициализация и переключение состояний &emsp; `UnitAiManagementSystem`
 		* [Системы конкретных состояний]
 	* Обработка юнитов &emsp; `UnitSystemGroup`:
