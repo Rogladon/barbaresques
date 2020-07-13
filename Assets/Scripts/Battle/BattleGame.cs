@@ -39,6 +39,8 @@ namespace Barbaresques.Battle {
 			});
 
 			archetypeUnit = entities.CreateArchetype(new ComponentType[] {
+				typeof(Unit),
+
 				typeof(OwnedByRealm),
 				typeof(CrowdMember),
 
