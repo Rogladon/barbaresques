@@ -10,6 +10,21 @@ namespace Barbaresques {
 		protected override void OnCreate() {
 			base.OnCreate();
 			
+			_AssembleRandoms();
+		}
+
+		protected override void OnUpdate() {
+			if (Unity.Jobs.LowLevel.Unsafe.JobsUtility.MaxJobThreadCount > randoms.Length ) {
+				randoms.Dispose();
+				_AssembleRandoms();
+			}
+		}
+
+		protected override void OnDestroy() {
+			randoms.Dispose();
+		}
+
+		private void _AssembleRandoms() {
 			var randomsArray = new Random[Unity.Jobs.LowLevel.Unsafe.JobsUtility.MaxJobThreadCount];
 
 			var seed = new System.Random();
@@ -18,12 +33,6 @@ namespace Barbaresques {
 			}
 
 			randoms = new NativeArray<Random>(randomsArray, Allocator.Persistent);
-		}
-
-		protected override void OnUpdate() {}
-
-		protected override void OnDestroy() {
-			randoms.Dispose();
 		}
 	}
 }

@@ -26,6 +26,8 @@ namespace Barbaresques.Battle {
 				.WithAll<UnitAiStateIdle>()
 				.WithNone<Walking>()
 				.ForEach((int nativeThreadIndex, int entityInQueryIndex, Entity e, in Translation translation) => {
+					if (nativeThreadIndex >= randoms.Length)
+						return;
 					var random = randoms[nativeThreadIndex];
 
 					ecb.AddComponent(entityInQueryIndex, e, new Walking(translation.Value + random.NextFloat3(new float3(-5.0f, 0, -5.0f), new float3(5.0f, 0, 5.0f))));

@@ -29,8 +29,8 @@ namespace Barbaresques.Battle {
 			Entities.WithName("UnitAi_followCrowd_updateTask")
 				.WithNone<UnitAiStateSwitched>()
 				.WithAll<UnitAiStateFollowCrowd>()
-				.ForEach((int entityInQueryIndex, Entity e, in CrowdMember crowdMember) => {
-					ecb.SetComponent(entityInQueryIndex, e, new Walking() { target = GetComponent<Crowd>(crowdMember.crowd).targetLocation });
+				.ForEach((int entityInQueryIndex, Entity e, ref Walking walking, in CrowdMember crowdMember) => {
+					walking.target = GetComponent<Crowd>(crowdMember.crowd).targetLocation;
 				})
 				.ScheduleParallel();
 
