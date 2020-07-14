@@ -4,6 +4,11 @@ using Unity.Rendering;
 using Unity.Transforms;
 
 namespace Barbaresques.Battle {
+	[MaterialProperty("_RealmColor", MaterialPropertyFormat.Float4)]
+	public struct UnitTint : ISystemStateComponentData {
+		public float4 Value;
+	}
+
 	[UpdateInGroup(typeof(AppearanceSystemGroup))]
 	public class UnitTintGroup : SystemBase {
 		private EndSimulationEntityCommandBufferSystem _endSimulationEcbSystem;
@@ -21,7 +26,7 @@ namespace Barbaresques.Battle {
 
 			Entities.WithName("UnitAppearance_update")
 				.WithAll<UnitAppearance>()
-				.ForEach((int entityInQueryIndex, Entity e, ref MaterialColor mc, in Parent parent) => {
+				.ForEach((int entityInQueryIndex, Entity e, ref UnitTint mc, in Parent parent) => {
 					if (!HasComponent<OwnedByRealm>(parent.Value))
 						return;
 					var obr = GetComponent<OwnedByRealm>(parent.Value);
@@ -36,7 +41,7 @@ namespace Barbaresques.Battle {
 
 			Entities.WithName("UnitAppearance_tint")
 				.WithAll<UnitAppearance>()
-				.WithNone<MaterialColor>()
+				.WithNone<UnitTint>()
 				.ForEach((int entityInQueryIndex, Entity e, in Parent parent) => {
 					if (!HasComponent<OwnedByRealm>(parent.Value))
 						return;
@@ -46,15 +51,15 @@ namespace Barbaresques.Battle {
 					if (!HasComponent<Realm>(obr.owner))
 						return;
 					var realm = GetComponent<Realm>(obr.owner);
-					ecb.AddComponent(entityInQueryIndex, e, new MaterialColor() { Value = new float4(realm.color.r, realm.color.g, realm.color.b, realm.color.a) });
+					ecb.AddComponent(entityInQueryIndex, e, new UnitTint() { Value = new float4(realm.color.r, realm.color.g, realm.color.b, realm.color.a) });
 				})
 				.ScheduleParallel();
 
 			Entities.WithName("UnitAppearance_cleanup")
 				.WithNone<Parent>()
-				.WithAll<MaterialColor>()
+				.WithAll<UnitTint>()
 				.ForEach((int entityInQueryIndex, Entity e) => {
-					ecb.RemoveComponent<MaterialColor>(entityInQueryIndex, e);
+					ecb.RemoveComponent<UnitTint>(entityInQueryIndex, e);
 				})
 				.ScheduleParallel();
 
