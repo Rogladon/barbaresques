@@ -41,7 +41,6 @@ namespace Barbaresques.Battle {
 							currentSpeed *= walking.speedFactor;
 						}
 						translation.Value += normalize(diff) * min(len, currentSpeed * delta);
-						// Debug.Log($"{len}, {currentSpeed * delta}, {normalize(diff) * min(len, currentSpeed * delta)}");
 					}
 				})
 				.ScheduleParallel();

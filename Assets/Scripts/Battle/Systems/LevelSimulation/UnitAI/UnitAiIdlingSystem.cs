@@ -22,7 +22,7 @@ namespace Barbaresques.Battle {
 
 			Entities.WithName("UnitAi_idle_setTask")
 				.WithNativeDisableParallelForRestriction(randoms)
-				.WithNone<UnitAiStateSwitched>()
+				.WithNone<UnitAiStateSwitch>()
 				.WithAll<UnitAiStateIdle>()
 				.WithNone<Walking>()
 				.ForEach((int nativeThreadIndex, int entityInQueryIndex, Entity e, in Translation translation) => {

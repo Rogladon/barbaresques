@@ -35,7 +35,7 @@ namespace Barbaresques.Battle {
 
 					var crowd = ecb.CreateEntity(entityInQueryIndex, archetypeCrowd);
 					ecb.SetComponent(entityInQueryIndex, crowd, new OwnedByRealm() { owner = spawn.owner });
-					ecb.SetComponent(entityInQueryIndex, crowd, new Crowd() { targetLocation = random.NextFloat3(new float3(-5.0f, 0, -5.0f), new float3(5.0f, 0, 5.0f)) });
+					ecb.SetComponent(entityInQueryIndex, crowd, new Crowd() { targetLocation = random.NextFloat3(new float3(-16.0f, 0, -16.0f), new float3(16.0f, 0, 16.0f)) });
 
 					// TODO: Переписать на NativeArray
 					for (int i = 0; i < spawn.count; i++) {

@@ -18,7 +18,7 @@ namespace Barbaresques.Battle {
 			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().ToConcurrent();
 
 			Entities.WithName("UnitAi_followCrowd_setTask")
-				.WithNone<UnitAiStateSwitched>()
+				.WithNone<UnitAiStateSwitch>()
 				.WithAll<UnitAiStateFollowCrowd>()
 				.WithNone<Walking>()
 				.ForEach((int entityInQueryIndex, Entity e, in CrowdMember crowdMember) => {
@@ -27,7 +27,7 @@ namespace Barbaresques.Battle {
 				.ScheduleParallel();
 
 			Entities.WithName("UnitAi_followCrowd_updateTask")
-				.WithNone<UnitAiStateSwitched>()
+				.WithNone<UnitAiStateSwitch>()
 				.WithAll<UnitAiStateFollowCrowd>()
 				.ForEach((int entityInQueryIndex, Entity e, ref Walking walking, in CrowdMember crowdMember) => {
 					walking.target = GetComponent<Crowd>(crowdMember.crowd).targetLocation;

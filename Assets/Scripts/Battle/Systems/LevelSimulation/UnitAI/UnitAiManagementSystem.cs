@@ -28,7 +28,7 @@ namespace Barbaresques.Battle {
 				.WithNone<UnitAiState>()
 				.ForEach((Entity e, int entityInQueryIndex) => {
 					ecb.AddComponent(entityInQueryIndex, e, new UnitAiState() {});
-					ecb.AddComponent(entityInQueryIndex, e, new UnitAiStateSwitched() {
+					ecb.AddComponent(entityInQueryIndex, e, new UnitAiStateSwitch() {
 						// Т.к. совпадают, должна быть просто инициализация
 						previousState = UnitAiStates.IDLE,
 						newState = UnitAiStates.IDLE,
@@ -40,16 +40,16 @@ namespace Barbaresques.Battle {
 			// Мб в отдельную систему вынести?
 			Entities.WithName("UnitAI_crowdish_job")
 				.WithAll<UnitAi, CrowdMember>()
-				.WithNone<UnitAiStateFollowCrowd, UnitAiStateSwitched>()
+				.WithNone<UnitAiStateFollowCrowd, UnitAiStateSwitch>()
 				.ForEach((int entityInQueryIndex, Entity e, in UnitAiState ai) => {
-					ecb.AddComponent(entityInQueryIndex, e, new UnitAiStateSwitched() { previousState = ai.state, newState = UnitAiStates.FOLLOW_CROWD });
+					ecb.AddComponent(entityInQueryIndex, e, new UnitAiStateSwitch() { previousState = ai.state, newState = UnitAiStates.FOLLOW_CROWD });
 				})
 				.ScheduleParallel(); 
 
 			// Переключаем состояния
 			Entities.WithName("UnitAI_switch")
-				.WithAll<UnitAi, UnitAiState>()
-				.ForEach((Entity e, int entityInQueryIndex, in UnitAiStateSwitched switched) => {
+				.WithAll<UnitAi>()
+				.ForEach((Entity e, int entityInQueryIndex, ref UnitAiState aiState, in UnitAiStateSwitch switched) => {
 					if (!switched.initialization) {
 						foreach (AssociatedComponentAttribute aca in GetAssociatedComponentsOf(switched.previousState)) {
 							ecb.RemoveComponent(entityInQueryIndex, e, aca.type);
@@ -58,7 +58,8 @@ namespace Barbaresques.Battle {
 					foreach (AssociatedComponentAttribute aca in GetAssociatedComponentsOf(switched.newState)) {
 						ecb.AddComponent(entityInQueryIndex, e, aca.type);
 					}
-					ecb.RemoveComponent<UnitAiStateSwitched>(entityInQueryIndex, e);
+					ecb.RemoveComponent<UnitAiStateSwitch>(entityInQueryIndex, e);
+					aiState.state = switched.newState;
 				})
 				.WithoutBurst()
 				.ScheduleParallel();

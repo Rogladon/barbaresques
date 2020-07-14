@@ -16,7 +16,7 @@ namespace Barbaresques.Battle {
 		public UnitAiStates state;
 	}
 
-	public struct UnitAiStateSwitched : ISystemStateComponentData {
+	public struct UnitAiStateSwitch : ISystemStateComponentData {
 		public UnitAiStates previousState;
 		public UnitAiStates newState;
 

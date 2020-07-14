@@ -817,7 +817,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   crowdMemberPrefab: {fileID: 2590418713886952591, guid: 12db60f2c881340d5aee04435441fa1a, type: 3}
   owner: {fileID: 1845357953}
-  count: 128
+  count: 64
 --- !u!114 &1815542140
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -935,7 +935,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   crowdMemberPrefab: {fileID: 2590418713886952591, guid: 12db60f2c881340d5aee04435441fa1a, type: 3}
   owner: {fileID: 372887028}
-  count: 128
+  count: 64
 --- !u!114 &1934745709
 MonoBehaviour:
   m_ObjectHideFlags: 0
