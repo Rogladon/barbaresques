@@ -6,7 +6,7 @@ using Debug = UnityEngine.Debug;
 namespace Barbaresques.Battle {
 	[UpdateInGroup(typeof(UnitSystemGroup))]
 	public class WalkingSystem : SystemBase {
-		public static readonly double WALKING_PRECISION = 0.01f;
+		public static readonly double WALKING_PRECISION = 0.00001f;
 
 		private EndSimulationEntityCommandBufferSystem _endSimulationEcbSystem;
 
@@ -41,6 +41,7 @@ namespace Barbaresques.Battle {
 							currentSpeed *= walking.speedFactor;
 						}
 						translation.Value += normalize(diff) * min(len, currentSpeed * delta);
+						// Debug.Log($"{len}, {currentSpeed * delta}, {normalize(diff) * min(len, currentSpeed * delta)}");
 					}
 				})
 				.ScheduleParallel();
