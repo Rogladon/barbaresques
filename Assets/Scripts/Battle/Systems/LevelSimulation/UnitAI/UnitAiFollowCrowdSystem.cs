@@ -21,7 +21,7 @@ namespace Barbaresques.Battle {
 				.WithNone<UnitAiStateSwitch>()
 				.WithAll<UnitAiStateFollowCrowd>()
 				.WithNone<Walking>()
-				.ForEach((int entityInQueryIndex, Entity e, in CrowdMember crowdMember) => {
+				.ForEach((int entityInQueryIndex, Entity e, in CrowdMember crowdMember, in Translation translation) => {
 					ecb.AddComponent(entityInQueryIndex, e, new Walking() { target = GetComponent<Crowd>(crowdMember.crowd).targetLocation, speedFactor = 1 });
 				})
 				.ScheduleParallel();
