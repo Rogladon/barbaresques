@@ -30,12 +30,12 @@ namespace Barbaresques.Battle {
 
 			Entities.WithName("SpawnCrowd")
 				.WithoutBurst()
-				.ForEach((int nativeThreadIndex, int entityInQueryIndex, Entity e, in SpawnCrowd spawn) => {
+				.ForEach((int nativeThreadIndex, int entityInQueryIndex, Entity e, in Translation translation, in SpawnCrowd spawn) => {
 					var random = randoms[nativeThreadIndex];
 
 					var crowd = ecb.CreateEntity(entityInQueryIndex, archetypeCrowd);
 					ecb.SetComponent(entityInQueryIndex, crowd, new OwnedByRealm() { owner = spawn.owner });
-					ecb.SetComponent(entityInQueryIndex, crowd, new Crowd() { targetLocation = random.NextFloat3(new float3(-16.0f, 0, -16.0f), new float3(16.0f, 0, 16.0f)) });
+					ecb.SetComponent(entityInQueryIndex, crowd, new Crowd() { targetLocation = translation.Value });
 
 					// TODO: Переписать на NativeArray
 					for (int i = 0; i < spawn.count; i++) {
@@ -43,7 +43,7 @@ namespace Barbaresques.Battle {
 						ecb.AddComponent(entityInQueryIndex, member, new CrowdMember() { crowd = crowd });
 						ecb.SetComponent(entityInQueryIndex, member, new OwnedByRealm() { owner = spawn.owner });
 						ecb.SetComponent(entityInQueryIndex, member, new Translation() {
-							Value = random.NextFloat3(new float3(-16.0f, 0, -16.0f), new float3(16.0f, 0, 16.0f)),
+							Value = translation.Value + random.NextFloat3(new float3(-16.0f, 0, -16.0f), new float3(16.0f, 0, 16.0f)),
 						});
 					}
 
