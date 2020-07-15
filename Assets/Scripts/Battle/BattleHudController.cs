@@ -3,15 +3,31 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Entities;
 using Unity.Collections;
+using UnityEngine.UI;
 
 namespace Barbaresques.Battle {
 	public class BattleHudController : MonoBehaviour {
+		[Header("Prefabs")]
+		[SerializeField]
+		private GameObject _crowdButtonPrefab;
+
+		[Header("Components")]
+		[SerializeField]
+		private Transform _crowdsDomain;
+
+		private Dictionary<Entity, GameObject> _crowdsButtons;
+
+		private static World world => World.DefaultGameObjectInjectionWorld;
+		private static EntityManager entityManager => world.EntityManager;
+
 		void Start() {
-			StartCoroutine(TryInitialize());
+			_crowdsButtons = new Dictionary<Entity, GameObject>();
 
 			World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<EventSystem>().AddEventHandler((BattleGameStartedEvent bgse) => {
 				Debug.Log("bgse 0");
 			});
+
+			StartCoroutine(TryInitialize());
 		}
 
 		void Initialize() {
@@ -21,7 +37,23 @@ namespace Barbaresques.Battle {
 				Debug.Log("bgse 1");
 			});
 			eventSystem.AddEventHandler((NewCrowdEvent ev) => {
-				Debug.Log("newcrowd");
+				Debug.Log("New crowd");
+
+				GameObject go = Instantiate(_crowdButtonPrefab, _crowdsDomain);
+				go.name = $"Crowd {ev.crowd}";
+
+				var text = go.GetComponent<Text>();
+				text.text = ev.crowd.ToString();
+				text.color = entityManager.GetComponentData<Realm>(entityManager.GetComponentData<OwnedByRealm>(ev.crowd).owner).color;
+
+				_crowdsButtons[ev.crowd] = go.gameObject;
+			});
+			eventSystem.AddEventHandler((CrowdDestroyedEvent ev) => {
+				Debug.Log("Crowd destroyed");
+				if (_crowdsButtons.TryGetValue(ev.crowd, out GameObject go)) {
+					Destroy(go);
+					_crowdsButtons.Remove(ev.crowd);
+				}
 			});
 		}
 
