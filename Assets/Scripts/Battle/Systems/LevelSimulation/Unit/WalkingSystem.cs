@@ -1,4 +1,5 @@
 using Unity.Entities;
+using Unity.Physics;
 using Unity.Transforms;
 using static Unity.Mathematics.math;
 using Debug = UnityEngine.Debug;
@@ -21,7 +22,7 @@ namespace Barbaresques.Battle {
 			var delta = Time.DeltaTime;
 
 			Entities.WithName("walk")
-				.ForEach((int entityInQueryIndex, Entity e, ref Translation translation, in Walking walking, in Speed speed) => {
+				.ForEach((int entityInQueryIndex, Entity e, ref PhysicsVelocity velocity, in Translation translation, in Walking walking, in Speed speed) => {
 					var diff = walking.target - translation.Value;
 					var len = length(diff);
 					if (len < WALKING_PRECISION) {
@@ -40,7 +41,7 @@ namespace Barbaresques.Battle {
 						} else {
 							currentSpeed *= walking.speedFactor;
 						}
-						translation.Value += normalize(diff) * min(len, currentSpeed * delta);
+						velocity.Linear = normalize(diff) * min(len, currentSpeed);
 					}
 				})
 				.ScheduleParallel();
