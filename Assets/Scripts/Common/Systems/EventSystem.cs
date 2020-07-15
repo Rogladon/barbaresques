@@ -22,7 +22,6 @@ namespace Barbaresques.Battle {
 		protected override void OnUpdate() {
 			var ecb = _endSimulationEcbSystem.CreateCommandBuffer();
 
-			// EntityManager.GetComponentData<T>(Entity)
 			var miGetComponentData = typeof(EntityManager).GetMethod(nameof(EntityManager.GetComponentData), new Type[] { typeof(Entity) });
 
 			Entities.WithName("events")

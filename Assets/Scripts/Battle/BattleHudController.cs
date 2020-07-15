@@ -43,7 +43,7 @@ namespace Barbaresques.Battle {
 				Debug.Log("bgse 1");
 			});
 			eventSystem.AddEventHandler((NewCrowdEvent ev) => {
-				Debug.Log("New crowd");
+				Debug.Log("+crowd");
 
 				GameObject go = Instantiate(_crowdButtonPrefab, _crowdsDomain);
 				go.name = $"Crowd {ev.crowd}";
@@ -55,7 +55,7 @@ namespace Barbaresques.Battle {
 				_crowdsButtons[ev.crowd] = go.gameObject;
 			});
 			eventSystem.AddEventHandler((CrowdDestroyedEvent ev) => {
-				Debug.Log("Crowd destroyed");
+				Debug.Log("-crowd");
 				if (_crowdsButtons.TryGetValue(ev.crowd, out GameObject go)) {
 					Destroy(go);
 					_crowdsButtons.Remove(ev.crowd);
