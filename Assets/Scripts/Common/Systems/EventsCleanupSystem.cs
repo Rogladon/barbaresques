@@ -15,8 +15,6 @@ namespace Barbaresques.Battle {
 		protected override void OnUpdate() {
 			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().ToConcurrent();
 
-			var delta = Time.DeltaTime;
-
 			Entities.WithName("events_cleanup")
 				.WithAll<Event>()
 				.ForEach((int entityInQueryIndex, Entity e) => {
@@ -28,4 +26,3 @@ namespace Barbaresques.Battle {
 		}
 	}
 }
-

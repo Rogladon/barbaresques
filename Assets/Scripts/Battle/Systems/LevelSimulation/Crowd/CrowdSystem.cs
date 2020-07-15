@@ -6,24 +6,42 @@ namespace Barbaresques.Battle {
 		public int membersCount;
 	}
 
+	public struct NewCrowdEvent : IComponentData, IEvent {
+		public Entity crowd;
+	}
+	public struct CrowdDestroyedEvent : IComponentData, IEvent {
+		public Entity crowd;
+	}
+
 	[UpdateInGroup(typeof(CrowdSystemGroup))]
 	public class CrowdSystem : SystemBase {
 		private EndSimulationEntityCommandBufferSystem _endSimulationEcbSystem;
+
+		private EntityArchetype _archetypeNewCrowdEvent;
+		private EntityArchetype _archetypeCrowdDestroyedEvent;
 
 		protected override void OnCreate() {
 			base.OnCreate();
 
 			_endSimulationEcbSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+
+			_archetypeNewCrowdEvent = World.EntityManager.CreateArchetype(typeof(Event), typeof(NewCrowdEvent));
+			_archetypeCrowdDestroyedEvent = World.EntityManager.CreateArchetype(typeof(Event), typeof(CrowdDestroyedEvent));
 		}
 
 		protected override void OnUpdate() {
 			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().ToConcurrent();
+
+			var archetypeNewCrowdEvent = _archetypeNewCrowdEvent;
+			var archetypeCrowdDestroyedEvent = _archetypeCrowdDestroyedEvent;
 
 			Entities.WithName("Crowd_init")
 				.WithNone<CrowdSystemState>()
 				.WithAll<Crowd>()
 				.ForEach((int entityInQueryIndex, Entity entity) => {
 					ecb.AddComponent(entityInQueryIndex, entity, new CrowdSystemState() { membersCount = 0 });
+					var ev = ecb.CreateEntity(entityInQueryIndex, archetypeNewCrowdEvent);
+					ecb.SetComponent(entityInQueryIndex, ev, new NewCrowdEvent() { crowd = entity });
 				})
 				.ScheduleParallel();
 
@@ -32,6 +50,8 @@ namespace Barbaresques.Battle {
 				.WithNone<Crowd>()
 				.ForEach((int entityInQueryIndex, Entity entity) => {
 					ecb.RemoveComponent<CrowdSystemState>(entityInQueryIndex, entity);
+					var ev = ecb.CreateEntity(entityInQueryIndex, archetypeCrowdDestroyedEvent);
+					ecb.SetComponent(entityInQueryIndex, ev, new CrowdDestroyedEvent() { crowd = entity });
 				})
 				.ScheduleParallel();
 
