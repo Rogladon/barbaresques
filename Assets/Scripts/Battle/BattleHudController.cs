@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 namespace Barbaresques.Battle {
 	public class BattleHudController : MonoBehaviour {
+#region Prefabs & Components
+#pragma warning disable 649
 		[Header("Prefabs")]
 		[SerializeField]
 		private GameObject _crowdButtonPrefab;
@@ -16,6 +18,10 @@ namespace Barbaresques.Battle {
 		private Transform _crowdsDomain;
 
 		private Dictionary<Entity, GameObject> _crowdsButtons;
+#pragma warning restore 649
+#endregion
+
+		private Entity currentRealm;
 
 		private static World world => World.DefaultGameObjectInjectionWorld;
 		private static EntityManager entityManager => world.EntityManager;
