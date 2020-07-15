@@ -6,10 +6,10 @@ namespace Barbaresques.Battle {
 		public int membersCount;
 	}
 
-	public struct NewCrowdEvent : IComponentData, IEvent {
+	public struct NewCrowdEvent : IComponentData, IEventData {
 		public Entity crowd;
 	}
-	public struct CrowdDestroyedEvent : IComponentData, IEvent {
+	public struct CrowdDestroyedEvent : IComponentData, IEventData {
 		public Entity crowd;
 	}
 

@@ -1,7 +1,7 @@
 using Unity.Entities;
 
 namespace Barbaresques.Battle {
-	public interface IEvent {}
+	public interface IEventData : IComponentData {}
 
 	[GenerateAuthoringComponent]
 	public struct Event : IComponentData {

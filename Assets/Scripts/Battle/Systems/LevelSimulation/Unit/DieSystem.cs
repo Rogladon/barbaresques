@@ -1,7 +1,7 @@
 using Unity.Entities;
 
 namespace Barbaresques.Battle {
-	public struct UnitDiedEvent : IComponentData, IEvent {
+	public struct UnitDiedEvent : IComponentData, IEventData {
 		public Entity unit;
 	}
 
