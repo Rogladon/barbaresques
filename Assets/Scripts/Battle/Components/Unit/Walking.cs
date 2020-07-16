@@ -5,7 +5,13 @@ namespace Barbaresques.Battle {
 	public struct Walking : IComponentData {
 		public float3 target;
 		public float speedFactor;
+		/// <summary>
+		/// Расстояние от target, на котором юнит считается достигшим точки назначения
+		/// </summary>
 		public float targetRadius;
+		/// <summary>
+		/// Время нахождения в targetRadius, после которого движение завершается
+		/// </summary>
 		public float stopAfterSecsInRadius;
 
 		public static readonly float SPEED_FACTOR_ZERO = -1.0f;
