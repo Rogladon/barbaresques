@@ -13,8 +13,6 @@ namespace Barbaresques.Battle {
 
 	[UpdateInGroup(typeof(UnitSystemGroup))]
 	public class WalkingSystem : SystemBase {
-		public static readonly double WALKING_PRECISION = 0.00001f;
-
 		private EndSimulationEntityCommandBufferSystem _endSimulationEcbSystem;
 
 		protected override void OnCreate() {
