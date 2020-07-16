@@ -6,6 +6,11 @@ using static Unity.Mathematics.math;
 using Debug = UnityEngine.Debug;
 
 namespace Barbaresques.Battle {
+	public struct WalkingSystemState : ISystemStateComponentData {
+		public bool achievedLocation;
+		public float timeInLocation;
+	}
+
 	[UpdateInGroup(typeof(UnitSystemGroup))]
 	public class WalkingSystem : SystemBase {
 		public static readonly double WALKING_PRECISION = 0.00001f;
@@ -17,16 +22,37 @@ namespace Barbaresques.Battle {
 
 			_endSimulationEcbSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 		}
+
 		protected override void OnUpdate() {
 			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().ToConcurrent();
 
 			var delta = Time.DeltaTime;
 
-			Entities.WithName("walk")
-				.ForEach((int entityInQueryIndex, Entity e, ref Translation translation, in Walking walking, in Speed speed) => {
+			Entities.WithName("Walking_init")
+				.WithNone<WalkingSystemState>()
+				.WithAll<Walking>()
+				.ForEach((int entityInQueryIndex, Entity entity) => {
+					ecb.AddComponent(entityInQueryIndex, entity, new WalkingSystemState() { achievedLocation = false });
+				})
+				.ScheduleParallel();
+
+			Entities.WithName("Walking_walk")
+				.ForEach((int entityInQueryIndex, Entity e, ref Translation translation, ref WalkingSystemState walkingSystemState, in Walking walking, in Speed speed) => {
 					var diff = walking.target - translation.Value;
 					var len = length(diff);
-					if (len < WALKING_PRECISION) {
+
+					if (len < walking.targetRadius) {
+						if (walkingSystemState.achievedLocation) {
+							walkingSystemState.timeInLocation += delta;
+						} else {
+							walkingSystemState.achievedLocation = true;
+							walkingSystemState.timeInLocation = 0.0f;
+						}
+					} else {
+						walkingSystemState.achievedLocation = false;
+					}
+
+					if (walkingSystemState.achievedLocation && walkingSystemState.timeInLocation > walking.stopAfterSecsInRadius) {
 						ecb.RemoveComponent<Walking>(entityInQueryIndex, e);
 					} else {
 						var currentSpeed = speed.value;
@@ -46,6 +72,15 @@ namespace Barbaresques.Battle {
 					}
 				})
 				.ScheduleParallel();
+
+			Entities.WithName("Walking_deinit")
+				.WithAll<WalkingSystemState>()
+				.WithNone<Walking>()
+				.ForEach((int entityInQueryIndex, Entity entity) => {
+					ecb.RemoveComponent<WalkingSystemState>(entityInQueryIndex, entity);
+				})
+				.ScheduleParallel();
+
 
 			_endSimulationEcbSystem.AddJobHandleForProducer(Dependency);
 		}
