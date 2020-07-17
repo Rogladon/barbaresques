@@ -24,8 +24,8 @@ namespace Barbaresques.Battle {
 #pragma warning restore 649
 		#endregion
 
-		private Entity currentRealm;
-		private Entity currentCrowd;
+		private Entity currentRealm = Entity.Null;
+		private Entity currentCrowd = Entity.Null;
 
 		private static World World => World.DefaultGameObjectInjectionWorld;
 		private static EntityManager entityManager => World.EntityManager;
@@ -97,7 +97,7 @@ namespace Barbaresques.Battle {
 			}
 		}
 
-		void OnUpdate() {
+		void Update() {
 			_crowdBar.gameObject.SetActive(currentCrowd != Entity.Null);
 		}
 
