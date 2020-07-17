@@ -17,6 +17,8 @@ namespace Barbaresques.Battle {
 		[Header("Components")]
 		[SerializeField]
 		private Transform _crowdsDomain;
+		[SerializeField]
+		private CrowdBarController _crowdBar;
 
 		private Dictionary<Entity, Button> _crowdsButtons;
 #pragma warning restore 649
@@ -56,7 +58,7 @@ namespace Barbaresques.Battle {
 
 				var btn = go.GetComponent<Button>();
 				btn.onClick.AddListener(() => {
-					currentCrowd = ev.crowd;
+					SelectCrowd(ev.crowd);
 					foreach (Button otherBtn in _crowdsButtons.Values) {
 						otherBtn.interactable = true;
 					}
@@ -96,6 +98,7 @@ namespace Barbaresques.Battle {
 		}
 
 		void OnUpdate() {
+			_crowdBar.gameObject.SetActive(currentCrowd != Entity.Null);
 		}
 
 		private void OnLevelPointSelected(float3 point) {
@@ -113,6 +116,12 @@ namespace Barbaresques.Battle {
 					break;
 				}
 			}
+		}
+
+		public void SelectCrowd(Entity entity) {
+			// TODO: чекать есть ли Crowd
+			currentCrowd = entity;
+			_crowdBar.crowdEntity = currentCrowd;
 		}
 	}
 }
