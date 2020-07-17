@@ -4,10 +4,11 @@ using UnityEngine;
 using Unity.Entities;
 using Unity.Collections;
 using UnityEngine.UI;
+using Unity.Mathematics;
 
 namespace Barbaresques.Battle {
 	public class BattleHudController : MonoBehaviour {
-#region Prefabs & Components
+		#region Prefabs & Components
 #pragma warning disable 649
 		[Header("Prefabs")]
 		[SerializeField]
@@ -19,12 +20,13 @@ namespace Barbaresques.Battle {
 
 		private Dictionary<Entity, GameObject> _crowdsButtons;
 #pragma warning restore 649
-#endregion
+		#endregion
 
 		private Entity currentRealm;
+		private Entity currentCrowd;
 
-		private static World world => World.DefaultGameObjectInjectionWorld;
-		private static EntityManager entityManager => world.EntityManager;
+		private static World World => World.DefaultGameObjectInjectionWorld;
+		private static EntityManager entityManager => World.EntityManager;
 
 		void Start() {
 			_crowdsButtons = new Dictionary<Entity, GameObject>();
@@ -53,6 +55,10 @@ namespace Barbaresques.Battle {
 				text.color = entityManager.GetComponentData<Realm>(entityManager.GetComponentData<OwnedByRealm>(ev.crowd).owner).color;
 
 				_crowdsButtons[ev.crowd] = go.gameObject;
+
+				if (currentCrowd == Entity.Null) {
+					currentCrowd = ev.crowd;
+				}
 			});
 			eventSystem.AddEventHandler((CrowdDestroyedEvent ev) => {
 				Debug.Log("-crowd");
@@ -74,11 +80,20 @@ namespace Barbaresques.Battle {
 			}
 		}
 
+		void OnUpdate() {
+		}
+
+		private void OnLevelPointSelected(float3 point) {
+			if (currentCrowd != Entity.Null) {
+				entityManager.SetComponentData(currentCrowd, new Crowd() { targetLocation = point });
+			}
+		}
+
 		public void Click(Transform clickArea) {
-			Debug.Log("Click");
-			foreach (var hit in Physics.RaycastAll(Camera.main.ViewportPointToRay(Input.mousePosition))) {
+			foreach (var hit in Physics.RaycastAll(Camera.main.ScreenPointToRay(Input.mousePosition), 1000.0f)) {
 				if (hit.transform == clickArea.transform) {
-					Debug.Log(hit.point);
+					// Debug.Log($"Clicked at {hit.point}");
+					OnLevelPointSelected(hit.point);
 					break;
 				}
 			}
