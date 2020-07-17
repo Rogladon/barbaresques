@@ -9,7 +9,7 @@ namespace Barbaresques.Battle {
 	/// <br/>
 	/// Должен исполняться первым в группе!
 	/// </summary>
-	[UpdateInGroup(typeof(UnitAiSystemGroup))]
+	[UpdateInGroup(typeof(UnitAiSystemGroup), OrderFirst = true)]
 	public class UnitAiManagementSystem : SystemBase {
 		private EndSimulationEntityCommandBufferSystem _endSimulationEcbSystem;
 
@@ -27,7 +27,7 @@ namespace Barbaresques.Battle {
 				.WithAll<UnitAi>()
 				.WithNone<UnitAiState>()
 				.ForEach((Entity e, int entityInQueryIndex) => {
-					ecb.AddComponent(entityInQueryIndex, e, new UnitAiState() {});
+					ecb.AddComponent(entityInQueryIndex, e, new UnitAiState() { });
 					ecb.AddComponent(entityInQueryIndex, e, new UnitAiStateSwitch() {
 						// Т.к. совпадают, должна быть просто инициализация
 						previousState = UnitAiStates.IDLE,
@@ -35,16 +35,6 @@ namespace Barbaresques.Battle {
 					});
 				})
 				.ScheduleParallel();
-
-			// Работа с толпами
-			// Мб в отдельную систему вынести?
-			Entities.WithName("crowdish_job")
-				.WithAll<UnitAi, CrowdMember>()
-				.WithNone<UnitAiStateFollowCrowd, UnitAiStateSwitch>()
-				.ForEach((int entityInQueryIndex, Entity e, in UnitAiState ai) => {
-					ecb.AddComponent(entityInQueryIndex, e, new UnitAiStateSwitch() { previousState = ai.state, newState = UnitAiStates.FOLLOW_CROWD });
-				})
-				.ScheduleParallel(); 
 
 			// Переключаем состояния
 			Entities.WithName("switch")
@@ -65,7 +55,7 @@ namespace Barbaresques.Battle {
 				.ScheduleParallel();
 
 			// Удаляем состояния с задестроенных юнитов
-			Entities.WithName("deinit")
+			Entities.WithName("cleanup_states")
 				.WithNone<UnitAi>()
 				.ForEach((Entity e, int entityInQueryIndex, in UnitAiState state) => {
 					// Удаление компонентов, связанных с состоянием машины состояния
@@ -75,6 +65,14 @@ namespace Barbaresques.Battle {
 					ecb.RemoveComponent<UnitAiState>(entityInQueryIndex, e);
 				})
 				.WithoutBurst()
+				.ScheduleParallel();
+
+			// Удаляем переключатели состояний с задестроенных юнитов
+			// (по идее не должны оставаться, но мало ли)
+			Entities.WithName($"cleanup_{nameof(UnitAiStateSwitch)}")
+				.WithNone<UnitAi>()
+				.WithAll<UnitAiStateSwitch>()
+				.ForEach((Entity e, int entityInQueryIndex) => ecb.RemoveComponent<UnitAiStateSwitch>(entityInQueryIndex, e))
 				.ScheduleParallel();
 
 			_endSimulationEcbSystem.AddJobHandleForProducer(Dependency);
