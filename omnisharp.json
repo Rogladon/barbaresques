@@ -5,6 +5,8 @@
 		"tabSize": 4,
 		"indentationSize": 4,
 
+		"IndentSwitchSection": false,
+
 		"NewLinesForBracesInTypes": false,
 		"NewLinesForBracesInMethods": false,
 		"NewLinesForBracesInProperties": false,
