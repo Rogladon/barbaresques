@@ -25,6 +25,7 @@ namespace Barbaresques.Battle {
 				.WithAll<UnitAiStateGoTo>()
 				.WithNone<Walking>()
 				.ForEach((int entityInQueryIndex, Entity e, in CrowdMember crowdMember) => {
+					// TODO: чек на расстояние до цели
 					ecb.AddComponent(entityInQueryIndex, e, new Walking() {
 						target = crowdMember.targetLocation,
 						speedFactor = 1,
@@ -38,6 +39,7 @@ namespace Barbaresques.Battle {
 				.WithNone<UnitAiStateSwitch>()
 				.WithAll<UnitAiStateGoTo>()
 				.ForEach((int entityInQueryIndex, Entity e, ref Walking walking, in CrowdMember crowdMember) => {
+					// TODO: чек на расстояние до цели
 					walking = new Walking() {
 						target = crowdMember.targetLocation,
 						speedFactor = 1,
