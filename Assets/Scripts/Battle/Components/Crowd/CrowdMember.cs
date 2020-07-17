@@ -5,7 +5,7 @@ namespace Barbaresques.Battle {
 	/// <summary>
 	/// Политика поведения члена толпы в толпе
 	/// </summary>
-	public enum CrowdMemberPolicy : byte {
+	public enum CrowdMemberBehavingPolicy : byte {
 		// TODO: вообще как флаговый enum сделать
 
 		/// <summary>
@@ -22,7 +22,7 @@ namespace Barbaresques.Battle {
 	[GenerateAuthoringComponent]
 	public struct CrowdMember : IComponentData {
 		public Entity crowd;
-		public CrowdMemberPolicy policy;
+		public CrowdMemberBehavingPolicy behavingPolicy;
 		public float3 targetLocation;
 	}
 }

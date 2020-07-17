@@ -52,7 +52,7 @@ namespace Barbaresques.Battle {
 				.ForEach((int nativeThreadIndex, ref CrowdMember crowdMember, ref CrowdMemberSystemState crowdMemberSystemState) => {
 					if (crowdsTargets.TryGetValue(crowdMember.crowd, out float3 target)) {
 						bool acquireNewTargetLocation = false;
-						if (crowdMember.policy == CrowdMemberPolicy.FOLLOW) {
+						if (crowdMember.behavingPolicy == CrowdMemberBehavingPolicy.FOLLOW) {
 							// Если целевая точка изменилась, выдаём её заново
 							if (math.length(crowdMemberSystemState.lastCrowdsTargetPosition - target) < 0.01f) {
 								crowdMemberSystemState.lastCrowdsTargetPosition = target;
@@ -60,7 +60,7 @@ namespace Barbaresques.Battle {
 								// TODO: слать событие?
 							}
 						} else {
-							crowdMember.policy = CrowdMemberPolicy.FOLLOW;
+							crowdMember.behavingPolicy = CrowdMemberBehavingPolicy.FOLLOW;
 
 							crowdMemberSystemState.lastCrowdsTargetPosition = target;
 							acquireNewTargetLocation = true;
@@ -73,7 +73,7 @@ namespace Barbaresques.Battle {
 							randoms[nativeThreadIndex] = random;
 						}
 					} else {
-						crowdMember.policy = CrowdMemberPolicy.IDLE;
+						crowdMember.behavingPolicy = CrowdMemberBehavingPolicy.IDLE;
 					}
 				})
 				.ScheduleParallel(collectCrowdsTargets);

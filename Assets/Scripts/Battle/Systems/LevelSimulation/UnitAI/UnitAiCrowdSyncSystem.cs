@@ -25,13 +25,13 @@ namespace Barbaresques.Battle {
 				.WithAll<UnitAi>()
 				.WithNone<UnitAiStateGoTo, UnitAiStateSwitch>()
 				.ForEach((int entityInQueryIndex, Entity e, in UnitAiState ai, in CrowdMember crowdMember) => {
-					switch (crowdMember.policy) {
-					case CrowdMemberPolicy.IDLE:
+					switch (crowdMember.behavingPolicy) {
+					case CrowdMemberBehavingPolicy.IDLE:
 						if (ai.state != UnitAiStates.IDLE) {
 							ecb.AddComponent(entityInQueryIndex, e, new UnitAiStateSwitch() { previousState = ai.state, newState = UnitAiStates.IDLE });
 						}
 						break;
-					case CrowdMemberPolicy.FOLLOW:
+					case CrowdMemberBehavingPolicy.FOLLOW:
 						if (ai.state != UnitAiStates.GO_TO) {
 							ecb.AddComponent(entityInQueryIndex, e, new UnitAiStateSwitch() { previousState = ai.state, newState = UnitAiStates.GO_TO });
 						}
