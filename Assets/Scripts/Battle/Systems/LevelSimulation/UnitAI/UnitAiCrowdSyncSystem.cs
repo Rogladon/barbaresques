@@ -7,7 +7,7 @@ namespace Barbaresques.Battle {
 	/// <summary>
 	/// Синхронизация состояния толпы с ИИ юнита
 	/// </summary>
-	[UpdateInGroup(typeof(UnitAiSystemGroup)),UpdateAfter(typeof(UnitAiManagementSystem))]
+	[UpdateInGroup(typeof(UnitAiSystemGroup), OrderFirst = true), UpdateAfter(typeof(UnitAiManagementSystem))]
 	public class UnitAiCrowdSyncSystem : SystemBase {
 		private EndSimulationEntityCommandBufferSystem _endSimulationEcbSystem;
 
@@ -21,13 +21,26 @@ namespace Barbaresques.Battle {
 			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().ToConcurrent();
 
 			// Работа с толпами
-			Entities.WithName("crowdish_job")
-				.WithAll<UnitAi, CrowdMember>()
-				.WithNone<UnitAiStateFollowCrowd, UnitAiStateSwitch>()
-				.ForEach((int entityInQueryIndex, Entity e, in UnitAiState ai) => {
-					ecb.AddComponent(entityInQueryIndex, e, new UnitAiStateSwitch() { previousState = ai.state, newState = UnitAiStates.FOLLOW_CROWD });
+			Entities.WithName("sync")
+				.WithAll<UnitAi>()
+				.WithNone<UnitAiStateGoTo, UnitAiStateSwitch>()
+				.ForEach((int entityInQueryIndex, Entity e, in UnitAiState ai, in CrowdMember crowdMember) => {
+					switch (crowdMember.policy) {
+					case CrowdMemberPolicy.IDLE:
+						if (ai.state != UnitAiStates.IDLE) {
+							ecb.AddComponent(entityInQueryIndex, e, new UnitAiStateSwitch() { previousState = ai.state, newState = UnitAiStates.IDLE });
+						}
+						break;
+					case CrowdMemberPolicy.FOLLOW:
+						if (ai.state != UnitAiStates.GO_TO) {
+							ecb.AddComponent(entityInQueryIndex, e, new UnitAiStateSwitch() { previousState = ai.state, newState = UnitAiStates.GO_TO });
+						}
+						break;
+					default:
+						break;
+					}
 				})
-				.ScheduleParallel(); 
+				.ScheduleParallel();
 
 			_endSimulationEcbSystem.AddJobHandleForProducer(Dependency);
 		}

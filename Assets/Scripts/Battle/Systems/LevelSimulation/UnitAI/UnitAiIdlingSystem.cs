@@ -30,7 +30,9 @@ namespace Barbaresques.Battle {
 						return;
 					var random = randoms[nativeThreadIndex];
 
-					ecb.AddComponent(entityInQueryIndex, e, new Walking(translation.Value + random.NextFloat3(new float3(-5.0f, 0, -5.0f), new float3(5.0f, 0, 5.0f))));
+					ecb.AddComponent(entityInQueryIndex, e, new Walking(translation.Value + random.NextFloat3(new float3(-5.0f, 0, -5.0f), new float3(5.0f, 0, 5.0f))) {
+						speedFactor = 0.25f,
+					});
 
 					randoms[nativeThreadIndex] = random; // возвращаем рандомайзер обратно
 				})

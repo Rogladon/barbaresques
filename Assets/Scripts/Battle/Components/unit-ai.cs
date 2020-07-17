@@ -8,8 +8,8 @@ namespace Barbaresques.Battle {
 	public enum UnitAiStates {
 		[AssociatedComponent(typeof(UnitAiStateIdle))]
 		IDLE,
-		[AssociatedComponent(typeof(UnitAiStateFollowCrowd))]
-		FOLLOW_CROWD,
+		[AssociatedComponent(typeof(UnitAiStateGoTo))]
+		GO_TO,
 	}
 
 	public struct UnitAiState : ISystemStateComponentData {
@@ -28,5 +28,5 @@ namespace Barbaresques.Battle {
 
 	public struct UnitAiStateIdle : ISystemStateComponentData {}
 
-	public struct UnitAiStateFollowCrowd : ISystemStateComponentData {}
+	public struct UnitAiStateGoTo : ISystemStateComponentData {}
 }
