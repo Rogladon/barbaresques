@@ -20,7 +20,7 @@ namespace Barbaresques.Battle {
 			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().ToConcurrent();
 			var randoms = _randomSystem.randoms;
 
-			Entities.WithName("UnitAi_idle_setTask")
+			Entities.WithName("setTask")
 				.WithNativeDisableParallelForRestriction(randoms)
 				.WithNone<UnitAiStateSwitch>()
 				.WithAll<UnitAiStateIdle>()

@@ -18,7 +18,7 @@ namespace Barbaresques.Battle {
 		[SerializeField]
 		private Transform _crowdsDomain;
 
-		private Dictionary<Entity, GameObject> _crowdsButtons;
+		private Dictionary<Entity, Button> _crowdsButtons;
 #pragma warning restore 649
 		#endregion
 
@@ -29,7 +29,7 @@ namespace Barbaresques.Battle {
 		private static EntityManager entityManager => World.EntityManager;
 
 		void Start() {
-			_crowdsButtons = new Dictionary<Entity, GameObject>();
+			_crowdsButtons = new Dictionary<Entity, Button>();
 
 			World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<EventSystem>().AddEventHandler((BattleGameStartedEvent bgse) => {
 				Debug.Log("bgse 0");
@@ -57,18 +57,18 @@ namespace Barbaresques.Battle {
 				var btn = go.GetComponent<Button>();
 				btn.onClick.AddListener(() => {
 					currentCrowd = ev.crowd;
-					foreach (var otherBtn in _crowdsButtons.Values) {
-						otherBtn.GetComponent<Button>().interactable = true;
+					foreach (Button otherBtn in _crowdsButtons.Values) {
+						otherBtn.interactable = true;
 					}
 					btn.interactable = false;
 				});
 
-				_crowdsButtons[ev.crowd] = go.gameObject;
+				_crowdsButtons[ev.crowd] = btn;
 			});
 			eventSystem.AddEventHandler((CrowdDestroyedEvent ev) => {
 				Debug.Log("-crowd");
-				if (_crowdsButtons.TryGetValue(ev.crowd, out GameObject go)) {
-					Destroy(go);
+				if (_crowdsButtons.TryGetValue(ev.crowd, out Button btn)) {
+					Destroy(btn.gameObject);
 					_crowdsButtons.Remove(ev.crowd);
 				}
 			});

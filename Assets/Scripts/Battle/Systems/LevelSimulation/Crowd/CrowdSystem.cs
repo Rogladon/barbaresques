@@ -35,7 +35,7 @@ namespace Barbaresques.Battle {
 			var archetypeNewCrowdEvent = _archetypeNewCrowdEvent;
 			var archetypeCrowdDestroyedEvent = _archetypeCrowdDestroyedEvent;
 
-			Entities.WithName("Crowd_init")
+			Entities.WithName("init")
 				.WithNone<CrowdSystemState>()
 				.WithAll<Crowd>()
 				.ForEach((int entityInQueryIndex, Entity entity) => {
@@ -45,7 +45,7 @@ namespace Barbaresques.Battle {
 				})
 				.ScheduleParallel();
 
-			Entities.WithName("Crowd_deinit")
+			Entities.WithName("deinit")
 				.WithAll<CrowdSystemState>()
 				.WithNone<Crowd>()
 				.ForEach((int entityInQueryIndex, Entity entity) => {

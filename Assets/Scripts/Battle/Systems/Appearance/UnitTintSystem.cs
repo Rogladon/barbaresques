@@ -10,7 +10,7 @@ namespace Barbaresques.Battle {
 	}
 
 	[UpdateInGroup(typeof(AppearanceSystemGroup))]
-	public class UnitTintGroup : SystemBase {
+	public class UnitTintSystem : SystemBase {
 		private EndSimulationEntityCommandBufferSystem _endSimulationEcbSystem;
 		private RandomSystem _randomSystem;
 
@@ -24,7 +24,7 @@ namespace Barbaresques.Battle {
 		protected override void OnUpdate() {
 			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().ToConcurrent();
 
-			Entities.WithName("UnitAppearance_update")
+			Entities.WithName("update")
 				.WithAll<UnitAppearance>()
 				.ForEach((int entityInQueryIndex, Entity e, ref UnitTint mc, in Parent parent) => {
 					if (!HasComponent<OwnedByRealm>(parent.Value))
@@ -39,7 +39,7 @@ namespace Barbaresques.Battle {
 				})
 				.ScheduleParallel();
 
-			Entities.WithName("UnitAppearance_tint")
+			Entities.WithName("tint")
 				.WithAll<UnitAppearance>()
 				.WithNone<UnitTint>()
 				.ForEach((int entityInQueryIndex, Entity e, in Parent parent) => {
@@ -55,7 +55,7 @@ namespace Barbaresques.Battle {
 				})
 				.ScheduleParallel();
 
-			Entities.WithName("UnitAppearance_cleanup")
+			Entities.WithName("cleanup")
 				.WithNone<Parent>()
 				.WithAll<UnitTint>()
 				.ForEach((int entityInQueryIndex, Entity e) => {

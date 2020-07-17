@@ -21,7 +21,7 @@ namespace Barbaresques.Battle {
 			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().ToConcurrent();
 
 			NativeHashMap<Entity, float3> crowdsTargets = new NativeHashMap<Entity, float3>(_crowdsQuery.CalculateEntityCount(), Allocator.TempJob);
-			JobHandle collectCrowdsTargets = Entities.WithName($"UnitAi_followCrowd_{nameof(collectCrowdsTargets)}")
+			JobHandle collectCrowdsTargets = Entities.WithName(nameof(collectCrowdsTargets))
 				.WithStoreEntityQueryInField(ref _crowdsQuery)
 				.WithAll<Crowd>()
 				.ForEach((Entity e, in CrowdTargetPosition targetPosition) => {
@@ -31,7 +31,7 @@ namespace Barbaresques.Battle {
 
 			float targetRadius = 10.0f;
 
-			JobHandle setTask = Entities.WithName($"UnitAi_followCrowd_{nameof(setTask)}")
+			JobHandle setTask = Entities.WithName(nameof(setTask))
 				.WithNone<UnitAiStateSwitch>()
 				.WithAll<UnitAiStateFollowCrowd>()
 				.WithNone<Walking>()
@@ -50,7 +50,7 @@ namespace Barbaresques.Battle {
 				})
 				.ScheduleParallel(collectCrowdsTargets);
 
-			JobHandle updateTask = Entities.WithName($"UnitAi_followCrowd_{nameof(updateTask)}")
+			JobHandle updateTask = Entities.WithName(nameof(updateTask))
 				.WithNone<UnitAiStateSwitch>()
 				.WithAll<UnitAiStateFollowCrowd>()
 				.WithReadOnly(crowdsTargets)

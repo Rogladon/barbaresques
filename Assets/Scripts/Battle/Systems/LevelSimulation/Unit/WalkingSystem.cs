@@ -26,7 +26,7 @@ namespace Barbaresques.Battle {
 
 			var delta = Time.DeltaTime;
 
-			Entities.WithName("Walking_init")
+			Entities.WithName("init")
 				.WithNone<WalkingSystemState>()
 				.WithAll<Walking>()
 				.ForEach((int entityInQueryIndex, Entity entity) => {
@@ -34,7 +34,7 @@ namespace Barbaresques.Battle {
 				})
 				.ScheduleParallel();
 
-			Entities.WithName("Walking_walk")
+			Entities.WithName("walk")
 				.ForEach((int entityInQueryIndex, Entity e, ref Translation translation, ref WalkingSystemState walkingSystemState, in Walking walking, in Speed speed) => {
 					var diff = walking.target - translation.Value;
 					var len = length(diff);
@@ -71,7 +71,7 @@ namespace Barbaresques.Battle {
 				})
 				.ScheduleParallel();
 
-			Entities.WithName("Walking_deinit")
+			Entities.WithName("deinit")
 				.WithAll<WalkingSystemState>()
 				.WithNone<Walking>()
 				.ForEach((int entityInQueryIndex, Entity entity) => {

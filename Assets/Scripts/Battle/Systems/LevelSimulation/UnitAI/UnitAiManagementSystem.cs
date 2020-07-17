@@ -23,7 +23,7 @@ namespace Barbaresques.Battle {
 			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().ToConcurrent();
 
 			// Закидываем состояния на новые юниты
-			Entities.WithName("UnitAI_init")
+			Entities.WithName("init")
 				.WithAll<UnitAi>()
 				.WithNone<UnitAiState>()
 				.ForEach((Entity e, int entityInQueryIndex) => {
@@ -38,7 +38,7 @@ namespace Barbaresques.Battle {
 
 			// Работа с толпами
 			// Мб в отдельную систему вынести?
-			Entities.WithName("UnitAI_crowdish_job")
+			Entities.WithName("crowdish_job")
 				.WithAll<UnitAi, CrowdMember>()
 				.WithNone<UnitAiStateFollowCrowd, UnitAiStateSwitch>()
 				.ForEach((int entityInQueryIndex, Entity e, in UnitAiState ai) => {
@@ -47,7 +47,7 @@ namespace Barbaresques.Battle {
 				.ScheduleParallel(); 
 
 			// Переключаем состояния
-			Entities.WithName("UnitAI_switch")
+			Entities.WithName("switch")
 				.WithAll<UnitAi>()
 				.ForEach((Entity e, int entityInQueryIndex, ref UnitAiState aiState, in UnitAiStateSwitch switched) => {
 					if (!switched.initialization) {
@@ -65,7 +65,7 @@ namespace Barbaresques.Battle {
 				.ScheduleParallel();
 
 			// Удаляем состояния с задестроенных юнитов
-			Entities.WithName("UnitAI_deinit")
+			Entities.WithName("deinit")
 				.WithNone<UnitAi>()
 				.ForEach((Entity e, int entityInQueryIndex, in UnitAiState state) => {
 					// Удаление компонентов, связанных с состоянием машины состояния

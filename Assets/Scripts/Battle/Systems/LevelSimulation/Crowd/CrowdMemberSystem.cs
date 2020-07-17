@@ -17,7 +17,7 @@ namespace Barbaresques.Battle {
 		protected override void OnUpdate() {
 			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().ToConcurrent();
 
-			Entities.WithName("CrowdMember_init")
+			Entities.WithName("init")
 				.WithNone<CrowdMemberSystemState>()
 				.WithAll<CrowdMember>()
 				.ForEach((int entityInQueryIndex, Entity entity) => {
@@ -25,7 +25,7 @@ namespace Barbaresques.Battle {
 				})
 				.ScheduleParallel();
 
-			Entities.WithName("CrowdMember_deinit")
+			Entities.WithName("deinit")
 				.WithAll<CrowdMemberSystemState>()
 				.WithNone<CrowdMember>()
 				.ForEach((int entityInQueryIndex, Entity entity) => {

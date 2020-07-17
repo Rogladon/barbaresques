@@ -13,5 +13,7 @@ namespace Barbaresques.Battle {
 			EntityArchetype ea = EntityManager.CreateArchetype(typeof(Event), typeof(BattleGameStartedEvent));
 			EntityManager.CreateEntity(ea);
 		}
+
+		// TODO:
 	}
 }

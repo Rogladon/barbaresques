@@ -17,7 +17,7 @@ namespace Barbaresques.Battle {
 
 			var delta = Time.DeltaTime;
 
-			Entities.WithName("RotationConstraint")
+			Entities.WithName("rotation")
 				.ForEach((ref Rotation rotation, in RotationConstraint constraint) => {
 					rotation.Value = new quaternion(
 						constraint.axes[0] ? 0 : rotation.Value.value[0],
