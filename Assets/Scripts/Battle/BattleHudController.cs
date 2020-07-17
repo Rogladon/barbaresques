@@ -85,7 +85,7 @@ namespace Barbaresques.Battle {
 
 		private void OnLevelPointSelected(float3 point) {
 			if (currentCrowd != Entity.Null) {
-				entityManager.SetComponentData(currentCrowd, new Crowd() { targetLocation = point });
+				entityManager.AddComponentData(currentCrowd, new CrowdTargetPosition() { value = point });
 			}
 		}
 

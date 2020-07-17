@@ -2,6 +2,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 
 namespace Barbaresques.Battle {
-	public struct Crowd : IComponentData {
+	public struct CrowdTargetPosition : IComponentData {
+		public float3 value;
 	}
 }

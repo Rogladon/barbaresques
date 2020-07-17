@@ -23,8 +23,9 @@ namespace Barbaresques.Battle {
 			NativeHashMap<Entity, float3> crowdsTargets = new NativeHashMap<Entity, float3>(_crowdsQuery.CalculateEntityCount(), Allocator.TempJob);
 			JobHandle collectCrowdsTargets = Entities.WithName($"UnitAi_followCrowd_{nameof(collectCrowdsTargets)}")
 				.WithStoreEntityQueryInField(ref _crowdsQuery)
-				.ForEach((Entity e, in Crowd crowd) => {
-					crowdsTargets[e] = crowd.targetLocation;
+				.WithAll<Crowd>()
+				.ForEach((Entity e, in CrowdTargetPosition targetPosition) => {
+					crowdsTargets[e] = targetPosition.value;
 				})
 				.Schedule(Dependency);
 
@@ -39,7 +40,7 @@ namespace Barbaresques.Battle {
 					if (crowdsTargets.TryGetValue(crowdMember.crowd, out float3 target)) {
 						if (math.length(translation.Value - target) > targetRadius / 2.0f) {
 							ecb.AddComponent(entityInQueryIndex, e, new Walking() {
-								target = GetComponent<Crowd>(crowdMember.crowd).targetLocation,
+								target = target,
 								speedFactor = 1,
 								targetRadius = targetRadius,
 								stopAfterSecsInRadius = 3.0f,
@@ -55,7 +56,7 @@ namespace Barbaresques.Battle {
 				.WithReadOnly(crowdsTargets)
 				.ForEach((int entityInQueryIndex, Entity e, ref Walking walking, in CrowdMember crowdMember) => {
 					if (crowdsTargets.TryGetValue(crowdMember.crowd, out float3 target)) {
-						walking.target = GetComponent<Crowd>(crowdMember.crowd).targetLocation;
+						walking.target = target;
 					}
 				})
 				.ScheduleParallel(collectCrowdsTargets);
