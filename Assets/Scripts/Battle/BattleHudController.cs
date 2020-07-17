@@ -54,6 +54,11 @@ namespace Barbaresques.Battle {
 				text.text = ev.crowd.ToString();
 				text.color = entityManager.GetComponentData<Realm>(entityManager.GetComponentData<OwnedByRealm>(ev.crowd).owner).color;
 
+				var btn = go.GetComponent<Button>();
+				btn.onClick.AddListener(() => {
+					currentCrowd = ev.crowd;
+				});
+
 				_crowdsButtons[ev.crowd] = go.gameObject;
 
 				if (currentCrowd == Entity.Null) {
