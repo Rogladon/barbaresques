@@ -57,13 +57,13 @@ namespace Barbaresques.Battle {
 				var btn = go.GetComponent<Button>();
 				btn.onClick.AddListener(() => {
 					currentCrowd = ev.crowd;
+					foreach (var otherBtn in _crowdsButtons.Values) {
+						otherBtn.GetComponent<Button>().interactable = true;
+					}
+					btn.interactable = false;
 				});
 
 				_crowdsButtons[ev.crowd] = go.gameObject;
-
-				if (currentCrowd == Entity.Null) {
-					currentCrowd = ev.crowd;
-				}
 			});
 			eventSystem.AddEventHandler((CrowdDestroyedEvent ev) => {
 				Debug.Log("-crowd");
@@ -72,6 +72,16 @@ namespace Barbaresques.Battle {
 					_crowdsButtons.Remove(ev.crowd);
 				}
 			});
+
+			EntityQuery eq = entityManager.CreateEntityQuery(new EntityQueryDesc() {
+				All = new ComponentType[] { typeof(Realm), typeof(PlayerControlled) }
+			});
+			if (eq.CalculateEntityCount() == 1) {
+				currentRealm = eq.GetSingletonEntity();
+				Debug.Log($"Current realm is {currentRealm} \"{entityManager.GetName(currentRealm)}\"");
+			} else {
+				Debug.LogError($"Expected exactly one entity with {nameof(Realm)} and {nameof(PlayerControlled)} components!");
+			}
 		}
 
 		IEnumerator TryInitialize() {
@@ -95,6 +105,7 @@ namespace Barbaresques.Battle {
 		}
 
 		public void Click(Transform clickArea) {
+			// TODO: приделать InputHelper и чекать одинарный/двойной клик и зум
 			foreach (var hit in Physics.RaycastAll(Camera.main.ScreenPointToRay(Input.mousePosition), 1000.0f)) {
 				if (hit.transform == clickArea.transform) {
 					// Debug.Log($"Clicked at {hit.point}");
