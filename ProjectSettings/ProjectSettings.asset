@@ -167,7 +167,7 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Android: com.redbook.barbaresques
+    Android: pro.redbook.barbaresques
     Standalone: pro.redbook.barbaresques
   buildNumber: {}
   AndroidBundleVersionCode: 1
@@ -686,6 +686,7 @@ PlayerSettings:
   managedStrippingLevel: {}
   incrementalIl2cppBuild: {}
   allowUnsafeCode: 0
+  useDeterministicCompilation: 1
   additionalIl2CppArgs: 
   scriptingRuntimeVersion: 1
   gcIncremental: 1
