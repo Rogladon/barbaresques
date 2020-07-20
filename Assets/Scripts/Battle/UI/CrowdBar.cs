@@ -7,7 +7,7 @@ using UnityEngine.UI;
 using Unity.Mathematics;
 
 namespace Barbaresques.Battle {
-	public class CrowdBarController : MonoBehaviour {
+	public class CrowdBar : MonoBehaviour {
 		private static World World => World.DefaultGameObjectInjectionWorld;
 		private static EntityManager entityManager => World.EntityManager;
 

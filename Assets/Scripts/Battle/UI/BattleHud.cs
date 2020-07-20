@@ -7,7 +7,7 @@ using UnityEngine.UI;
 using Unity.Mathematics;
 
 namespace Barbaresques.Battle {
-	public class BattleHudController : MonoBehaviour {
+	public class BattleHud : MonoBehaviour {
 		#region Prefabs & Components
 #pragma warning disable 649
 		[Header("Prefabs")]
@@ -18,7 +18,7 @@ namespace Barbaresques.Battle {
 		[SerializeField]
 		private Transform _crowdsDomain;
 		[SerializeField]
-		private CrowdBarController _crowdBar;
+		private CrowdBar _crowdBar;
 #pragma warning restore 649
 		#endregion
 
