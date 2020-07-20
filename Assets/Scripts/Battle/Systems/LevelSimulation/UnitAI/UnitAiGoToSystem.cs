@@ -24,10 +24,8 @@ namespace Barbaresques.Battle {
 				.WithAll<UnitAiStateGoTo>()
 				.ForEach((int entityInQueryIndex, Entity e, ref Walking walking, in CrowdMember crowdMember, in CrowdMemberSystemState crowdMemberSystemState) => {
 					if (crowdMemberSystemState.distanceToTarget > TARGET_LOCATION_RADIUS) {
-						walking = new Walking() {
-							target = crowdMember.targetLocation,
-							speedFactor = 1,
-						};
+						walking.target = crowdMember.targetLocation;
+						walking.speedFactor = 1.0f;
 					} else {
 						ecb.RemoveComponent<Walking>(entityInQueryIndex, e);
 					}

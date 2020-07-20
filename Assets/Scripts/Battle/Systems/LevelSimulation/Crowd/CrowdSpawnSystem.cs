@@ -38,7 +38,7 @@ namespace Barbaresques.Battle {
 
 					var crowd = ecb.CreateEntity(entityInQueryIndex, archetypeCrowd);
 					ecb.SetComponent(entityInQueryIndex, crowd, new OwnedByRealm() { owner = spawn.owner });
-					ecb.SetComponent(entityInQueryIndex, crowd, new Moral() { value = 1.0f });
+					ecb.SetComponent(entityInQueryIndex, crowd, new Moral() { value = 0.8f });
 					ecb.SetComponent(entityInQueryIndex, crowd, new MaxMoral() { value = 1.0f });
 					// ecb.AddComponent(entityInQueryIndex, crowd, new CrowdTargetPosition() { value = translation.Value });
 

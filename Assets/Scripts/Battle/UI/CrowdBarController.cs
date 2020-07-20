@@ -32,8 +32,8 @@ namespace Barbaresques.Battle {
 		}
 
 		public void Refresh() {
-			var maxMoral = entityManager.GetComponentData<MaxMoral>(crowdEntity);
-			var moral = entityManager.GetComponentData<MaxMoral>(crowdEntity);
+			MaxMoral maxMoral = entityManager.GetComponentData<MaxMoral>(crowdEntity);
+			Moral moral = entityManager.GetComponentData<Moral>(crowdEntity);
 
 			_btnCancelTarget.interactable = entityManager.HasComponent<CrowdTargetPosition>(crowdEntity);
 
