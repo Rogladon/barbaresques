@@ -2,10 +2,12 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
+using Unity.Transforms;
 
 namespace Barbaresques.Battle {
 	public struct CrowdMemberSystemState : ISystemStateComponentData {
 		public float3 lastCrowdsTargetPosition;
+		public float distanceToTarget;
 	}
 
 	[UpdateInGroup(typeof(CrowdSystemGroup)), UpdateAfter(typeof(CrowdSystem))]
@@ -78,7 +80,16 @@ namespace Barbaresques.Battle {
 				})
 				.ScheduleParallel(collectCrowdsTargets);
 
+
 			Dependency = JobHandle.CombineDependencies(init, cleanup, updatePolicy);
+
+			// CLEANCODE: а уместно ли тут эта джобса?
+			JobHandle calculateDistanceToTarget = Entities.WithName(nameof(calculateDistanceToTarget))
+				.ForEach((ref CrowdMemberSystemState c, in CrowdMember crowdMember, in Translation translation) => {
+					c.distanceToTarget = math.length(crowdMember.targetLocation - translation.Value);
+				}).ScheduleParallel(Dependency);
+
+			Dependency = calculateDistanceToTarget;
 
 			_endSimulationEcbSystem.AddJobHandleForProducer(Dependency);
 
