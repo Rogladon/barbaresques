@@ -17,15 +17,21 @@ namespace Barbaresques.Battle {
 			_randomSystem = World.GetOrCreateSystem<RandomSystem>();
 		}
 
+		static readonly float MAX_IDLING_RADIUS = 5.0f;
+		static readonly float IDLING_SPEED_FACTOR = 0.25f;
+
 		protected override void OnUpdate() {
 			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().ToConcurrent();
 			var randoms = _randomSystem.randoms;
 
-			JobHandle endTask = Entities.WithName(nameof(endTask))
+			JobHandle fixTask = Entities.WithName(nameof(fixTask))
 				.WithNone<UnitAiStateSwitch>()
 				.WithAll<UnitAiStateIdle>()
-				.ForEach((int entityInQueryIndex, Entity e, in Walking w, in Translation translation) => {
-					if (math.length(w.target - translation.Value) < 0.2f) {
+				.ForEach((int entityInQueryIndex, Entity e, ref Walking w, in Translation translation) => {
+					w.speedFactor = IDLING_SPEED_FACTOR;
+
+					var len = math.length(w.target - translation.Value);
+					if (len < 0.2f || len > MAX_IDLING_RADIUS) {
 						ecb.RemoveComponent<Walking>(entityInQueryIndex, e);
 					}
 				})
@@ -37,19 +43,21 @@ namespace Barbaresques.Battle {
 				.WithAll<UnitAiStateIdle>()
 				.WithNone<Walking>()
 				.ForEach((int nativeThreadIndex, int entityInQueryIndex, Entity e, in Translation translation) => {
-					// HACK:
+					// HACK: Всё из-за того, что по какой-то неведомой причине nativeThreadIndex > Unity.Jobs.LowLevel.Unsafe.JobsUtility.MaxJobThreadCount
+					// Хотя должно быть наоборот
 					if (nativeThreadIndex >= randoms.Length)
 						return;
 
 					var random = randoms[nativeThreadIndex];
 
-					ecb.AddComponent(entityInQueryIndex, e, new Walking(translation.Value + random.NextFloat3(new float3(-5.0f, 0, -5.0f), new float3(5.0f, 0, 5.0f))) {
-						speedFactor = 0.25f,
+					ecb.AddComponent(entityInQueryIndex, e, new Walking() {
+						target = translation.Value + random.NextFloat3(new float3(-5.0f, 0, -5.0f), new float3(5.0f, 0, 5.0f)),
+						speedFactor = IDLING_SPEED_FACTOR,
 					});
 
 					randoms[nativeThreadIndex] = random; // возвращаем рандомайзер обратно
 				})
-				.ScheduleParallel(endTask);
+				.ScheduleParallel(fixTask);
 
 			Dependency = setTask;
 
