@@ -20,6 +20,9 @@ namespace Barbaresques.Battle {
 			_archetypeCrowd = World.EntityManager.CreateArchetype(new ComponentType[] {
 				typeof(Crowd),
 				typeof(OwnedByRealm),
+
+				typeof(Moral),
+				typeof(MaxMoral),
 			});
 		}
 
@@ -35,6 +38,8 @@ namespace Barbaresques.Battle {
 
 					var crowd = ecb.CreateEntity(entityInQueryIndex, archetypeCrowd);
 					ecb.SetComponent(entityInQueryIndex, crowd, new OwnedByRealm() { owner = spawn.owner });
+					ecb.SetComponent(entityInQueryIndex, crowd, new Moral() { value = 1.0f });
+					ecb.SetComponent(entityInQueryIndex, crowd, new MaxMoral() { value = 1.0f });
 					// ecb.AddComponent(entityInQueryIndex, crowd, new CrowdTargetPosition() { value = translation.Value });
 
 					// TODO: Переписать на NativeArray
@@ -42,6 +47,7 @@ namespace Barbaresques.Battle {
 						var member = ecb.Instantiate(entityInQueryIndex, spawn.crowdMemberPrefab);
 						ecb.AddComponent(entityInQueryIndex, member, new CrowdMember() { crowd = crowd, behavingPolicy = CrowdMemberBehavingPolicy.IDLE });
 						ecb.SetComponent(entityInQueryIndex, member, new OwnedByRealm() { owner = spawn.owner });
+
 						ecb.SetComponent(entityInQueryIndex, member, new Translation() {
 							Value = translation.Value + random.NextFloat3(new float3(-16.0f, 0, -16.0f), new float3(16.0f, 0, 16.0f)),
 						});

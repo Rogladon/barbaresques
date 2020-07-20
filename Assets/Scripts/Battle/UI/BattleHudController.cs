@@ -19,10 +19,10 @@ namespace Barbaresques.Battle {
 		private Transform _crowdsDomain;
 		[SerializeField]
 		private CrowdBarController _crowdBar;
-
-		private Dictionary<Entity, Button> _crowdsButtons;
 #pragma warning restore 649
 		#endregion
+
+		private Dictionary<Entity, Button> _crowdsButtons;
 
 		private Entity currentRealm = Entity.Null;
 		private Entity currentCrowd = Entity.Null;

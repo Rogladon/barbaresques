@@ -17,7 +17,8 @@ namespace Barbaresques.Battle {
 		[SerializeField]
 		private Button _btnCancelTarget;
 
-		// private Dictionary<Entity, Button> _crowdsButtons;
+		[SerializeField]
+		private Slider _moralSlider;
 #pragma warning restore 649
 		#endregion
 
@@ -31,7 +32,13 @@ namespace Barbaresques.Battle {
 		}
 
 		public void Refresh() {
+			var maxMoral = entityManager.GetComponentData<MaxMoral>(crowdEntity);
+			var moral = entityManager.GetComponentData<MaxMoral>(crowdEntity);
+
 			_btnCancelTarget.interactable = entityManager.HasComponent<CrowdTargetPosition>(crowdEntity);
+
+			_moralSlider.maxValue = maxMoral.value;
+			_moralSlider.value = moral.value;
 		}
 
 		public void CancelTarget() {
