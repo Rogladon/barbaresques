@@ -80,7 +80,7 @@ namespace Barbaresques.Battle {
 			});
 			if (eq.CalculateEntityCount() == 1) {
 				currentRealm = eq.GetSingletonEntity();
-				Debug.Log($"Current realm is {currentRealm} \"{entityManager.GetName(currentRealm)}\"");
+				// Debug.Log($"Current realm is {currentRealm} \"{entityManager.GetName(currentRealm)}\"");
 			} else {
 				Debug.LogError($"Expected exactly one entity with {nameof(Realm)} and {nameof(PlayerControlled)} components!");
 			}

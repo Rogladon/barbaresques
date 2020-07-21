@@ -6,9 +6,6 @@ using static Unity.Mathematics.math;
 using Debug = UnityEngine.Debug;
 
 namespace Barbaresques.Battle {
-	public struct WalkingSystemState : ISystemStateComponentData {
-	}
-
 	[UpdateInGroup(typeof(UnitSystemGroup))]
 	public class WalkingSystem : SystemBase {
 		private EndSimulationEntityCommandBufferSystem _endSimulationEcbSystem;
@@ -24,19 +21,8 @@ namespace Barbaresques.Battle {
 
 			var delta = Time.DeltaTime;
 
-			Entities.WithName("init")
-				.WithNone<WalkingSystemState>()
-				.WithAll<Walking>()
-				.ForEach((int entityInQueryIndex, Entity entity) => {
-					ecb.AddComponent(entityInQueryIndex, entity, new WalkingSystemState() {});
-				})
-				.ScheduleParallel();
-
 			Entities.WithName("walk")
-				.ForEach((int entityInQueryIndex, Entity e, ref Translation translation, ref WalkingSystemState walkingSystemState, in Walking walking, in Speed speed) => {
-					var diff = walking.target - translation.Value;
-					var len = length(diff);
-
+				.ForEach((ref Translation translation, in Walking walking, in Speed speed) => {
 					var currentSpeed = speed.value;
 					if (walking.speedFactor == 0) {
 						// FIXME: так-то, все эти репорты можно обернуть в статический метод с [BurstDiscard], но тогда для запуска в редакторе придётся запускать без burst компиляции
@@ -50,18 +36,14 @@ namespace Barbaresques.Battle {
 					} else {
 						currentSpeed *= walking.speedFactor;
 					}
-					translation.Value += normalize(diff) * min(len, currentSpeed * delta);
+
+					var diff = walking.target - translation.Value;
+					var len = length(diff);
+
+					if (len > 0.25f)
+						translation.Value += normalize(diff) * min(len, currentSpeed * delta);
 				})
 				.ScheduleParallel();
-
-			Entities.WithName("deinit")
-				.WithAll<WalkingSystemState>()
-				.WithNone<Walking>()
-				.ForEach((int entityInQueryIndex, Entity entity) => {
-					ecb.RemoveComponent<WalkingSystemState>(entityInQueryIndex, entity);
-				})
-				.ScheduleParallel();
-
 
 			_endSimulationEcbSystem.AddJobHandleForProducer(Dependency);
 		}
