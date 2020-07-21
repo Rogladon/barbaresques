@@ -5,7 +5,7 @@ namespace Barbaresques.Battle {
 		public Entity crowd;
 	}
 
-	[UpdateInGroup(typeof(UnitSystemGroup)), UpdateAfter(typeof(HealthSystem))]
+	[UpdateInGroup(typeof(CrowdSystemGroup)), UpdateAfter(typeof(MoralSystem))]
 	public class RetreatSystem : SystemBase {
 		private EndSimulationEntityCommandBufferSystem _endSimulationEcbSystem;
 
