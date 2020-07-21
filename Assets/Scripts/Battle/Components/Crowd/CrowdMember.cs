@@ -17,6 +17,7 @@ namespace Barbaresques.Battle {
 		/// </summary>
 		FOLLOW,
 		// TODO: ограничения на определённые действия
+		RETREAT,
 	}
 
 	[GenerateAuthoringComponent]

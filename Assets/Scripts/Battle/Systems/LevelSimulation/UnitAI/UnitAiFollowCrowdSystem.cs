@@ -6,7 +6,7 @@ using Unity.Jobs;
 
 namespace Barbaresques.Battle {
 	[UpdateInGroup(typeof(UnitAiSystemGroup)), UpdateAfter(typeof(UnitAiManagementSystem))]
-	public class UnitAiGoToSystem : SystemBase {
+	public class UnitAiFollowCrowdSystem : SystemBase {
 		private static readonly float TARGET_LOCATION_RADIUS = 0.5f;
 		private EndSimulationEntityCommandBufferSystem _endSimulationEcbSystem;
 

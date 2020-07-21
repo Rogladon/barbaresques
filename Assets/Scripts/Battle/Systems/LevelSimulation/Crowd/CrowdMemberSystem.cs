@@ -28,14 +28,24 @@ namespace Barbaresques.Battle {
 			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().ToConcurrent();
 			var randoms = _randomSystem.randoms;
 
-			NativeHashMap<Entity, float3> crowdsTargets = new NativeHashMap<Entity, float3>(_crowdsQuery.CalculateEntityCount(), Allocator.TempJob);
-			JobHandle collectCrowdsTargets = Entities.WithName(nameof(collectCrowdsTargets))
+			NativeHashMap<Entity, (float3 position, bool retreating)> crowdsSummaries = new NativeHashMap<Entity, (float3, bool)>(_crowdsQuery.CalculateEntityCount(), Allocator.TempJob);
+			JobHandle collectActiveCrowds = Entities.WithName(nameof(collectActiveCrowds))
 				.WithStoreEntityQueryInField(ref _crowdsQuery)
 				.WithAll<Crowd>()
+				.WithNone<Retreating>()
 				.ForEach((Entity e, in CrowdTargetPosition targetPosition) => {
-					crowdsTargets[e] = targetPosition.value;
+					crowdsSummaries[e] = (targetPosition.value, false);
 				})
 				.Schedule(Dependency);
+			JobHandle collectRetreatedCrowds = Entities.WithName(nameof(collectRetreatedCrowds))
+				.WithStoreEntityQueryInField(ref _crowdsQuery)
+				.WithAll<Crowd, Retreating>()
+				.ForEach((Entity e, in CrowdTargetPosition targetPosition) => {
+					crowdsSummaries[e] = (targetPosition.value, true);
+				})
+				.Schedule(collectActiveCrowds);
+
+			JobHandle collectCrowdsSummaries = collectRetreatedCrowds;
 
 			JobHandle init = Entities.WithName(nameof(init))
 				.WithNone<CrowdMemberSystemState>()
@@ -50,35 +60,39 @@ namespace Barbaresques.Battle {
 				.ScheduleParallel(init);
 
 			JobHandle updatePolicy = Entities.WithName(nameof(updatePolicy))
-				.WithReadOnly(crowdsTargets)
+				.WithReadOnly(crowdsSummaries)
 				.ForEach((int nativeThreadIndex, ref CrowdMember crowdMember, ref CrowdMemberSystemState crowdMemberSystemState) => {
-					if (crowdsTargets.TryGetValue(crowdMember.crowd, out float3 target)) {
-						bool acquireNewTargetLocation = false;
-						if (crowdMember.behavingPolicy == CrowdMemberBehavingPolicy.FOLLOW) {
-							// Если целевая точка изменилась, выдаём её заново
-							if (math.length(crowdMemberSystemState.lastCrowdsTargetPosition - target) < 0.01f) {
-								crowdMemberSystemState.lastCrowdsTargetPosition = target;
-								acquireNewTargetLocation = true;
-								// TODO: слать событие?
-							}
+					if (crowdsSummaries.TryGetValue(crowdMember.crowd, out (float3 pos, bool retreating) crowd)) {
+						if (crowd.retreating) {
+							crowdMember.behavingPolicy = CrowdMemberBehavingPolicy.RETREAT;
 						} else {
-							crowdMember.behavingPolicy = CrowdMemberBehavingPolicy.FOLLOW;
+							bool acquireNewTargetLocation = false;
+							if (crowdMember.behavingPolicy == CrowdMemberBehavingPolicy.FOLLOW) {
+								// Если целевая точка изменилась, выдаём её заново
+								if (math.length(crowdMemberSystemState.lastCrowdsTargetPosition - crowd.pos) < 0.01f) {
+									crowdMemberSystemState.lastCrowdsTargetPosition = crowd.pos;
+									acquireNewTargetLocation = true;
+									// TODO: слать событие?
+								}
+							} else {
+								crowdMember.behavingPolicy = CrowdMemberBehavingPolicy.FOLLOW;
 
-							crowdMemberSystemState.lastCrowdsTargetPosition = target;
-							acquireNewTargetLocation = true;
-						}
+								crowdMemberSystemState.lastCrowdsTargetPosition = crowd.pos;
+								acquireNewTargetLocation = true;
+							}
 
-						if (acquireNewTargetLocation) {
-							// TODO: сделать нормальная раздачу точек, пока рандомом
-							var random = randoms[nativeThreadIndex];
-							crowdMember.targetLocation = target + random.NextFloat3(new float3(-5.0f, 0, -5.0f), new float3(5.0f, 0, 5.0f));
-							randoms[nativeThreadIndex] = random;
+							if (acquireNewTargetLocation) {
+								// TODO: сделать нормальная раздачу точек, пока рандомом
+								var random = randoms[nativeThreadIndex];
+								crowdMember.targetLocation = crowd.pos + random.NextFloat3(new float3(-5.0f, 0, -5.0f), new float3(5.0f, 0, 5.0f));
+								randoms[nativeThreadIndex] = random;
+							}
 						}
 					} else {
 						crowdMember.behavingPolicy = CrowdMemberBehavingPolicy.IDLE;
 					}
 				})
-				.ScheduleParallel(collectCrowdsTargets);
+				.ScheduleParallel(collectCrowdsSummaries);
 
 
 			Dependency = JobHandle.CombineDependencies(init, cleanup, updatePolicy);
@@ -94,7 +108,7 @@ namespace Barbaresques.Battle {
 			_endSimulationEcbSystem.AddJobHandleForProducer(Dependency);
 
 			CompleteDependency();
-			crowdsTargets.Dispose();
+			crowdsSummaries.Dispose();
 		}
 	}
 }

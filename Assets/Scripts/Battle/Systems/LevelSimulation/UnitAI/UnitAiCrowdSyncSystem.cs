@@ -36,6 +36,11 @@ namespace Barbaresques.Battle {
 							ecb.AddComponent(entityInQueryIndex, e, new UnitAiStateSwitch() { previousState = ai.state, newState = UnitAiStates.GO_TO });
 						}
 						break;
+					case CrowdMemberBehavingPolicy.RETREAT:
+						if (ai.state != UnitAiStates.RETREAT) {
+							ecb.AddComponent(entityInQueryIndex, e, new UnitAiStateSwitch() { previousState = ai.state, newState = UnitAiStates.RETREAT });
+						}
+						break;
 					default:
 						break;
 					}
