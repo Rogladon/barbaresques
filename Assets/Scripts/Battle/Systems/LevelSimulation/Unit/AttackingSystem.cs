@@ -45,6 +45,7 @@ namespace Barbaresques.Battle {
 							ecb.SetComponent(entityInQueryIndex, missile, new Translation() {
 								Value = t.Value + math.rotate(r.Value, new float3(2, 0, 0)) + new float3(0, 1.75f, 0),
 							});
+							ecb.SetComponent(entityInQueryIndex, missile, r);
 							a.burst--;
 						} else {
 							ass.sinceLast += delta;
