@@ -51,6 +51,16 @@ namespace Barbaresques.Battle {
 						ecb.SetComponent(entityInQueryIndex, member, new Translation() {
 							Value = translation.Value + random.NextFloat3(new float3(-16.0f, 0, -16.0f), new float3(16.0f, 0, 16.0f)),
 						});
+						ecb.SetComponent(entityInQueryIndex, member, new Rotation() {
+							Value = quaternion.AxisAngle(new float3(0, 1, 0), random.NextFloat(-360, 360)),
+						});
+
+						if (random.NextInt(100) < 25) {
+							ecb.AddComponent(entityInQueryIndex, member, new Attacking() {
+								// TODO: target = ,
+								burst = random.NextInt(1, 16),
+							});
+						}
 					}
 
 					ecb.DestroyEntity(entityInQueryIndex, e);

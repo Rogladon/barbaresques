@@ -113,6 +113,7 @@ GameObject:
   - component: {fileID: 3095453285440342908}
   - component: {fileID: 7786643266475772372}
   - component: {fileID: 3302817878099284148}
+  - component: {fileID: 8710032386194966426}
   m_Layer: 0
   m_Name: Saberman
   m_TagString: Untagged
@@ -448,3 +449,17 @@ MonoBehaviour:
     x: 1
     y: 0
     z: 1
+--- !u!114 &8710032386194966426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2590418713886952591}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86dbb95d24f5743e3bb39e8fc9c16aa1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  missilePrefab: {fileID: 5355108536735888339, guid: 87d15695fd3f94becbf14b776daee552, type: 3}
+  shotsPerMinute: 240
