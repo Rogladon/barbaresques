@@ -8,7 +8,7 @@ using Unity.Collections;
 using Unity.Burst;
 
 namespace Barbaresques.Battle {
-	[UpdateInGroup(typeof(LevelSimulationSystemGroup)),UpdateBefore(typeof(UnitSystemGroup))]
+	[UpdateInGroup(typeof(LevelSimulationSystemGroup)), UpdateBefore(typeof(UnitSystemGroup))]
 	public class MissileSystem : SystemBase {
 		private EndSimulationEntityCommandBufferSystem _endSimulationEcbSystem;
 		private BuildPhysicsWorld _buildPhysicsWorld;
@@ -16,6 +16,8 @@ namespace Barbaresques.Battle {
 
 		[BurstCompile]
 		private struct HitJob : ITriggerEventsJob {
+			[ReadOnly]
+			public ComponentDataFromEntity<OwnedByRealm> ownershipGroup;
 			[ReadOnly]
 			public ComponentDataFromEntity<Missile> missileGroup;
 			public ComponentDataFromEntity<Health> healthGroup;
@@ -26,6 +28,15 @@ namespace Barbaresques.Battle {
 			public void Execute(TriggerEvent triggerEvent) {
 				var a = triggerEvent.EntityA;
 				var b = triggerEvent.EntityB;
+
+				// No friendly-fire
+				if (ownershipGroup.HasComponent(a) && ownershipGroup.HasComponent(b)) {
+					var obrA = ownershipGroup[a];
+					var obrB = ownershipGroup[b];
+					if (obrA.owner == obrB.owner && obrA.owner != Entity.Null) {
+						return;
+					}
+				}
 
 				bool isMissileA = missileGroup.HasComponent(a);
 				bool isMissileB = missileGroup.HasComponent(b);
@@ -97,6 +108,7 @@ namespace Barbaresques.Battle {
 				.Schedule(flight);
 
 			JobHandle collisions = new HitJob() {
+				ownershipGroup = GetComponentDataFromEntity<OwnedByRealm>(true),
 				missileGroup = GetComponentDataFromEntity<Missile>(true),
 				healthGroup = GetComponentDataFromEntity<Health>(),
 				diedGroup = GetComponentDataFromEntity<Died>(),

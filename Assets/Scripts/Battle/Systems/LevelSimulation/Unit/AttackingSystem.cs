@@ -37,7 +37,7 @@ namespace Barbaresques.Battle {
 				.ScheduleParallel(Dependency);
 
 			JobHandle attack = Entities.WithName(nameof(attack))
-				.ForEach((int entityInQueryIndex, Entity e, ref Attacking a, ref AttackingSystemState ass, in Weapon w, in Translation t, in Rotation r) => {
+				.ForEach((int entityInQueryIndex, Entity e, ref Attacking a, ref AttackingSystemState ass, in Weapon w, in Translation t, in Rotation r, in OwnedByRealm ownership) => {
 					if (a.burst > 0) {
 						if (ass.colddown < ass.sinceLast) {
 							ass.sinceLast = 0;
@@ -46,6 +46,7 @@ namespace Barbaresques.Battle {
 								Value = t.Value + math.rotate(r.Value, new float3(2, 0, 0)) + new float3(0, 1.75f, 0),
 							});
 							ecb.SetComponent(entityInQueryIndex, missile, r);
+							ecb.AddComponent(entityInQueryIndex, missile, ownership);
 							a.burst--;
 						} else {
 							ass.sinceLast += delta;
