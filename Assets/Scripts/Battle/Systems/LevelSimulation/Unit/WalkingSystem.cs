@@ -42,12 +42,6 @@ namespace Barbaresques.Battle {
 					var len = length(diff);
 					var n = normalize(diff);
 
-					rotation.Value = math.slerp(rotation.Value,
-						new quaternion(new float4(
-							math.cross(n, new float3(1, 0, 0)),
-							math.dot(n, new float3(1, 0, 0))
-						)), delta);
-
 					if (len > 0.25f)
 						translation.Value += n * min(len, currentSpeed * delta);
 					else
