@@ -4,6 +4,7 @@ using Unity.Physics;
 using Unity.Transforms;
 using static Unity.Mathematics.math;
 using Debug = UnityEngine.Debug;
+using quaternion = Unity.Mathematics.quaternion;
 
 namespace Barbaresques.Battle {
 	[UpdateInGroup(typeof(UnitSystemGroup))]
@@ -22,7 +23,7 @@ namespace Barbaresques.Battle {
 			var delta = Time.DeltaTime;
 
 			Entities.WithName("walk")
-				.ForEach((ref Translation translation, in Walking walking, in Speed speed) => {
+				.ForEach((int entityInQueryIndex, Entity e, ref Translation translation, ref Rotation rotation, in Walking walking, in Speed speed) => {
 					var currentSpeed = speed.value;
 					if (walking.speedFactor == 0) {
 						// FIXME: так-то, все эти репорты можно обернуть в статический метод с [BurstDiscard], но тогда для запуска в редакторе придётся запускать без burst компиляции
@@ -39,9 +40,18 @@ namespace Barbaresques.Battle {
 
 					var diff = walking.target - translation.Value;
 					var len = length(diff);
+					var n = normalize(diff);
+
+					rotation.Value = math.slerp(rotation.Value,
+						new quaternion(new float4(
+							math.cross(n, new float3(1, 0, 0)),
+							math.dot(n, new float3(1, 0, 0))
+						)), delta);
 
 					if (len > 0.25f)
-						translation.Value += normalize(diff) * min(len, currentSpeed * delta);
+						translation.Value += n * min(len, currentSpeed * delta);
+					else
+						ecb.RemoveComponent<Walking>(entityInQueryIndex, e);
 				})
 				.ScheduleParallel();
 
