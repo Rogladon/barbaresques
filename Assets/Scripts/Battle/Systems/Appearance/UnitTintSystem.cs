@@ -22,7 +22,7 @@ namespace Barbaresques.Battle {
 		}
 
 		protected override void OnUpdate() {
-			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().ToConcurrent();
+			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().AsParallelWriter();
 
 			Entities.WithName("update")
 				.WithAll<UnitAppearance>()

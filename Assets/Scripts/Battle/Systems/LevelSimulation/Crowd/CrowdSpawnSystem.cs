@@ -27,7 +27,7 @@ namespace Barbaresques.Battle {
 		}
 
 		protected override void OnUpdate() {
-			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().ToConcurrent();
+			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().AsParallelWriter();
 			var randoms = _randomSystem.randoms;
 			EntityArchetype archetypeCrowd = _archetypeCrowd;
 

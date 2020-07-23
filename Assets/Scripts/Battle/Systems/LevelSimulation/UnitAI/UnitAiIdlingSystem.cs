@@ -21,7 +21,7 @@ namespace Barbaresques.Battle {
 		static readonly float IDLING_SPEED_FACTOR = 0.25f;
 
 		protected override void OnUpdate() {
-			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().ToConcurrent();
+			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().AsParallelWriter();
 			var randoms = _randomSystem.randoms;
 
 			JobHandle fixTask = Entities.WithName(nameof(fixTask))

@@ -13,7 +13,7 @@ namespace Barbaresques.Battle {
 			_endSimulationEcbSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 		}
 		protected override void OnUpdate() {
-			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().ToConcurrent();
+			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().AsParallelWriter();
 
 			var delta = Time.DeltaTime;
 

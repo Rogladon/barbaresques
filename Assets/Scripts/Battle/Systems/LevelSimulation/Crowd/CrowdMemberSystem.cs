@@ -31,7 +31,7 @@ namespace Barbaresques.Battle {
 		private EntityQuery _crowdsQuery;
 
 		protected override void OnUpdate() {
-			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().ToConcurrent();
+			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().AsParallelWriter();
 			var randoms = _randomSystem.randoms;
 
 			NativeHashMap<Entity, _CrowdSummary> crowdsSummaries = new NativeHashMap<Entity, _CrowdSummary>(_crowdsQuery.CalculateEntityCount(), Allocator.TempJob);
