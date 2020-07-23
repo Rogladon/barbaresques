@@ -1,3 +1,4 @@
+using System;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -9,6 +10,7 @@ namespace Barbaresques.Battle {
 	public struct CrowdMemberSystemState : ISystemStateComponentData {
 		public float3 lastCrowdsTargetPosition;
 		public float distanceToTarget;
+		public Entity prey;
 	}
 
 	[UpdateInGroup(typeof(CrowdSystemGroup)), UpdateAfter(typeof(CrowdSystem))]
@@ -26,10 +28,12 @@ namespace Barbaresques.Battle {
 		private EntityQuery _calculateDistancesJobQuery;
 
 		[System.Serializable]
-		public struct DistanceBetweenEntities {
+		public struct DistanceBetweenEntities : IComparable<DistanceBetweenEntities> {
 			public Entity a;
 			public Entity b;
 			public float distance;
+
+			public int CompareTo(DistanceBetweenEntities other) => distance.CompareTo(other.distance);
 		}
 
 		/// <summary>
@@ -118,17 +122,6 @@ namespace Barbaresques.Battle {
 				.ForEach((int entityInQueryIndex, Entity entity) => ecb.RemoveComponent<CrowdMemberSystemState>(entityInQueryIndex, entity))
 				.ScheduleParallel(init);
 
-			var distancesBuffer = new NativeList<DistanceBetweenEntities>(
-				(int)((math.pow(_calculateDistancesJobQuery.CalculateEntityCount(), 2) - 1) / 2.0f),
-				Allocator.TempJob);
-
-			var calculateHostileDistances = new CalculateHostileDistancesJob() {
-				translationTypeHandle = GetComponentTypeHandle<Translation>(),
-				crowdMemberTypeHandle = GetComponentTypeHandle<CrowdMember>(),
-				entityTypeHandle = GetEntityTypeHandle(),
-				distancesBuffer = distancesBuffer.AsParallelWriter(),
-			}.ScheduleParallel(_calculateDistancesJobQuery, init);
-
 			JobHandle updatePolicy = Entities.WithName(nameof(updatePolicy))
 				.WithReadOnly(crowdsSummaries)
 				.ForEach((int nativeThreadIndex, ref CrowdMember crowdMember, ref CrowdMemberSystemState crowdMemberSystemState) => {
@@ -164,10 +157,37 @@ namespace Barbaresques.Battle {
 						crowdMember.behavingPolicy = CrowdMemberBehavingPolicy.IDLE;
 					}
 				})
-				.ScheduleParallel(JobHandle.CombineDependencies(calculateHostileDistances, collectCrowdsSummaries));
+				.ScheduleParallel(JobHandle.CombineDependencies(init, collectCrowdsSummaries));
 
+			var distances = new NativeList<DistanceBetweenEntities>(
+				(int)((math.pow(_calculateDistancesJobQuery.CalculateEntityCount(), 2) - 1) / 2.0f),
+				Allocator.TempJob);
 
-			Dependency = JobHandle.CombineDependencies(init, cleanup, updatePolicy);
+			var calculateHostileDistances = new CalculateHostileDistancesJob() {
+				translationTypeHandle = GetComponentTypeHandle<Translation>(),
+				crowdMemberTypeHandle = GetComponentTypeHandle<CrowdMember>(),
+				entityTypeHandle = GetEntityTypeHandle(),
+				distancesBuffer = distances.AsParallelWriter(),
+			}.ScheduleParallel(_calculateDistancesJobQuery, updatePolicy);
+
+			var sortDistances = Job.WithCode(() => distances.Sort()).Schedule(calculateHostileDistances);
+
+			JobHandle assignPreys = Entities.WithName(nameof(assignPreys))
+				.WithReadOnly(distances)
+				.ForEach((Entity e, ref CrowdMemberSystemState state) => {
+					state.prey = Entity.Null;
+					foreach (var d in distances) {
+						if (d.a == e) {
+							state.prey = d.b;
+							break;
+						} else if (d.b == e) {
+							state.prey = d.a;
+							break;
+						}
+					}
+				}).ScheduleParallel(sortDistances);
+
+			Dependency = JobHandle.CombineDependencies(updatePolicy, assignPreys, cleanup);
 
 			// CLEANCODE: а уместно ли тут эта джобса?
 			JobHandle calculateDistanceToTarget = Entities.WithName(nameof(calculateDistanceToTarget))
@@ -181,7 +201,7 @@ namespace Barbaresques.Battle {
 
 			CompleteDependency();
 			crowdsSummaries.Dispose();
-			distancesBuffer.Dispose();
+			distances.Dispose();
 		}
 	}
 }
