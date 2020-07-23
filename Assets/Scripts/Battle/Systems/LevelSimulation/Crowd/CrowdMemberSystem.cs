@@ -1,3 +1,4 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -15,13 +16,6 @@ namespace Barbaresques.Battle {
 		private EndSimulationEntityCommandBufferSystem _endSimulationEcbSystem;
 		private RandomSystem _randomSystem;
 
-		protected override void OnCreate() {
-			base.OnCreate();
-
-			_endSimulationEcbSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
-			_randomSystem = World.GetOrCreateSystem<RandomSystem>();
-		}
-
 		[System.Serializable]
 		private struct _CrowdSummary {
 			public float3 position;
@@ -29,11 +23,70 @@ namespace Barbaresques.Battle {
 		}
 
 		private EntityQuery _crowdsQuery;
+		private EntityQuery _calculateDistancesJobQuery;
+
+		[System.Serializable]
+		public struct DistanceBetweenEntities {
+			public Entity a;
+			public Entity b;
+			public float distance;
+		}
+
+		/// <summary>
+		/// Подсчёт расстояний между враждебными юнитами
+		/// </summary>
+		[BurstCompile]
+		private struct CalculateHostileDistancesJob : IJobChunk {
+			[ReadOnly] public ComponentTypeHandle<Translation> translationTypeHandle;
+			[ReadOnly] public ComponentTypeHandle<CrowdMember> crowdMemberTypeHandle;
+			[ReadOnly] public EntityTypeHandle entityTypeHandle;
+
+			public NativeList<DistanceBetweenEntities>.ParallelWriter distancesBuffer;
+
+			public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex) {
+				var translations = chunk.GetNativeArray(translationTypeHandle);
+				var crowdMembers = chunk.GetNativeArray(crowdMemberTypeHandle);
+
+				var entities = chunk.GetNativeArray(entityTypeHandle);
+
+				for (int a = 0; a < chunk.Count; a++) {
+					var positionA = translations[a].Value;
+					var entityA = entities[a];
+					var crowdA = crowdMembers[a].crowd;
+					for (int b = 0; b < chunk.Count; b++) {
+						if (a == b) continue;
+						var crowdB = crowdMembers[a].crowd;
+						if (crowdA == crowdB) continue;
+
+						var positionB = translations[b].Value;
+						var entityB = entities[b];
+						distancesBuffer.AddNoResize(new DistanceBetweenEntities() {
+							a = entityA, b = entityB,
+							distance = math.length(a - b),
+						});
+					}
+				}
+			}
+		}
+
+		protected override void OnCreate() {
+			base.OnCreate();
+
+			_endSimulationEcbSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+			_randomSystem = World.GetOrCreateSystem<RandomSystem>();
+
+			_calculateDistancesJobQuery = GetEntityQuery(new ComponentType[] {
+				ComponentType.ReadOnly<Translation>(),
+				ComponentType.ReadOnly<CrowdMember>(),
+				ComponentType.ReadOnly<CrowdMemberSystemState>(),
+			});
+		}
 
 		protected override void OnUpdate() {
 			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().AsParallelWriter();
 			var randoms = _randomSystem.randoms;
 
+			// Сводки по толпам
 			NativeHashMap<Entity, _CrowdSummary> crowdsSummaries = new NativeHashMap<Entity, _CrowdSummary>(_crowdsQuery.CalculateEntityCount(), Allocator.TempJob);
 			JobHandle collectActiveCrowds = Entities.WithName(nameof(collectActiveCrowds))
 				.WithStoreEntityQueryInField(ref _crowdsQuery)
@@ -64,6 +117,17 @@ namespace Barbaresques.Battle {
 				.WithNone<CrowdMember>()
 				.ForEach((int entityInQueryIndex, Entity entity) => ecb.RemoveComponent<CrowdMemberSystemState>(entityInQueryIndex, entity))
 				.ScheduleParallel(init);
+
+			var distancesBuffer = new NativeList<DistanceBetweenEntities>(
+				(int)((math.pow(_calculateDistancesJobQuery.CalculateEntityCount(), 2) - 1) / 2.0f),
+				Allocator.TempJob);
+
+			var calculateHostileDistances = new CalculateHostileDistancesJob() {
+				translationTypeHandle = GetComponentTypeHandle<Translation>(),
+				crowdMemberTypeHandle = GetComponentTypeHandle<CrowdMember>(),
+				entityTypeHandle = GetEntityTypeHandle(),
+				distancesBuffer = distancesBuffer.AsParallelWriter(),
+			}.ScheduleParallel(_calculateDistancesJobQuery, init);
 
 			JobHandle updatePolicy = Entities.WithName(nameof(updatePolicy))
 				.WithReadOnly(crowdsSummaries)
@@ -100,7 +164,7 @@ namespace Barbaresques.Battle {
 						crowdMember.behavingPolicy = CrowdMemberBehavingPolicy.IDLE;
 					}
 				})
-				.ScheduleParallel(collectCrowdsSummaries);
+				.ScheduleParallel(JobHandle.CombineDependencies(calculateHostileDistances, collectCrowdsSummaries));
 
 
 			Dependency = JobHandle.CombineDependencies(init, cleanup, updatePolicy);
@@ -117,6 +181,7 @@ namespace Barbaresques.Battle {
 
 			CompleteDependency();
 			crowdsSummaries.Dispose();
+			distancesBuffer.Dispose();
 		}
 	}
 }
