@@ -9,7 +9,6 @@ using Unity.Transforms;
 namespace Barbaresques.Battle {
 	public struct CrowdMemberSystemState : ISystemStateComponentData {
 		public float3 lastCrowdsTargetPosition;
-		public float distanceToTarget;
 		public Entity prey;
 	}
 
@@ -90,7 +89,9 @@ namespace Barbaresques.Battle {
 			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().AsParallelWriter();
 			var randoms = _randomSystem.randoms;
 
+			//
 			// Сводки по толпам
+			//
 			NativeHashMap<Entity, _CrowdSummary> crowdsSummaries = new NativeHashMap<Entity, _CrowdSummary>(_crowdsQuery.CalculateEntityCount(), Allocator.TempJob);
 			JobHandle collectActiveCrowds = Entities.WithName(nameof(collectActiveCrowds))
 				.WithStoreEntityQueryInField(ref _crowdsQuery)
@@ -110,6 +111,9 @@ namespace Barbaresques.Battle {
 
 			JobHandle collectCrowdsSummaries = collectRetreatedCrowds;
 
+			//
+			// Обработка новых и задестроенных
+			//
 			JobHandle init = Entities.WithName(nameof(init))
 				.WithNone<CrowdMemberSystemState>()
 				.WithAll<CrowdMember>()
@@ -122,6 +126,9 @@ namespace Barbaresques.Battle {
 				.ForEach((int entityInQueryIndex, Entity entity) => ecb.RemoveComponent<CrowdMemberSystemState>(entityInQueryIndex, entity))
 				.ScheduleParallel(init);
 
+			//
+			// Проведение политики толпы в жизнь её членов
+			//
 			JobHandle updatePolicy = Entities.WithName(nameof(updatePolicy))
 				.WithReadOnly(crowdsSummaries)
 				.ForEach((int nativeThreadIndex, ref CrowdMember crowdMember, ref CrowdMemberSystemState crowdMemberSystemState) => {
@@ -158,6 +165,10 @@ namespace Barbaresques.Battle {
 					}
 				})
 				.ScheduleParallel(JobHandle.CombineDependencies(init, collectCrowdsSummaries));
+			
+			//
+			// Таргетирование
+			//
 
 			var distances = new NativeList<DistanceBetweenEntities>(
 				(int)((math.pow(_calculateDistancesJobQuery.CalculateEntityCount(), 2) - 1) / 2.0f),
@@ -174,6 +185,7 @@ namespace Barbaresques.Battle {
 
 			JobHandle assignPreys = Entities.WithName(nameof(assignPreys))
 				.WithReadOnly(distances)
+				.WithAll<CrowdMember>()
 				.ForEach((Entity e, ref CrowdMemberSystemState state) => {
 					state.prey = Entity.Null;
 					foreach (var d in distances) {
@@ -188,14 +200,6 @@ namespace Barbaresques.Battle {
 				}).ScheduleParallel(sortDistances);
 
 			Dependency = JobHandle.CombineDependencies(updatePolicy, assignPreys, cleanup);
-
-			// CLEANCODE: а уместно ли тут эта джобса?
-			JobHandle calculateDistanceToTarget = Entities.WithName(nameof(calculateDistanceToTarget))
-				.ForEach((ref CrowdMemberSystemState c, in CrowdMember crowdMember, in Translation translation) => {
-					c.distanceToTarget = math.length(crowdMember.targetLocation - translation.Value);
-				}).ScheduleParallel(Dependency);
-
-			Dependency = calculateDistanceToTarget;
 
 			_endSimulationEcbSystem.AddJobHandleForProducer(Dependency);
 

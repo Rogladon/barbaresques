@@ -22,8 +22,8 @@ namespace Barbaresques.Battle {
 			JobHandle updateTarget = Entities.WithName(nameof(updateTarget))
 				.WithNone<UnitAiStateSwitch>()
 				.WithAll<UnitAiStateGoTo>()
-				.ForEach((int entityInQueryIndex, Entity e, ref Walking walking, in CrowdMember crowdMember, in CrowdMemberSystemState crowdMemberSystemState) => {
-					if (crowdMemberSystemState.distanceToTarget > TARGET_LOCATION_RADIUS) {
+				.ForEach((int entityInQueryIndex, Entity e, ref Walking walking, in CrowdMember crowdMember, in CrowdMemberSystemState crowdMemberSystemState, in Translation translation) => {
+					if (math.length(crowdMember.targetLocation - translation.Value) > TARGET_LOCATION_RADIUS) {
 						walking.target = crowdMember.targetLocation;
 						walking.speedFactor = 1.0f;
 					} else {
@@ -37,7 +37,7 @@ namespace Barbaresques.Battle {
 				.WithAll<UnitAiStateGoTo>()
 				.WithNone<Walking>()
 				.ForEach((int entityInQueryIndex, Entity e, in CrowdMember crowdMember, in CrowdMemberSystemState crowdMemberSystemState, in Translation translation) => {
-					if (crowdMemberSystemState.distanceToTarget > TARGET_LOCATION_RADIUS / 2.0f) {
+					if (math.length(crowdMember.targetLocation - translation.Value) > TARGET_LOCATION_RADIUS / 2.0f) {
 						ecb.AddComponent(entityInQueryIndex, e, new Walking() {
 							target = crowdMember.targetLocation,
 							speedFactor = 1,
