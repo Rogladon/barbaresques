@@ -41,11 +41,11 @@ namespace Barbaresques.Battle {
 				.WithAll<UnitAi>()
 				.ForEach((Entity e, int entityInQueryIndex, ref UnitAiState aiState, in UnitAiStateSwitch switched) => {
 					if (!switched.initialization) {
-						foreach (AssociatedComponentAttribute aca in GetAssociatedComponentsOf(switched.previousState)) {
+						foreach (AssociatedComponentAttribute aca in AssociatedComponentAttribute.OfEnum(switched.previousState)) {
 							ecb.RemoveComponent(entityInQueryIndex, e, aca.type);
 						}
 					}
-					foreach (AssociatedComponentAttribute aca in GetAssociatedComponentsOf(switched.newState)) {
+					foreach (AssociatedComponentAttribute aca in AssociatedComponentAttribute.OfEnum(switched.newState)) {
 						ecb.AddComponent(entityInQueryIndex, e, aca.type);
 					}
 					ecb.RemoveComponent<UnitAiStateSwitch>(entityInQueryIndex, e);
@@ -59,7 +59,7 @@ namespace Barbaresques.Battle {
 				.WithNone<UnitAi>()
 				.ForEach((Entity e, int entityInQueryIndex, in UnitAiState state) => {
 					// Удаление компонентов, связанных с состоянием машины состояния
-					foreach (AssociatedComponentAttribute aca in GetAssociatedComponentsOf(state.state)) {
+					foreach (AssociatedComponentAttribute aca in AssociatedComponentAttribute.OfEnum(state.state)) {
 						ecb.RemoveComponent(entityInQueryIndex, e, aca.type);
 					}
 					ecb.RemoveComponent<UnitAiState>(entityInQueryIndex, e);
@@ -76,19 +76,6 @@ namespace Barbaresques.Battle {
 				.ScheduleParallel();
 
 			_endSimulationEcbSystem.AddJobHandleForProducer(Dependency);
-		}
-
-		/// <summary>
-		/// C Burst не работает, так что использовать выйдет только с <c>WithoutBurst()</c>
-		/// </summary>
-		private static AssociatedComponentAttribute[] GetAssociatedComponentsOf(UnitAiStates uis) {
-			var attributes = uis.GetType()
-				.GetMember(uis.ToString())[0]
-				.GetCustomAttributes(typeof(AssociatedComponentAttribute), false);
-			if (attributes.Length == 0) {
-				Debug.LogError($"Enum value {uis} got no {nameof(AssociatedComponentAttribute)}");
-			}
-			return (AssociatedComponentAttribute[])attributes;
 		}
 	}
 }
