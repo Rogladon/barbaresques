@@ -25,24 +25,18 @@ namespace Barbaresques.Battle {
 				.WithAll<UnitAi>()
 				.WithNone<UnitAiStateGoTo, UnitAiStateSwitch>()
 				.ForEach((int entityInQueryIndex, Entity e, in UnitAiState ai, in CrowdMember crowdMember) => {
-					switch (crowdMember.behavingPolicy) {
-					case CrowdMemberBehavingPolicy.IDLE:
-						if (ai.state != UnitAiStates.IDLE) {
-							ecb.AddComponent(entityInQueryIndex, e, new UnitAiStateSwitch() { previousState = ai.state, newState = UnitAiStates.IDLE });
-						}
-						break;
-					case CrowdMemberBehavingPolicy.FOLLOW:
+					if ((crowdMember.behavingPolicy | CrowdMemberBehavingPolicy.FOLLOW) == crowdMember.behavingPolicy) {
 						if (ai.state != UnitAiStates.GO_TO) {
 							ecb.AddComponent(entityInQueryIndex, e, new UnitAiStateSwitch() { previousState = ai.state, newState = UnitAiStates.GO_TO });
 						}
-						break;
-					case CrowdMemberBehavingPolicy.RETREAT:
+					} else if (crowdMember.behavingPolicy == CrowdMemberBehavingPolicy.IDLE) {
+						if (ai.state != UnitAiStates.IDLE) {
+							ecb.AddComponent(entityInQueryIndex, e, new UnitAiStateSwitch() { previousState = ai.state, newState = UnitAiStates.IDLE });
+						}
+					} else if (crowdMember.behavingPolicy == CrowdMemberBehavingPolicy.RETREAT) {
 						if (ai.state != UnitAiStates.RETREAT) {
 							ecb.AddComponent(entityInQueryIndex, e, new UnitAiStateSwitch() { previousState = ai.state, newState = UnitAiStates.RETREAT });
 						}
-						break;
-					default:
-						break;
 					}
 				})
 				.ScheduleParallel();

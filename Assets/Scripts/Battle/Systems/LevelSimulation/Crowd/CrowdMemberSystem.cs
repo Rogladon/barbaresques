@@ -75,7 +75,7 @@ namespace Barbaresques.Battle {
 							crowdMember.behavingPolicy |= CrowdMemberBehavingPolicy.ALLOWED_ATTACK;
 
 							bool acquireNewTargetLocation = false;
-							if ((crowdMember.behavingPolicy ^ CrowdMemberBehavingPolicy.FOLLOW) == CrowdMemberBehavingPolicy.FOLLOW) {
+							if ((crowdMember.behavingPolicy | CrowdMemberBehavingPolicy.FOLLOW) == crowdMember.behavingPolicy) {
 								// Если целевая точка изменилась, выдаём её заново
 								if (math.length(crowdMemberSystemState.lastCrowdsTargetPosition - crowd.position) < 0.01f) {
 									crowdMemberSystemState.lastCrowdsTargetPosition = crowd.position;
