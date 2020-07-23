@@ -7,6 +7,7 @@ namespace Barbaresques.Battle {
 	/// Политика поведения члена толпы в толпе
 	/// </summary>
 	[Flags]
+	[Serializable]
 	public enum CrowdMemberBehavingPolicy : byte {
 		/// <summary>
 		/// Должен ли следовать к точке цели толпы
