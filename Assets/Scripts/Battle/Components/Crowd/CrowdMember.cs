@@ -1,3 +1,4 @@
+using System;
 using Unity.Entities;
 using Unity.Mathematics;
 
@@ -5,19 +6,20 @@ namespace Barbaresques.Battle {
 	/// <summary>
 	/// Политика поведения члена толпы в толпе
 	/// </summary>
+	[Flags]
 	public enum CrowdMemberBehavingPolicy : byte {
-		// TODO: вообще как флаговый enum сделать
+		/// <summary>
+		/// Должен ли следовать к точке цели толпы
+		/// </summary>
+		FOLLOW = 0b1,
+		/// <summary>
+		/// Может ли атаковать
+		/// </summary>
+		ALLOWED_ATTACK = 0b10,
 
-		/// <summary>
-		/// Занимается своими делами
-		/// </summary>
-		IDLE = 0,
-		/// <summary>
-		/// Следует к targetLocation
-		/// </summary>
-		FOLLOW,
-		// TODO: ограничения на определённые действия
-		RETREAT,
+		_NOTHING = 0b0,
+		IDLE = _NOTHING | ALLOWED_ATTACK,
+		RETREAT = _NOTHING,
 	}
 
 	[GenerateAuthoringComponent]

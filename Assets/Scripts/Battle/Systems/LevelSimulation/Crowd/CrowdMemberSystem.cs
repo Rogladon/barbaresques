@@ -72,8 +72,10 @@ namespace Barbaresques.Battle {
 						if (crowd.retreating) {
 							crowdMember.behavingPolicy = CrowdMemberBehavingPolicy.RETREAT;
 						} else {
+							crowdMember.behavingPolicy |= CrowdMemberBehavingPolicy.ALLOWED_ATTACK;
+
 							bool acquireNewTargetLocation = false;
-							if (crowdMember.behavingPolicy == CrowdMemberBehavingPolicy.FOLLOW) {
+							if (crowdMember.behavingPolicy.HasFlag(CrowdMemberBehavingPolicy.FOLLOW)) {
 								// Если целевая точка изменилась, выдаём её заново
 								if (math.length(crowdMemberSystemState.lastCrowdsTargetPosition - crowd.position) < 0.01f) {
 									crowdMemberSystemState.lastCrowdsTargetPosition = crowd.position;
@@ -81,7 +83,7 @@ namespace Barbaresques.Battle {
 									// TODO: слать событие?
 								}
 							} else {
-								crowdMember.behavingPolicy = CrowdMemberBehavingPolicy.FOLLOW;
+								crowdMember.behavingPolicy |= CrowdMemberBehavingPolicy.FOLLOW;
 
 								crowdMemberSystemState.lastCrowdsTargetPosition = crowd.position;
 								acquireNewTargetLocation = true;
