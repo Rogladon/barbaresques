@@ -28,7 +28,7 @@ namespace Barbaresques.Battle {
 					var len = length(diff);
 
 					if (len > 0.25f) {
-						var targetRotation = quaternion.AxisAngle(new float3(0, 1, 0), -atan2(diff.z, diff.x) + atan2(1, 0));
+						var targetRotation = quaternion.LookRotationSafe(diff, new float3(0, 1, 0));
 						rotation.Value = slerp(rotation.Value, targetRotation, delta * 2);
 
 						var currentSpeed = min(len, math.clamp(speed.value * walking.speedFactor * delta, 0.0f, 1.0f));
