@@ -463,7 +463,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   missilePrefab: {fileID: 5355108536735888339, guid: 87d15695fd3f94becbf14b776daee552, type: 3}
-  shotsPerMinute: 60
+  shotsPerMinute: 45
 --- !u!1 &3349825334341125062
 GameObject:
   m_ObjectHideFlags: 0
