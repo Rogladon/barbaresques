@@ -10,6 +10,8 @@ namespace Barbaresques.Battle {
 		IDLE,
 		[AssociatedComponent(typeof(UnitAiStateGoTo))]
 		GO_TO,
+		[AssociatedComponent(typeof(UnitAiStateAttack))]
+		ATTACK,
 		[AssociatedComponent(typeof(UnitAiStateRetreat))]
 		RETREAT,
 	}
@@ -31,6 +33,8 @@ namespace Barbaresques.Battle {
 	public struct UnitAiStateIdle : ISystemStateComponentData {}
 
 	public struct UnitAiStateGoTo : ISystemStateComponentData {}
+
+	public struct UnitAiStateAttack : ISystemStateComponentData {}
 
 	public struct UnitAiStateRetreat : ISystemStateComponentData {}
 }

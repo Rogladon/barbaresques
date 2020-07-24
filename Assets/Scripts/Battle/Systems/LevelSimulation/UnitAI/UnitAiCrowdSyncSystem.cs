@@ -24,10 +24,16 @@ namespace Barbaresques.Battle {
 			Entities.WithName("sync")
 				.WithAll<UnitAi>()
 				.WithNone<UnitAiStateGoTo, UnitAiStateSwitch>()
-				.ForEach((int entityInQueryIndex, Entity e, in UnitAiState ai, in CrowdMember crowdMember) => {
+				.ForEach((int entityInQueryIndex, Entity e, in UnitAiState ai, in CrowdMember crowdMember, in CrowdMemberSystemState crowdMemberSystemState) => {
 					if ((crowdMember.behavingPolicy | CrowdMemberBehavingPolicy.FOLLOW) == crowdMember.behavingPolicy) {
 						if (ai.state != UnitAiStates.GO_TO) {
 							ecb.AddComponent(entityInQueryIndex, e, new UnitAiStateSwitch() { previousState = ai.state, newState = UnitAiStates.GO_TO });
+						}
+					} else if ((crowdMember.behavingPolicy | CrowdMemberBehavingPolicy.ALLOWED_ATTACK) == crowdMember.behavingPolicy
+						&& crowdMemberSystemState.prey != Entity.Null
+						&& crowdMemberSystemState.preyDistance < 5.0f) {
+						if (ai.state != UnitAiStates.ATTACK) {
+							ecb.AddComponent(entityInQueryIndex, e, new UnitAiStateSwitch() { previousState = ai.state, newState = UnitAiStates.ATTACK });
 						}
 					} else if (crowdMember.behavingPolicy == CrowdMemberBehavingPolicy.IDLE) {
 						if (ai.state != UnitAiStates.IDLE) {

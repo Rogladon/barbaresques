@@ -10,6 +10,8 @@ namespace Barbaresques.Battle {
 	public struct CrowdMemberSystemState : ISystemStateComponentData {
 		public float3 lastCrowdsTargetPosition;
 		public Entity prey;
+		public float3 preyPosition;
+		public float preyDistance;
 	}
 
 	[UpdateInGroup(typeof(CrowdSystemGroup)), UpdateAfter(typeof(CrowdSystem))]
@@ -30,6 +32,8 @@ namespace Barbaresques.Battle {
 		public struct DistanceBetweenEntities : IComparable<DistanceBetweenEntities> {
 			public Entity a;
 			public Entity b;
+			public float3 positionA;
+			public float3 positionB;
 			public float distance;
 
 			public int CompareTo(DistanceBetweenEntities other) => distance.CompareTo(other.distance);
@@ -53,18 +57,21 @@ namespace Barbaresques.Battle {
 				var entities = chunk.GetNativeArray(entityTypeHandle);
 
 				for (int a = 0; a < chunk.Count; a++) {
+					var crowdA = crowdMembers[a].crowd;
 					var positionA = translations[a].Value;
 					var entityA = entities[a];
-					var crowdA = crowdMembers[a].crowd;
-					for (int b = 0; b < chunk.Count; b++) {
+
+					for (int b = a; b < chunk.Count; b++) {
 						if (a == b) continue;
-						var crowdB = crowdMembers[a].crowd;
+						var crowdB = crowdMembers[b].crowd;
 						if (crowdA == crowdB) continue;
 
 						var positionB = translations[b].Value;
 						var entityB = entities[b];
 						distancesBuffer.AddNoResize(new DistanceBetweenEntities() {
 							a = entityA, b = entityB,
+							positionA = positionA,
+							positionB = positionB,
 							distance = math.length(a - b),
 						});
 					}
@@ -187,13 +194,17 @@ namespace Barbaresques.Battle {
 				.WithReadOnly(distances)
 				.WithAll<CrowdMember>()
 				.ForEach((Entity e, ref CrowdMemberSystemState state) => {
-					state.prey = Entity.Null;
+					// Находим ближайшего вражеского юнита -- он и жертва
 					foreach (var d in distances) {
 						if (d.a == e) {
+							state.preyDistance = d.distance;
 							state.prey = d.b;
+							state.preyPosition = d.positionB;
 							break;
 						} else if (d.b == e) {
+							state.preyDistance = d.distance;
 							state.prey = d.a;
+							state.preyPosition = d.positionA;
 							break;
 						}
 					}
