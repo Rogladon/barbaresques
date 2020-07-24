@@ -23,6 +23,7 @@ namespace Barbaresques.Battle {
 
 			JobHandle select = Entities.WithName(nameof(select))
 				.WithAll<UnitAi, UnitAiDecision>()
+				.WithoutBurst() // TODO: переписать бёрстово
 				.ForEach((int entityInQueryIndex, Entity e, ref UnitAiDecision decision, in UnitIdleScore idleScore, in UnitAttackScore attackScore, in UnitRetreatScore retreatScore, in UnitFollowCrowdScore followCrowdScore) => {
 					float maxScore = 0.0f;
 					UnitActionTypes newAction = UnitActionTypes.IDLE;

@@ -195,7 +195,8 @@ namespace Barbaresques.Battle {
 				.WithAll<CrowdMember>()
 				.ForEach((Entity e, ref CrowdMemberSystemState state) => {
 					// Находим ближайшего вражеского юнита -- он и жертва
-					foreach (var d in distances) {
+					for (int i = 0; i < distances.Length; i++) {
+						var d = distances[i];
 						if (d.a == e) {
 							state.preyDistance = d.distance;
 							state.prey = d.b;
