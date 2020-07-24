@@ -32,7 +32,7 @@ namespace Barbaresques.Battle {
 				}).ScheduleParallel();
 
 			Entities.WithAll<UnitAi, UnitAiDecision, UnitIdleAction>()
-				.WithNone<Walking>()
+				.WithNone<Walking, CrowdMember>()
 				.ForEach((int nativeThreadIndex, int entityInQueryIndex, Entity e, ref UnitIdleAction action, in Translation translation) => {
 					if (action.motionColddown < 0) {
 						// HACK: Всё из-за того, что по какой-то неведомой причине nativeThreadIndex > Unity.Jobs.LowLevel.Unsafe.JobsUtility.MaxJobThreadCount

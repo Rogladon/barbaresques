@@ -44,7 +44,7 @@ namespace Barbaresques.Battle {
 							ass.sinceLast = 0;
 							var missile = ecb.Instantiate(entityInQueryIndex, w.missilePrefab);
 							ecb.SetComponent(entityInQueryIndex, missile, new Translation() {
-								Value = t.Value + math.rotate(r.Value, new float3(1f, 1.75f, 0)),
+								Value = t.Value + math.forward(r.Value) * 0.75f + new float3(0, 1.75f, 0),
 							});
 							ecb.SetComponent(entityInQueryIndex, missile, r);
 							ecb.AddComponent(entityInQueryIndex, missile, ownership);
