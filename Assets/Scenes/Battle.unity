@@ -132,7 +132,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 479949247}
-  - component: {fileID: 479949249}
   - component: {fileID: 479949248}
   m_Layer: 0
   m_Name: Spawn Crowd C
@@ -140,7 +139,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &479949247
 Transform:
   m_ObjectHideFlags: 0
@@ -148,13 +147,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 479949246}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.5999756, y: 0, z: -13.869995}
+  m_LocalRotation: {x: -0, y: 0.7056623, z: -0, w: 0.70854837}
+  m_LocalPosition: {x: -6.2, y: 0, z: 0.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1231989144}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 89.766, z: 0}
 --- !u!114 &479949248
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,25 +163,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 479949246}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af5c6bec7fcb24c519be70ac65201891, type: 3}
+  m_Script: {fileID: 11500000, guid: 54d9a7b340545954791ee1ffe71453f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  crowdMemberPrefab: {fileID: 2590418713886952591, guid: 12db60f2c881340d5aee04435441fa1a, type: 3}
-  owner: {fileID: 1520912831}
+  prefab: {fileID: 2590418713886952591, guid: 12db60f2c881340d5aee04435441fa1a, type: 3}
   count: 64
---- !u!114 &479949249
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 479949246}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea7d7495833204790ba1d3a8755397f8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ConversionMode: 0
+  typeFormationCrowd: 0
+  distance: 1.2
 --- !u!4 &1231989144 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2642240636825435476, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
@@ -197,7 +184,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1236722682}
-  - component: {fileID: 1236722684}
   - component: {fileID: 1236722683}
   m_Layer: 0
   m_Name: Spawn Crowd D
@@ -213,13 +199,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1236722681}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -10, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0.25278828, z: -0, w: 0.96752167}
+  m_LocalPosition: {x: 5, y: 0, z: -7.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1231989144}
   m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -29.285, z: 0}
 --- !u!114 &1236722683
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -229,25 +215,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1236722681}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af5c6bec7fcb24c519be70ac65201891, type: 3}
+  m_Script: {fileID: 11500000, guid: 54d9a7b340545954791ee1ffe71453f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  crowdMemberPrefab: {fileID: 2590418713886952591, guid: 12db60f2c881340d5aee04435441fa1a, type: 3}
-  owner: {fileID: 1679726181}
+  prefab: {fileID: 2590418713886952591, guid: 12db60f2c881340d5aee04435441fa1a, type: 3}
   count: 64
---- !u!114 &1236722684
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1236722681}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea7d7495833204790ba1d3a8755397f8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ConversionMode: 0
+  typeFormationCrowd: 1
+  distance: 1.2
 --- !u!1 &1520912831
 GameObject:
   m_ObjectHideFlags: 0
@@ -315,7 +289,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1581881031}
-  - component: {fileID: 1581881033}
   - component: {fileID: 1581881032}
   m_Layer: 0
   m_Name: Spawn Crowd E
@@ -331,13 +304,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1581881030}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 10, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0.8577999, z: -0, w: 0.5139839}
+  m_LocalPosition: {x: 7.5, y: 0, z: 3.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1231989144}
   m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -118.141, z: 0}
 --- !u!114 &1581881032
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -347,25 +320,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1581881030}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af5c6bec7fcb24c519be70ac65201891, type: 3}
+  m_Script: {fileID: 11500000, guid: 54d9a7b340545954791ee1ffe71453f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  crowdMemberPrefab: {fileID: 2590418713886952591, guid: 12db60f2c881340d5aee04435441fa1a, type: 3}
-  owner: {fileID: 1958272643}
+  prefab: {fileID: 2590418713886952591, guid: 12db60f2c881340d5aee04435441fa1a, type: 3}
   count: 64
---- !u!114 &1581881033
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1581881030}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea7d7495833204790ba1d3a8755397f8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ConversionMode: 0
+  typeFormationCrowd: 1
+  distance: 1.2
 --- !u!1 &1679726181
 GameObject:
   m_ObjectHideFlags: 0
@@ -383,7 +344,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1679726182
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -442,7 +403,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1958272644
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -503,6 +464,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
       propertyPath: warriorAppearanceMaterial
       value: 
       objectReference: {fileID: 2100000, guid: e7ccaf691ad2b4f25a45a8bba23c98e2, type: 2}
@@ -514,6 +479,62 @@ PrefabInstance:
       propertyPath: warriorAppearanceMaterialB
       value: 
       objectReference: {fileID: 2100000, guid: b19015c277f114f0daedcbbe04ae4544, type: 2}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[0].colorRealm.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[0].colorRealm.g
+      value: 0.08004165
+      objectReference: {fileID: 0}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[0].colorRealm.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[0].spawnCrowd
+      value: 
+      objectReference: {fileID: 1581881032}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[1].spawnCrowd
+      value: 
+      objectReference: {fileID: 1236722683}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[1].colorRealm.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[1].colorRealm.b
+      value: 0.81758165
+      objectReference: {fileID: 0}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[2].spawnCrowd
+      value: 
+      objectReference: {fileID: 479949248}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[2].colorRealm.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[2].colorRealm.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[1].colorRealm.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[2].colorRealm.r
+      value: 0.93927205
+      objectReference: {fileID: 0}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[1].idRealm
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[2].idRealm
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2642240637796305912, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1316.2781

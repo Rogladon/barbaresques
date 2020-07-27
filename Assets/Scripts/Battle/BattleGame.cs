@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 using Unity.Entities;
 using Unity.Transforms;
 using Unity.Collections;
@@ -25,7 +26,7 @@ namespace Barbaresques.Battle {
 		public Material warriorAppearanceMaterial;
 		public Material warriorAppearanceMaterialA;
 		public Material warriorAppearanceMaterialB;
-
+		
 		public void Initialize() {
 			Debug.Log("Initializing BattleGame");
 
