@@ -148,7 +148,7 @@ namespace Barbaresques.Battle {
 							bool acquireNewTargetLocation = false;
 							if ((crowdMember.behavingPolicy | CrowdMemberBehavingPolicy.FOLLOW) == crowdMember.behavingPolicy) {
 								// Если целевая точка изменилась, выдаём её заново
-								if (math.length(crowdMemberSystemState.lastCrowdsTargetPosition - crowd.position) < 0.01f) {
+								if (math.length(crowdMemberSystemState.lastCrowdsTargetPosition - crowd.position) > 0.1f) {
 									crowdMemberSystemState.lastCrowdsTargetPosition = crowd.position;
 									acquireNewTargetLocation = true;
 									// TODO: слать событие?
