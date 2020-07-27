@@ -7,18 +7,18 @@ namespace Barbaresques.Battle {
 	[UpdateInGroup(typeof(UnitAiSystemGroup))]
 	[UpdateAfter(typeof(UnitAiSystem))]
 	public class UnitAiActionsScoreSystem : SystemBase {
-		private EndSimulationEntityCommandBufferSystem _endSimulationEcbSystem;
+		// private EndSimulationEntityCommandBufferSystem _endSimulationEcbSystem;
 
 		protected override void OnCreate() {
 			base.OnCreate();
 
-			_endSimulationEcbSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+			// _endSimulationEcbSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 		}
 
 		private EntityQuery _crowdsQuery;
 
 		protected override void OnUpdate() {
-			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().AsParallelWriter();
+			// var ecb = _endSimulationEcbSystem.CreateCommandBuffer().AsParallelWriter();
 
 			Entities.WithAll<UnitAi, UnitAiDecision>()
 				.ForEach((ref UnitAttackScore attackScore, in CrowdMember crowdMember, in CrowdMemberSystemState crowdMemberSystemState, in UnitAiDecision aiState) => {
@@ -71,7 +71,7 @@ namespace Barbaresques.Battle {
 
 			Dependency = JobHandle.CombineDependencies(Dependency, scoreRetreat);
 
-			_endSimulationEcbSystem.AddJobHandleForProducer(Dependency);
+			// _endSimulationEcbSystem.AddJobHandleForProducer(Dependency);
 
 			CompleteDependency();
 			retreatedCrowds.Dispose();
