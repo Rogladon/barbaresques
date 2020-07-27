@@ -1,4 +1,6 @@
+using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
 
 namespace Barbaresques.Battle {
@@ -12,6 +14,8 @@ namespace Barbaresques.Battle {
 
 			_endSimulationEcbSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 		}
+
+		private EntityQuery _crowdsQuery;
 
 		protected override void OnUpdate() {
 			var ecb = _endSimulationEcbSystem.CreateCommandBuffer().AsParallelWriter();
@@ -35,15 +39,42 @@ namespace Barbaresques.Battle {
 				}).ScheduleParallel();
 
 			Entities.WithAll<UnitAi, UnitAiDecision>()
-				.ForEach((ref UnitFollowCrowdScore score, in CrowdMember crowdMember, in CrowdMemberSystemState crowdMemberSystemState, in UnitAiDecision aiState) => {
+				.ForEach((ref UnitFollowCrowdScore followCrowdScore, in CrowdMember crowdMember, in CrowdMemberSystemState crowdMemberSystemState, in UnitAiDecision aiState) => {
 					if ((crowdMember.behavingPolicy | CrowdMemberBehavingPolicy.FOLLOW) == crowdMember.behavingPolicy) {
-						score.score = 1.0f;
+						followCrowdScore.score = 1.0f;
 					} else {
-						score.score = 0; // TODO: плавное снижение
+						followCrowdScore.score = 1.0f - ResponseCurve.Exponential(math.clamp(1.0f - followCrowdScore.score, 0.0f, 1.0f));
 					}
 				}).ScheduleParallel();
 
+			NativeArray<Entity> retreatedCrowds = new NativeArray<Entity>(_crowdsQuery.CalculateEntityCount(), Allocator.TempJob);
+
+			JobHandle collectRetreatedCrowds = Entities.WithName(nameof(collectRetreatedCrowds))
+				.WithStoreEntityQueryInField(ref _crowdsQuery)
+				.WithAll<Crowd, Retreating>()
+				.ForEach((int entityInQueryIndex, Entity e) => {
+					retreatedCrowds[entityInQueryIndex] = e;
+				})
+				.Schedule(Dependency);
+
+			JobHandle scoreRetreat = Entities.WithName(nameof(scoreRetreat))
+				.WithAll<UnitAi, UnitAiDecision>()
+				.WithReadOnly(retreatedCrowds)
+				.ForEach((ref UnitRetreatScore retreatScore, in CrowdMember crowdMember) => {
+					if (retreatedCrowds.Contains(crowdMember.crowd)) {
+						retreatScore.score = 10000.0f;
+					} else {
+						retreatScore.score = 0.0f;
+					}
+				})
+				.ScheduleParallel(collectRetreatedCrowds);
+
+			Dependency = JobHandle.CombineDependencies(Dependency, scoreRetreat);
+
 			_endSimulationEcbSystem.AddJobHandleForProducer(Dependency);
+
+			CompleteDependency();
+			retreatedCrowds.Dispose();
 		}
 	}
 }
