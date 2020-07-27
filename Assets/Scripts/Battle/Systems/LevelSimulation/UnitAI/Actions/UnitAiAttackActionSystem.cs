@@ -6,8 +6,7 @@ using static Unity.Mathematics.math;
 using quaternion = Unity.Mathematics.quaternion;
 
 namespace Barbaresques.Battle {
-	[UpdateInGroup(typeof(UnitAiSystemGroup))]
-	[UpdateAfter(typeof(UnitAiActionSelectionSystem))]
+	[UpdateInGroup(typeof(UnitAiActionsSystemGroup))]
 	public class UnitAiAttackActionSystem : SystemBase {
 		private EndSimulationEntityCommandBufferSystem _endSimulationEcbSystem;
 

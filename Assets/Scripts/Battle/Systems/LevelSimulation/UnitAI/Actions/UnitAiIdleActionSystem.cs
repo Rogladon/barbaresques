@@ -3,8 +3,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 
 namespace Barbaresques.Battle {
-	[UpdateInGroup(typeof(UnitAiSystemGroup))]
-	[UpdateAfter(typeof(UnitAiActionSelectionSystem))]
+	[UpdateInGroup(typeof(UnitAiActionsSystemGroup))]
 	public class UnitAiIdleActionSystem : SystemBase {
 		private EndSimulationEntityCommandBufferSystem _endSimulationEcbSystem;
 		private RandomSystem _randomSystem;

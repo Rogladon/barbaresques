@@ -1,8 +1,7 @@
 using Unity.Entities;
 
 namespace Barbaresques.Battle {
-	[UpdateInGroup(typeof(UnitAiSystemGroup))]
-	[UpdateAfter(typeof(UnitAiActionSelectionSystem))]
+	[UpdateInGroup(typeof(UnitAiActionsSystemGroup))]
 	public class UnitAiFollowCrowdActionSystem : SystemBase {
 		private EndSimulationEntityCommandBufferSystem _endSimulationEcbSystem;
 
