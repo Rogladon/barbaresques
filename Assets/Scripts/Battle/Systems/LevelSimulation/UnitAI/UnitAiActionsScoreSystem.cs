@@ -2,6 +2,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
+using Unity.Transforms;
 
 namespace Barbaresques.Battle {
 	[UpdateInGroup(typeof(UnitAiSystemGroup))]
@@ -39,9 +40,13 @@ namespace Barbaresques.Battle {
 				}).ScheduleParallel();
 
 			Entities.WithAll<UnitAi, UnitAiDecision>()
-				.ForEach((ref UnitFollowCrowdScore followCrowdScore, in CrowdMember crowdMember, in CrowdMemberSystemState crowdMemberSystemState, in UnitAiDecision aiState) => {
+				.ForEach((ref UnitFollowCrowdScore followCrowdScore, in CrowdMember crowdMember, in CrowdMemberSystemState crowdMemberSystemState, in UnitAiDecision aiState, in Translation translation) => {
 					if ((crowdMember.behavingPolicy | CrowdMemberBehavingPolicy.FOLLOW) == crowdMember.behavingPolicy) {
-						followCrowdScore.score = 1.0f;
+						if (math.length(crowdMember.targetLocation - translation.Value) > 10.0f) {
+							followCrowdScore.score = 10.0f;
+						} else {
+							followCrowdScore.score = 1.0f;
+						}
 					} else {
 						followCrowdScore.score = 1.0f - ResponseCurve.Exponential(math.clamp(1.0f - followCrowdScore.score, 0.0f, 1.0f));
 					}
