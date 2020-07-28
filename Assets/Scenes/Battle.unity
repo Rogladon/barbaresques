@@ -169,7 +169,7 @@ MonoBehaviour:
   prefab: {fileID: 2590418713886952591, guid: 12db60f2c881340d5aee04435441fa1a, type: 3}
   count: 64
   typeFormationCrowd: 0
-  distance: 1.2
+  intervalBetweenUnits: 1.2
 --- !u!4 &1231989144 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2642240636825435476, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
@@ -221,7 +221,7 @@ MonoBehaviour:
   prefab: {fileID: 2590418713886952591, guid: 12db60f2c881340d5aee04435441fa1a, type: 3}
   count: 64
   typeFormationCrowd: 1
-  distance: 1.2
+  intervalBetweenUnits: 1.2
 --- !u!1 &1520912831
 GameObject:
   m_ObjectHideFlags: 0
@@ -326,7 +326,7 @@ MonoBehaviour:
   prefab: {fileID: 2590418713886952591, guid: 12db60f2c881340d5aee04435441fa1a, type: 3}
   count: 64
   typeFormationCrowd: 1
-  distance: 1.2
+  intervalBetweenUnits: 1.2
 --- !u!1 &1679726181
 GameObject:
   m_ObjectHideFlags: 0
@@ -535,33 +535,57 @@ PrefabInstance:
       propertyPath: spawns.Array.data[2].idRealm
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 2642240637796305912, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 1316.2781
-      objectReference: {fileID: 0}
-    - target: {fileID: 2642240637796305912, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 535.4805
-      objectReference: {fileID: 0}
-    - target: {fileID: 2642240637796305912, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -225.7543
-      objectReference: {fileID: 0}
-    - target: {fileID: 2642240637796305912, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
-      propertyPath: m_LocalRotation.x
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[0].realmColor.r
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2642240637796305912, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[0].realmColor.g
+      value: 0.084089994
       objectReference: {fileID: 0}
-    - target: {fileID: 2642240637796305912, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2642240637796305912, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
-      propertyPath: m_LocalRotation.w
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[0].realmColor.b
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[1].realmColor.r
+      value: 0.12494111
+      objectReference: {fileID: 0}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[1].realmColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[1].realmColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[2].realmColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[2].realmColor.g
+      value: 0.5849304
+      objectReference: {fileID: 0}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[2].realmColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[2].playerControlled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[1].realmId
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[2].realmId
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[0].realmId
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2642240637796305912, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
       propertyPath: m_RootOrder

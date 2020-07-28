@@ -8,10 +8,6 @@ namespace Barbaresques {
 	public class BattleGameSetup : MonoBehaviour {
 		public BattleGame game { get; private set; }
 
-		public Mesh warriorAppearanceMesh;
-		public Material warriorAppearanceMaterial;
-		public Material warriorAppearanceMaterialA;
-		public Material warriorAppearanceMaterialB;
 		public EntityManager em;
 
 		[System.Serializable]
@@ -19,29 +15,29 @@ namespace Barbaresques {
 			public SpawnCrowdBehaviour spawnCrowd;
 			[SerializeField]
 			public Entity entity;
-			public int idRealm;
-			public Color colorRealm;
+			public int realmId;
+			public Color realmColor;
+			public bool playerControlled;
 		}
 
 		public List<Spawn> spawns = new List<Spawn>();
 
 		void Awake() {
 			game = new BattleGame();
-			game.warriorAppearanceMesh = warriorAppearanceMesh;
-			game.warriorAppearanceMaterial = warriorAppearanceMaterial;
-			game.warriorAppearanceMaterialA = warriorAppearanceMaterialA;
-			game.warriorAppearanceMaterialB = warriorAppearanceMaterialB;
 			game.Initialize();
 			em = game.world.EntityManager;
 
-			Dictionary<int, Entity> idCreatedRealms = new Dictionary<int, Entity>();
-			foreach(var i in spawns) {
-				if (!idCreatedRealms.ContainsKey(i.idRealm)) {
+			Dictionary<int, Entity> createdRealms = new Dictionary<int, Entity>();
+			foreach(var realmConfig in spawns) {
+				if (!createdRealms.ContainsKey(realmConfig.realmId)) {
 					Entity realm = em.CreateEntity(game.archetypeRealm);
-					em.SetComponentData(realm, new Realm { color = i.colorRealm });
-					idCreatedRealms.Add(i.idRealm, realm);
+					em.SetComponentData(realm, new Realm { color = realmConfig.realmColor });
+					if (realmConfig.playerControlled) {
+						em.AddComponent<PlayerControlled>(realm);
+					}
+					createdRealms.Add(realmConfig.realmId, realm);
 				}
-				i.spawnCrowd.Init(idCreatedRealms[i.idRealm]);
+				realmConfig.spawnCrowd.Init(createdRealms[realmConfig.realmId]);
 			}
 			
 		}
