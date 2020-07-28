@@ -4,27 +4,25 @@ using UnityEngine;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using Unity.Physics;
-
-public enum TypeFormationCrowd {
-	square,
-	triangle
-}
 
 namespace Barbaresques.Battle {
-	public class SpawnCrowdBehavier : MonoBehaviour {
+	public enum CrowdFormationTypes {
+		SQUARE,
+		TRIANGLE,
+	}
+
+	public class SpawnCrowdBehaviour : MonoBehaviour {
 		public GameObject prefab;
 		public int count;
-		public TypeFormationCrowd typeFormationCrowd;
+		public CrowdFormationTypes typeFormationCrowd;
 		public float distance;
-		EntityManager em;
+		private EntityManager em;
 		private EntityArchetype _archetypeCrowd;
 		private Entity owner;
 		private GameObjectConversionSettings setting;
-		private NativeArray<Entity> entites;
+		private NativeArray<Entity> entities;
 
 		public void Init(Entity realm) {
-			
 			owner = realm;
 			em = World.DefaultGameObjectInjectionWorld.EntityManager;
 			_archetypeCrowd = em.CreateArchetype(new ComponentType[] {
@@ -45,41 +43,40 @@ namespace Barbaresques.Battle {
 			var entity = GameObjectConversionUtility.ConvertGameObjectHierarchy(prefab,
 					setting);
 
-			entites = new NativeArray<Entity>(count, Allocator.Temp);
-			em.Instantiate(entity, entites);
+			entities = new NativeArray<Entity>(count, Allocator.Temp);
+			em.Instantiate(entity, entities);
 
 			NativeArray<float3> positions = new NativeArray<float3>(count, Allocator.Temp);
 			switch (typeFormationCrowd) {
-				case TypeFormationCrowd.square:
+				case CrowdFormationTypes.SQUARE:
 					positions = SquarePositions();
 					break;
-				case TypeFormationCrowd.triangle:
+				case CrowdFormationTypes.TRIANGLE:
 					positions = TrianglePositions();
 					break;
 			}
 
-			for (int i = 0; i < entites.Length; i++) {
-				em.SetName(entites[i], "Unit: " + crowd.Index + "-" + i);
-				em.AddComponentData(entites[i], new CrowdMember() {
+			for (int i = 0; i < entities.Length; i++) {
+				em.SetName(entities[i], "Unit: " + crowd.Index + "-" + i);
+				em.AddComponentData(entities[i], new CrowdMember() {
 					crowd = crowd,
 					behavingPolicy = CrowdMemberBehavingPolicy.IDLE,
 					targetLocation = transform.position,
 				});
-				em.SetComponentData(entites[i], new OwnedByRealm() { owner = owner });
+				em.SetComponentData(entities[i], new OwnedByRealm() { owner = owner });
 
-				em.SetComponentData(entites[i], new Translation() {
+				em.SetComponentData(entities[i], new Translation() {
 					Value =positions[i]
 				});
-				em.SetComponentData(entites[i], new Rotation() {
+				em.SetComponentData(entities[i], new Rotation() {
 					Value = quaternion.AxisAngle(new float3(0, 1, 0), transform.rotation.eulerAngles.y)
 				});
 			}
 
-			entites.Dispose();
+			entities.Dispose();
 		}
 
-		public NativeArray<float3> SquarePositions() {
-
+		private NativeArray<float3> SquarePositions() {
 			NativeArray<float3> na = new NativeArray<float3>(count, Allocator.Temp);
 			int width = (int)math.round(math.sqrt(count) + 0.49f);
 			int x = 0;
@@ -96,8 +93,7 @@ namespace Barbaresques.Battle {
 			return na;
 		}
 
-		public NativeArray<float3> TrianglePositions() {
-
+		private NativeArray<float3> TrianglePositions() {
 			NativeArray<float3> na = new NativeArray<float3>(count, Allocator.Temp);
 			int width = 1;
 			int x = 0;
@@ -115,6 +111,7 @@ namespace Barbaresques.Battle {
 			}
 			return na;
 		}
+
 		private void OnDestroy() {
 			setting.BlobAssetStore.Dispose();
 		}

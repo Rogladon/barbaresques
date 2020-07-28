@@ -16,7 +16,7 @@ namespace Barbaresques {
 
 		[System.Serializable]
 		public struct Spawn {
-			public SpawnCrowdBehavier spawnCrowd;
+			public SpawnCrowdBehaviour spawnCrowd;
 			[SerializeField]
 			public Entity entity;
 			public int idRealm;
