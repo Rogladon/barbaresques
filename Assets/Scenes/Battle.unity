@@ -587,6 +587,18 @@ PrefabInstance:
       propertyPath: spawns.Array.data[0].realmId
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[0].realmColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[1].realmColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2642240636825435483, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: spawns.Array.data[2].realmColor.a
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2642240637796305912, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
       propertyPath: m_RootOrder
       value: 0

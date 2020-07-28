@@ -13,5 +13,9 @@ namespace Barbaresques.GlobalMap {
 		public void NextTurn() {
 			scheduler.NextTurn();
 		}
+
+		public void ClickMap() {
+			// TODO:
+		}
 	}
 }

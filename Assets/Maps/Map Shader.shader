@@ -36,10 +36,10 @@
 
 			bool IsBorder(float borderWidth, fixed2 uv, fixed3 currentColor) {
 			#define IS_SAME_PROV(x, y) (isclreq(currentColor, tex2D(_provinces, uv + fixed2(x, y)).rgb) && length(tex2D(_provinces, uv + fixed2(x, y)).rgb) > 0.003)
-				return /*u */ !IS_SAME_PROV(_provinces_TexelSize.x * borderWidth, 0)
-					|| /*b */ !IS_SAME_PROV(-_provinces_TexelSize.x * borderWidth, 0)
-					|| /* l*/ !IS_SAME_PROV(0, -_provinces_TexelSize.y * borderWidth)
-					|| /* r*/ !IS_SAME_PROV(0, +_provinces_TexelSize.y * borderWidth)
+				return /* u   */ !IS_SAME_PROV(_provinces_TexelSize.x * borderWidth, 0)
+					|| /* b   */ !IS_SAME_PROV(-_provinces_TexelSize.x * borderWidth, 0)
+					|| /*   l */ !IS_SAME_PROV(0, -_provinces_TexelSize.y * borderWidth)
+					|| /*   r */ !IS_SAME_PROV(0, +_provinces_TexelSize.y * borderWidth)
 				;
 			#undef IS_SAME_PROV
 			}
@@ -56,15 +56,11 @@
 				fixed3 textureColor = tex2D(_MainTex, i.uv).rgb;
 				fixed3 provinceColor = tex2D(_provinces, i.uv).rgb;
 				fixed3 result = textureColor;
-				if (!isclreq(provinceColor, fixed3(0, 0, 0))) {
-					if (IsBorder(10, i.uv, provinceColor.rgb)) {
-						result *= 0.99f;
-					}
-					if (IsBorder(5, i.uv, provinceColor.rgb)) {
-						result *= 0.99f;
-					}
-					if (IsBorder(2, i.uv, provinceColor.rgb)) {
-						result *= 0.75f;
+				if (length(provinceColor) > 0.003) {
+					for (int b = 5; b > 0; b--) {
+						if (IsBorder(b, i.uv, provinceColor.rgb)) {
+							result *= 1 - 64 * (1.0/255.0);
+						}
 					}
 				}
 				return fixed4(result, 1);
