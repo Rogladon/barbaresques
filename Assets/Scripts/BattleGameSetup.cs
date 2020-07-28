@@ -30,6 +30,9 @@ namespace Barbaresques {
 			Dictionary<int, Entity> createdRealms = new Dictionary<int, Entity>();
 			foreach(var realmConfig in spawns) {
 				if (!createdRealms.ContainsKey(realmConfig.realmId)) {
+					if (realmConfig.realmColor.a < 1) {
+						Debug.LogWarning($"Alpha of realm {realmConfig.realmId} is below zero {realmConfig.realmColor.a}");
+					}
 					Entity realm = em.CreateEntity(game.archetypeRealm);
 					em.SetComponentData(realm, new Realm { color = realmConfig.realmColor });
 					if (realmConfig.playerControlled) {
