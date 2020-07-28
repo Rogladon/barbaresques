@@ -58,6 +58,7 @@ namespace Barbaresques {
 		IEnumerator LoadAsync(string sceneName) {
 			if (scenes.TryGetValue(sceneName, out SceneReference scene)) {
 				AsyncOperation ao = SceneManager.LoadSceneAsync(scene);
+				LoadingScreen.instance?.Show(ao);
 				while (!ao.isDone) {
 					yield return null;
 				}
@@ -93,6 +94,7 @@ namespace Barbaresques {
 			targetScene = name;
 			loadParameters = parameters;
 			var ao = SceneManager.LoadSceneAsync(SCENE_LOADER_SCENE_ID);
+			LoadingScreen.instance?.Show(ao);
 			while (!ao.isDone) {
 				yield return ao;
 			}
