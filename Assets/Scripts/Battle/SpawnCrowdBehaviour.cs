@@ -42,6 +42,9 @@ namespace Barbaresques.Battle {
 			em.SetComponentData(crowd, new Moral() { value = 0.8f });
 			em.SetComponentData(crowd, new MaxMoral() { value = 1.0f });
 
+			if (!em.HasComponent<PlayerControlled>(owner))
+				em.AddComponent<CrowdAi>(crowd);
+
 			var entity = GameObjectConversionUtility.ConvertGameObjectHierarchy(prefab,
 					setting);
 

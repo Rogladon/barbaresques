@@ -9,7 +9,9 @@ namespace Barbaresques {
 
 		[Header("Components")]
 		[SerializeField]
+#pragma warning disable 649
 		private Slider _progressBarSlider;
+#pragma warning restore 649
 
 		private bool _isLoading = false;
 		private AsyncOperation _currentLoadingOperation = null;

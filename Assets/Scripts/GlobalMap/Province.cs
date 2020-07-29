@@ -17,6 +17,14 @@ namespace Barbaresques.GlobalMap {
 			};
 		}
 
+		public static ProvinceId FromColor(Color32 c) {
+			return new ProvinceId() {
+				r = c.r,
+				g = c.g,
+				b = c.b,
+			};
+		}
+
 		public bool Equals(ProvinceId other) => this == other;
 
 		public override bool Equals(object obj) => obj is ProvinceId && this == (ProvinceId)obj;
