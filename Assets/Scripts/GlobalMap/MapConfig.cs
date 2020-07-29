@@ -7,8 +7,6 @@ namespace Barbaresques.GlobalMap {
 	public class MapConfig : ScriptableObject {
 		public Texture2D provincesMap;
 
-		public void Validate() { }
-
 		public HashSet<(ProvinceId, ProvinceId)> Neighbors() {
 			var pixels = provincesMap.GetPixels32();
 			HashSet<ProvinceId> provinces = new HashSet<ProvinceId>();
@@ -19,8 +17,8 @@ namespace Barbaresques.GlobalMap {
 					ProvinceId a = ProvinceId.FromColor(_GetPixelFromPixels(pixels, provincesMap.width, provincesMap.height, x - 1, y - 1));
 					if (a == ProvinceId.NULL) continue;
 					provinces.Add(a);
-					ProvinceId right = ProvinceId.FromColor(_GetPixelFromPixels(pixels, provincesMap.width, provincesMap.height, x, y - 1));
 
+					ProvinceId right = ProvinceId.FromColor(_GetPixelFromPixels(pixels, provincesMap.width, provincesMap.height, x, y - 1));
 					if (right != ProvinceId.NULL) {
 						provinces.Add(right);
 						neighbors.Add((a, right));
