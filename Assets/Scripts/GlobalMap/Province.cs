@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -34,6 +35,9 @@ namespace Barbaresques.GlobalMap {
 		public override string ToString() => $"province#{r.ToString("X2")}{g.ToString("X2")}{b.ToString("X2")}";
 
 		public static bool operator==(ProvinceId a, ProvinceId b) => a.r == b.r && a.g == b.g && a.b == b.b;
+
+		public Vector4 ToVector4Color() => new Vector4(r / 255.0f, g / 255.0f, b / 255.0f, 1.0f);
+
 		public static bool operator!=(ProvinceId a, ProvinceId b) => a.r != b.r || a.g != b.g || a.b != b.b;
 	}
 

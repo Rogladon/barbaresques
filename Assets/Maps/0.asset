@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 085fdb2cb47ac4d96847f12a676e218e, type: 3}
   m_Name: 0
   m_EditorClassIdentifier: 
+  texture: {fileID: 2800000, guid: 50896e35f1ab94f5d9071ed7d7e349a9, type: 3}
   provincesMap: {fileID: 2800000, guid: 41f8998ffbce94f2f938aea8e2bf85bc, type: 3}

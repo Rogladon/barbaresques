@@ -6,7 +6,10 @@ namespace Barbaresques.GlobalMap {
 	public class GlobalMap : MonoBehaviour {
 		public MapConfig mapConfig;
 
+		public int maxInternalProvinceId { get; private set; } = 0;
+
 		private Dictionary<ProvinceId, Province> _provinces;
+		public List<Province> provinces { get; private set; }
 
 		void Awake() {
 			var neighbors = mapConfig.Neighbors();
@@ -20,8 +23,9 @@ namespace Barbaresques.GlobalMap {
 			Debug.Log("Creating provinces...");
 
 			_provinces = new Dictionary<ProvinceId, Province>();
+			provinces = new List<Province>();
 
-			int idCounter = 0;
+			maxInternalProvinceId = 0;
 
 			foreach (var pid in uniqueProvinces) {
 				var provGameObject = new GameObject(pid.ToString());
@@ -29,9 +33,11 @@ namespace Barbaresques.GlobalMap {
 
 				var province = provGameObject.AddComponent<Province>();
 				province.id = pid;
-				province.internalId = ++idCounter;
+				maxInternalProvinceId++;
+				province.internalId = maxInternalProvinceId;
 
 				_provinces[pid] = province;
+				provinces.Add(province);
 			}
 
 			Debug.Log("Connecting provinces...");

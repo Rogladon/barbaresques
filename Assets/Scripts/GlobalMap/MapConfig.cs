@@ -5,6 +5,7 @@ using UnityEngine;
 namespace Barbaresques.GlobalMap {
 	[CreateAssetMenu(fileName = "New GlobalMapConfig", menuName = "Global Map config", order = 51)]
 	public class MapConfig : ScriptableObject {
+		public Texture2D texture;
 		public Texture2D provincesMap;
 
 		public HashSet<(ProvinceId, ProvinceId)> Neighbors() {
