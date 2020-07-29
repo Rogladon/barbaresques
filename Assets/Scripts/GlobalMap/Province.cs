@@ -29,7 +29,7 @@ namespace Barbaresques.GlobalMap {
 
 		public override bool Equals(object obj) => obj is ProvinceId && this == (ProvinceId)obj;
 
-		public override int GetHashCode() => r.GetHashCode() ^ g.GetHashCode() ^ b.GetHashCode();
+		public override int GetHashCode() => ((int)r << 16) + ((int)g << 8) + (int)b;
 
 		public override string ToString() => $"province#{r.ToString("X2")}{g.ToString("X2")}{b.ToString("X2")}";
 
