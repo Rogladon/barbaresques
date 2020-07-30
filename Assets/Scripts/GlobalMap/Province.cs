@@ -36,7 +36,7 @@ namespace Barbaresques.GlobalMap {
 
 		public static bool operator==(ProvinceId a, ProvinceId b) => a.r == b.r && a.g == b.g && a.b == b.b;
 
-		public Vector4 ToVector4Color() => new Vector4(r / 255.0f, g / 255.0f, b / 255.0f, 1.0f);
+		public static implicit operator Color(ProvinceId pid) => new Color(((float)pid.r) / 255.0f, ((float)pid.g) / 255.0f, ((float)pid.b) / 255.0f, 1.0f);
 
 		public static bool operator!=(ProvinceId a, ProvinceId b) => a.r != b.r || a.g != b.g || a.b != b.b;
 	}

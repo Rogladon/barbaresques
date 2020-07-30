@@ -29,16 +29,17 @@
 			}
 
 			#define PROVS_MAX 256
-			#define NULL_PROV (0)
+			#define NULLPROV (-1)
 			uniform fixed4 _provs[PROVS_MAX];
 
 			int GetProvinceId(fixed3 color) {
-				for (int i = 1; i < PROVS_MAX; i++) {
-					if (isclreq(_provs[i].rgb, color)) {
+				for (int i = 0; i < PROVS_MAX; i++) {
+					fixed3 pc = _provs[i].rgb;
+					if (isclreq(color, pc)) {
 						return i;
 					}
 				}
-				return NULL_PROV;
+				return NULLPROV;
 			}
 
 			sampler2D _MainTex;
@@ -46,7 +47,6 @@
 
 			sampler2D _provinces;
 			float4 _provinces_TexelSize;
-
 
 			bool IsBorder(float borderWidth, fixed2 uv, fixed3 currentColor) {
 			#define IS_SAME_PROV(x, y) (isclreq(currentColor, tex2D(_provinces, uv + fixed2(x, y)).rgb) && length(tex2D(_provinces, uv + fixed2(x, y)).rgb) > 0.003)
@@ -73,12 +73,14 @@
 
 				fixed3 result = textureColor;
 
-				if (provinceId != NULL_PROV) {
+				if (provinceId > NULLPROV) {
 					for (int b = 5; b > 0; b--) {
 						if (IsBorder(b, i.uv, provinceColor.rgb)) {
 							result *= 1 - 64 * (1.0/255.0);
 						}
 					}
+				} else {
+					result *= fixed3(1, 0.1, 0.1);
 				}
 				return fixed4(result, 1);
 			}

@@ -15,19 +15,24 @@ namespace Barbaresques.GlobalMap {
 		private Material _material;
 
 		private static readonly string FIELD_PROVINCE_COLORS = "_provs";
+		private MaterialPropertyBlock _mpb;
 
 		void Start() {
 			if (_meshRenderer == null) _meshRenderer = GetComponent<MeshRenderer>();
 
 			transform.localScale = new Vector3(_map.mapConfig.texture.width / _downscaleFactor, _map.mapConfig.texture.height / _downscaleFactor, 1);
 
-			_material = _meshRenderer.material;
 			_SetupMaterial();
 		}
 
 		void _SetupMaterial() {
+			_material = _meshRenderer.material;
+
 			_material.mainTexture = _map.mapConfig.texture;
 			_material.SetTexture("_provinces", _map.mapConfig.provincesMap);
+
+			_mpb = new MaterialPropertyBlock();
+			_meshRenderer.GetPropertyBlock(_mpb);
 
 			// if (_material.GetInt("_maxProvs") <= _globalMap.maxInternalProvinceId) {
 			// 	Debug.LogError($"Shader allows only {_material.GetInt("_maxProvs")} provinces. Got {_globalMap.maxInternalProvinceId}");
@@ -35,10 +40,12 @@ namespace Barbaresques.GlobalMap {
 
 			Vector4[] colors = new Vector4[_map.maxInternalProvinceId + 1];
 			foreach (var p in _map.provinces) {
-				Debug.Log($"{p.internalId} {colors.Length} {_map.maxInternalProvinceId}");
-				colors[p.internalId] = p.id.ToVector4Color();
+				var color = (Color)p.id;
+				colors[p.internalId] = new Vector4(color.r, color.g, color.b, 0.0f);
 			}
-			_material.SetVectorArray(FIELD_PROVINCE_COLORS, colors);
+			_mpb.SetVectorArray(FIELD_PROVINCE_COLORS, colors);
+
+			_meshRenderer.SetPropertyBlock(_mpb);
 		}
 	}
 }

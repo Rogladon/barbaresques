@@ -33,8 +33,8 @@ namespace Barbaresques.GlobalMap {
 
 				var province = provGameObject.AddComponent<Province>();
 				province.id = pid;
-				maxInternalProvinceId++;
 				province.internalId = maxInternalProvinceId;
+				maxInternalProvinceId++;
 
 				_provinces[pid] = province;
 				provinces.Add(province);
