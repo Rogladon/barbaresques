@@ -29,7 +29,7 @@ namespace Barbaresques.GlobalMap {
 			_material = _meshRenderer.material;
 
 			_material.mainTexture = _map.mapConfig.texture;
-			_material.SetTexture("_provinces", _map.mapConfig.provincesMap);
+			_material.SetTexture("_ProvsMap", _map.mapConfig.provincesMap);
 
 			_mpb = new MaterialPropertyBlock();
 			_meshRenderer.GetPropertyBlock(_mpb);
@@ -42,6 +42,7 @@ namespace Barbaresques.GlobalMap {
 			foreach (var p in _map.provinces) {
 				var color = (Color)p.id;
 				colors[p.internalId] = new Vector4(color.r, color.g, color.b, 0.0f);
+				Debug.Log($"{ColorUtility.ToHtmlStringRGB(color)} {p.id} {color}");
 			}
 			_mpb.SetVectorArray(FIELD_PROVINCE_COLORS, colors);
 

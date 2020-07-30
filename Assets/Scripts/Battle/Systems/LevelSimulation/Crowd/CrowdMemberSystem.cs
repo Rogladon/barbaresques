@@ -12,6 +12,7 @@ namespace Barbaresques.Battle {
 		public Entity prey;
 		public float3 preyPosition;
 		public float preyDistance;
+		public Entity _crowd;
 	}
 
 	[UpdateInGroup(typeof(CrowdSystemGroup)), UpdateAfter(typeof(CrowdSystem))]
@@ -26,6 +27,7 @@ namespace Barbaresques.Battle {
 		}
 
 		private EntityQuery _crowdsQuery;
+		private EntityQuery _crowdPopulationDiffQuery;
 		private EntityQuery _calculateDistancesJobQuery;
 
 		[System.Serializable]
@@ -85,10 +87,15 @@ namespace Barbaresques.Battle {
 			_endSimulationEcbSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 			_randomSystem = World.GetOrCreateSystem<RandomSystem>();
 
-			_calculateDistancesJobQuery = GetEntityQuery(new ComponentType[] {
-				ComponentType.ReadOnly<Translation>(),
-				ComponentType.ReadOnly<CrowdMember>(),
-				ComponentType.ReadOnly<CrowdMemberSystemState>(),
+			_calculateDistancesJobQuery = GetEntityQuery(new EntityQueryDesc() {
+				All = new ComponentType[] {
+					ComponentType.ReadOnly<Translation>(),
+					ComponentType.ReadOnly<CrowdMember>(),
+					ComponentType.ReadOnly<CrowdMemberSystemState>(),
+				},
+				None = new ComponentType[] {
+					typeof(Died),
+				},
 			});
 		}
 
@@ -121,17 +128,47 @@ namespace Barbaresques.Battle {
 			//
 			// Обработка новых и задестроенных
 			//
+			var syncEcb = _endSimulationEcbSystem.CreateCommandBuffer();
+
+			NativeHashMap<Entity, int> crowdPopulationDiffs = new NativeHashMap<Entity, int>(_crowdPopulationDiffQuery.CalculateEntityCount(), Allocator.TempJob);
+
 			JobHandle init = Entities.WithName(nameof(init))
 				.WithNone<CrowdMemberSystemState>()
 				.WithAll<CrowdMember>()
-				.ForEach((int entityInQueryIndex, Entity entity) => ecb.AddComponent<CrowdMemberSystemState>(entityInQueryIndex, entity))
-				.ScheduleParallel(Dependency);
+				.ForEach((Entity entity, in CrowdMember crowdMember) => {
+					syncEcb.AddComponent(entity, new CrowdMemberSystemState() { _crowd = crowdMember.crowd });
+					if (crowdPopulationDiffs.ContainsKey(crowdMember.crowd)) {
+						crowdPopulationDiffs[crowdMember.crowd] = crowdPopulationDiffs[crowdMember.crowd] + 1;
+					} else {
+						crowdPopulationDiffs[crowdMember.crowd] = 1;
+					}
+				})
+				.Schedule(Dependency);
 
 			JobHandle cleanup = Entities.WithName(nameof(cleanup))
 				.WithAll<CrowdMemberSystemState>()
 				.WithNone<CrowdMember>()
-				.ForEach((int entityInQueryIndex, Entity entity) => ecb.RemoveComponent<CrowdMemberSystemState>(entityInQueryIndex, entity))
-				.ScheduleParallel(init);
+				.ForEach((Entity entity, in CrowdMemberSystemState systemState) => {
+					if (crowdPopulationDiffs.ContainsKey(systemState._crowd)) {
+						crowdPopulationDiffs[systemState._crowd] = crowdPopulationDiffs[systemState._crowd] - 1;
+					} else {
+						crowdPopulationDiffs[systemState._crowd] = -1;
+					}
+					syncEcb.RemoveComponent<CrowdMemberSystemState>(entity);
+				})
+				.Schedule(init);
+
+			// Оно вообще уместно тут?
+			JobHandle applyCrowdPopulationsChanges = Entities.WithName(nameof(applyCrowdPopulationsChanges))
+				.WithStoreEntityQueryInField(ref _crowdPopulationDiffQuery)
+				.WithReadOnly(crowdPopulationDiffs)
+				.WithAll<Crowd>()
+				.ForEach((Entity crowd, ref CrowdSystemState crowdSystemState) => {
+					if (crowdPopulationDiffs.TryGetValue(crowd, out int diff)) {
+						crowdSystemState.membersCount += diff;
+					}
+				})
+				.ScheduleParallel(cleanup);
 
 			//
 			// Проведение политики толпы в жизнь её членов
@@ -171,8 +208,8 @@ namespace Barbaresques.Battle {
 						crowdMember.behavingPolicy = CrowdMemberBehavingPolicy.IDLE;
 					}
 				})
-				.ScheduleParallel(JobHandle.CombineDependencies(init, collectCrowdsSummaries));
-			
+				.ScheduleParallel(JobHandle.CombineDependencies(cleanup, collectCrowdsSummaries));
+
 			//
 			// Таргетирование
 			//
@@ -211,11 +248,12 @@ namespace Barbaresques.Battle {
 					}
 				}).ScheduleParallel(sortDistances);
 
-			Dependency = JobHandle.CombineDependencies(updatePolicy, assignPreys, cleanup);
+			Dependency = JobHandle.CombineDependencies(updatePolicy, assignPreys, applyCrowdPopulationsChanges);
 
 			_endSimulationEcbSystem.AddJobHandleForProducer(Dependency);
 
 			CompleteDependency();
+			crowdPopulationDiffs.Dispose();
 			crowdsSummaries.Dispose();
 			distances.Dispose();
 		}

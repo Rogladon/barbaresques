@@ -23,6 +23,7 @@ namespace Barbaresques.Battle {
 			var delta = Time.DeltaTime;
 
 			Entities.WithName("walk")
+				.WithNone<Died>()
 				.ForEach((int entityInQueryIndex, Entity e, ref Translation translation, ref Rotation rotation, in Walking walking, in Speed speed) => {
 					var diff = walking.target - translation.Value;
 					var len = length(diff);

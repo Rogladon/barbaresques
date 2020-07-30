@@ -26,6 +26,7 @@ namespace Barbaresques.Battle {
 
 			Entities.WithName("update")
 				.WithAll<UnitAppearance>()
+				.WithNone<Died>()
 				.ForEach((int entityInQueryIndex, Entity e, ref UnitTint mc, in Parent parent) => {
 					if (!HasComponent<OwnedByRealm>(parent.Value))
 						return;
@@ -36,12 +37,15 @@ namespace Barbaresques.Battle {
 						return;
 					var realm = GetComponent<Realm>(obr.owner);
 					mc.Value = new float4(realm.color.r, realm.color.g, realm.color.b, realm.color.a);
+					if (HasComponent<Died>(parent.Value)) {
+						mc.Value *= 0.25f;
+					}
 				})
 				.ScheduleParallel();
 
 			Entities.WithName("tint")
 				.WithAll<UnitAppearance>()
-				.WithNone<UnitTint>()
+				.WithNone<UnitTint, Died>()
 				.ForEach((int entityInQueryIndex, Entity e, in Parent parent) => {
 					if (!HasComponent<OwnedByRealm>(parent.Value))
 						return;

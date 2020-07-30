@@ -3,6 +3,7 @@ using Unity.Collections;
 
 namespace Barbaresques.Battle {
 	public struct CrowdSystemState : ISystemStateComponentData {
+		public int membersCount;
 	}
 
 	public struct NewCrowdEvent : IComponentData, IEventData {
@@ -38,7 +39,7 @@ namespace Barbaresques.Battle {
 				.WithNone<CrowdSystemState>()
 				.WithAll<Crowd>()
 				.ForEach((int entityInQueryIndex, Entity entity) => {
-					ecb.AddComponent(entityInQueryIndex, entity, new CrowdSystemState());
+					ecb.AddComponent(entityInQueryIndex, entity, new CrowdSystemState() { membersCount = 0 });
 					var ev = ecb.CreateEntity(entityInQueryIndex, archetypeNewCrowdEvent);
 					ecb.SetComponent(entityInQueryIndex, ev, new NewCrowdEvent() { crowd = entity });
 				})

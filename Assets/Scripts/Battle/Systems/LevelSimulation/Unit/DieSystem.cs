@@ -26,12 +26,18 @@ namespace Barbaresques.Battle {
 
 			Entities.ForEach((Entity e, int entityInQueryIndex, in Health h) => {
 				if (h.value <= 0) {
-					ecb.DestroyEntity(entityInQueryIndex, e);
+					ecb.AddComponent<Died>(entityInQueryIndex, e);
 
 					var ev = ecb.CreateEntity(entityInQueryIndex, archetypeUnitDiedEvent);
 					ecb.SetComponent(entityInQueryIndex, ev, new UnitDiedEvent() { unit = e });
 				}
 			}).ScheduleParallel();
+
+			Entities
+				.WithAll<Died>()
+				.ForEach((int entityInQueryIndex, Entity e) => {
+					ecb.RemoveComponent<RotationConstraint>(entityInQueryIndex, e);
+				}).ScheduleParallel();
 
 			_endSimulationEcbSystem.AddJobHandleForProducer(Dependency);
 		}

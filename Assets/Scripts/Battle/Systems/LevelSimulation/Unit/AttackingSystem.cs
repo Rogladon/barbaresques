@@ -38,6 +38,7 @@ namespace Barbaresques.Battle {
 
 			JobHandle attack = Entities.WithName(nameof(attack))
 				.WithAll<Unit>()
+				.WithNone<Died>()
 				.ForEach((int entityInQueryIndex, Entity e, ref Attacking a, ref AttackingSystemState ass, in Weapon w, in Translation t, in Rotation r, in OwnedByRealm ownership) => {
 					if (a.burst > 0) {
 						if (ass.colddown < ass.sinceLast) {
