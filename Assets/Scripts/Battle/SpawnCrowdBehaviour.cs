@@ -77,47 +77,11 @@ namespace Barbaresques.Battle {
 					Value = positions[i]
 				});
 				em.SetComponentData(entities[i], new Rotation() {
-					Value = quaternion.AxisAngle(new float3(0, 1, 0), transform.rotation.eulerAngles.y)
+					Value = transform.rotation
 				});
 			}
 
 			entities.Dispose();
-		}
-
-		private NativeArray<float3> SquarePositions() {
-			NativeArray<float3> na = new NativeArray<float3>(count, Allocator.Temp);
-			int width = (int)math.round(math.sqrt(count) + 0.49f);
-			int x = 0;
-			int y = -(int)math.round(width / 2 - 0.49f);
-
-			for (int i = 0; i < na.Length; i++) {
-				na[i] = transform.position + (transform.right * y - transform.forward * x) * intervalBetweenUnits;
-				y++;
-				if (y >= math.round(width / 2 + 0.5f)) {
-					x++;
-					y = -(int)math.round(width / 2 - 0.49f);
-				}
-			}
-			return na;
-		}
-
-		private NativeArray<float3> TrianglePositions() {
-			NativeArray<float3> na = new NativeArray<float3>(count, Allocator.Temp);
-			int width = 1;
-			int x = 0;
-			int y = 0;
-
-			for (int i = 0; i < na.Length; i++) {
-				na[i] = transform.position + (transform.right * y - transform.forward * x) * intervalBetweenUnits;
-				y++;
-				if (y > (width - 1) / 2) {
-					x++;
-					width += 2;
-					y = -(width - 1) / 2;
-
-				}
-			}
-			return na;
 		}
 
 		private void OnDestroy() {
