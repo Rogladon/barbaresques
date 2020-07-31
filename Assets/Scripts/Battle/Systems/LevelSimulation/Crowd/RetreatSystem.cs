@@ -26,6 +26,7 @@ namespace Barbaresques.Battle {
 
 			Entities.ForEach((Entity e, int entityInQueryIndex, in Moral m) => {
 				if (m.value <= 0) {
+					ecb.AddComponent<Retreating>(entityInQueryIndex, e);
 					var ev = ecb.CreateEntity(entityInQueryIndex, archetypeCrowdRetreatsEvent);
 					ecb.SetComponent(entityInQueryIndex, ev, new CrowdRetreatsEvent() { crowd = e });
 				}

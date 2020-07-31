@@ -1,4 +1,6 @@
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
 
 namespace Barbaresques.Battle {
 	public struct UnitDiedEvent : IComponentData, IEventData {

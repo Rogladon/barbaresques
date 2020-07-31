@@ -45,8 +45,7 @@ namespace Barbaresques.Battle {
 			if (!em.HasComponent<PlayerControlled>(owner))
 				em.AddComponent<CrowdAi>(crowd);
 
-			var entity = GameObjectConversionUtility.ConvertGameObjectHierarchy(prefab,
-					setting);
+			var entity = GameObjectConversionUtility.ConvertGameObjectHierarchy(prefab, setting);
 
 			entities = new NativeArray<Entity>(count, Allocator.Temp);
 			em.Instantiate(entity, entities);

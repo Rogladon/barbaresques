@@ -45,7 +45,7 @@ namespace Barbaresques.Battle {
 		/// Подсчёт расстояний между враждебными юнитами
 		/// </summary>
 		[BurstCompile]
-		private struct CalculateHostileDistancesJob : IJobChunk {
+		private struct HostileDinstancesCalculationJob : IJobChunk {
 			[ReadOnly] public ComponentTypeHandle<Translation> translationTypeHandle;
 			[ReadOnly] public ComponentTypeHandle<CrowdMember> crowdMemberTypeHandle;
 			[ReadOnly] public EntityTypeHandle entityTypeHandle;
@@ -218,7 +218,7 @@ namespace Barbaresques.Battle {
 				(int)((math.pow(_calculateDistancesJobQuery.CalculateEntityCount(), 2) - 1) / 2.0f),
 				Allocator.TempJob);
 
-			var calculateHostileDistances = new CalculateHostileDistancesJob() {
+			var calculateHostileDistances = new HostileDinstancesCalculationJob() {
 				translationTypeHandle = GetComponentTypeHandle<Translation>(),
 				crowdMemberTypeHandle = GetComponentTypeHandle<CrowdMember>(),
 				entityTypeHandle = GetEntityTypeHandle(),
