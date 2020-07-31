@@ -13,6 +13,7 @@ namespace Barbaresques.GlobalMap {
 		public Text treasuryFieldValue;
 		public Transform realmsList;
 		public Transform hireMenu;
+		public Button nextTurnButton;
 
 		public Image realmArmsPrefab;
 
@@ -27,6 +28,12 @@ namespace Barbaresques.GlobalMap {
 				scheduler.onNextRealm.AddListener(setScale);
 				setScale();
 			}
+			{
+				UnityAction refreshButtonState = () => nextTurnButton.interactable = scheduler.current == playerRealm;
+				scheduler.onNextRealm.AddListener(refreshButtonState);
+				refreshButtonState();
+			}
+
 			Refresh();
 			hireMenu.gameObject.SetActive(false);
 		}

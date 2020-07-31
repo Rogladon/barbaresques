@@ -7,6 +7,9 @@ namespace Barbaresques.GlobalMap {
 	public interface INextTurnEventHandler {
 		void OnNextTurn(Scheduler scheduler);
 	}
+	public interface INextRealmEventHandler {
+		void OnNextRealm(Scheduler scheduler, RealmSocket currentRealm);
+	}
 
 	public class Scheduler : MonoBehaviour {
 		public UnityEvent onNextRealm = new UnityEvent();
@@ -25,6 +28,11 @@ namespace Barbaresques.GlobalMap {
 			onNextTurn.AddListener(() => {
 				foreach (var h in GetComponentsInChildren<INextTurnEventHandler>()) {
 					h.OnNextTurn(this);
+				}
+			});
+			onNextRealm.AddListener(() => {
+				foreach (var h in GetComponentsInChildren<INextRealmEventHandler>()) {
+					h.OnNextRealm(this, current);
 				}
 			});
 		}
