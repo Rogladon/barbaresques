@@ -599,6 +599,10 @@ PrefabInstance:
       propertyPath: spawns.Array.data[2].realmColor.a
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2642240637264210120, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: f43ab6bcca34eef48bf9e751c2d95cf8, type: 2}
     - target: {fileID: 2642240637796305912, guid: 03cee178dc2ef4502b673b8ecca9323a, type: 3}
       propertyPath: m_RootOrder
       value: 0
