@@ -6,19 +6,9 @@ using Unity.Mathematics;
 using Unity.Collections;
 using UnityEngine;
 namespace AnimBakery {
+	[UpdateInGroup(typeof(PresentationSystemGroup))]
 	public class AnimSystem : SystemBase {
-
-		private EndSimulationEntityCommandBufferSystem _endSimulationEcbSystem;
-
-		protected override void OnCreate() {
-			base.OnCreate();
-
-			_endSimulationEcbSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
-		}
-
 		protected override void OnUpdate() {
-			var ecb = _endSimulationEcbSystem.CreateCommandBuffer();
-
 			var delta = Time.DeltaTime;
 
 			Entities.WithName("Animation")
@@ -27,8 +17,6 @@ namespace AnimBakery {
 					anim.drawer.Draw(delta, translation.Value, rotation.Value);
 				})
 				.Run();
-
-			_endSimulationEcbSystem.AddJobHandleForProducer(Dependency);
 		}
 	}
 }

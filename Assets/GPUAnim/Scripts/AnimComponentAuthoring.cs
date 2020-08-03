@@ -8,9 +8,6 @@ using AnimBakery.Cook.Model;
 using Unity.Transforms;
 namespace AnimBakery {
 	public class AnimComponentAuthoring : MonoBehaviour, IConvertGameObjectToEntity {
-
-
-
 		public float frameRate = 30;
 
 		public float timeMultiplier = 1.0f;
@@ -22,8 +19,6 @@ namespace AnimBakery {
 		private GPUAnimDrawer drawer;
 		public GameObject body;
 		public List<Clip> clips;
-
-
 
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem) {
 			Debug.Log(gameObject.name);

@@ -11,38 +11,34 @@ using UnityEngine;
 using UnityEngine.Profiling;
 using Random = UnityEngine.Random;
 
-namespace AnimBakery.Draw
-{
-    public class GPUAnimDrawer : IDisposable
-    {
-        private static readonly int TextureCoordinatesBufferProperty = Shader.PropertyToID("textureCoordinatesBuffer");
-        private static readonly int ObjectPositionsBufferProperty = Shader.PropertyToID("objectPositionsBuffer");
-        private static readonly int ObjectRotationsBufferProperty = Shader.PropertyToID("objectRotationsBuffer");
+namespace AnimBakery.Draw {
+	public class GPUAnimDrawer : IDisposable {
+		private static readonly int TextureCoordinatesBufferProperty = Shader.PropertyToID("textureCoordinatesBuffer");
+		private static readonly int ObjectPositionsBufferProperty = Shader.PropertyToID("objectPositionsBuffer");
+		private static readonly int ObjectRotationsBufferProperty = Shader.PropertyToID("objectRotationsBuffer");
 
-        private static readonly int AnimationTextureSizeProperty = Shader.PropertyToID("animationTextureSize");
-        private static readonly int AnimationTextureProperty = Shader.PropertyToID("animationTexture");
+		private static readonly int AnimationTextureSizeProperty = Shader.PropertyToID("animationTextureSize");
+		private static readonly int AnimationTextureProperty = Shader.PropertyToID("animationTexture");
 
-        private readonly uint[] indirectArgs = {0, 0, 0, 0, 0};
-        private readonly AnimComponent config;
-        public BakedData[] dataBase;
+		private readonly uint[] indirectArgs = { 0, 0, 0, 0, 0 };
+		private readonly AnimComponent config;
+		public BakedData[] dataBase;
 
-        private ComputeBuffer[] argsBuffer;
-        private ComputeBuffer[] textureCoordinatesBuffer;
-        private ComputeBuffer[] objectRotationsBuffer;
-        private ComputeBuffer[] objectPositionsBuffer;
-        private float[] times;
+		private ComputeBuffer[] argsBuffer;
+		private ComputeBuffer[] textureCoordinatesBuffer;
+		private ComputeBuffer[] objectRotationsBuffer;
+		private ComputeBuffer[] objectPositionsBuffer;
+		private float[] times;
 		int count = -1;
 
-        public GPUAnimDrawer(BakedData[] bakery, AnimComponent config, List<Clip> clips)
-        {
+		public GPUAnimDrawer(BakedData[] bakery, AnimComponent config, List<Clip> clips) {
 			this.dataBase = bakery;
-            this.config = config;
+			this.config = config;
 			InitBuffers();
-        }
+		}
 
-        private void InitBuffers()
-        {
-            Dispose();
+		private void InitBuffers() {
+			Dispose();
 			count = dataBase.Length;
 			argsBuffer = new ComputeBuffer[dataBase.Length];
 			objectRotationsBuffer = new ComputeBuffer[dataBase.Length];
@@ -56,16 +52,24 @@ namespace AnimBakery.Draw
 				textureCoordinatesBuffer[i] = new ComputeBuffer(1, sizeof(float));
 			}
 			times = new float[count];
-        }
+
+			textureCoordinates = new NativeList<float>(1, Allocator.Persistent);
+			objectPositions = new NativeList<float4>(1, Allocator.Persistent);
+			objectRotations = new NativeList<quaternion>(1, Allocator.Persistent);
+		}
+
+		NativeList<float> textureCoordinates;
+		NativeList<float4> objectPositions;
+		NativeList<quaternion> objectRotations;
 
 		public void Draw(float deltaTime, float3 position, quaternion rotation, float scale = 1) {
-
-			for(int i =0;i<dataBase.Length;i++) {
+			for (int i = 0; i < dataBase.Length; i++) {
 				Profiler.BeginSample("Prepare shader dataBase[i]");
-				var textureCoordinates = new NativeList<float>(1, Allocator.Temp);
-				var objectPositions = new NativeList<float4>(1, Allocator.Temp);
-				var objectRotations = new NativeList<quaternion>(1, Allocator.Temp);
-			
+
+				textureCoordinates.Clear();
+				objectPositions.Clear();
+				objectRotations.Clear();
+
 				var x = position.x;
 				var y = position.y;
 				var z = position.z;
@@ -112,15 +116,14 @@ namespace AnimBakery.Draw
 					0,
 					new MaterialPropertyBlock());
 
-				textureCoordinates.Dispose();
-				objectPositions.Dispose();
-				objectRotations.Dispose();
-
 			}
 		}
 
-        public void Dispose()
-        {
+		public void Dispose() {
+			if (textureCoordinates.IsCreated) textureCoordinates.Dispose();
+			if (objectPositions.IsCreated) objectPositions.Dispose();
+			if (objectRotations.IsCreated) objectRotations.Dispose();
+
 			if (count <= 0) return;
 			for (int i = 0; i < count; i++) {
 				argsBuffer[i]?.Dispose();
@@ -128,7 +131,7 @@ namespace AnimBakery.Draw
 				objectRotationsBuffer[i]?.Dispose();
 				textureCoordinatesBuffer[i]?.Dispose();
 			}
-            
-        }
-    }
+
+		}
+	}
 }

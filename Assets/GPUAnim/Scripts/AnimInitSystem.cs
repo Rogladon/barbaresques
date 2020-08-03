@@ -32,13 +32,12 @@ namespace AnimBakery {
 						frameRate = init.anim.frameRate,
 						normalizedTime = init.anim.normalizedTime,
 						timeMultiplier = init.anim.timeMultiplier,
-						animationId= init.anim.animationId
+						animationId = init.anim.animationId,
 					};
 					BakedData[] bakery = new BakedData[init.bakery.Length];
-					for(int i = 0; i < bakery.Length; i++) {
-						Material m = Material.Instantiate((init.bakery[i].Material));
-						bakery[i] = BakedData.Copy(init.bakery[i], m
-							);
+					for (int i = 0; i < bakery.Length; i++) {
+						Material m = Material.Instantiate(init.bakery[i].Material);
+						bakery[i] = BakedData.Copy(init.bakery[i], m);
 					}
 					anim.drawer = new GPUAnimDrawer(bakery, anim, init.clips);
 					anim.id = index;

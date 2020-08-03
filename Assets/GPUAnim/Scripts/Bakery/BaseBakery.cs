@@ -25,7 +25,7 @@ namespace AnimBakery.Cook {
 														   out var numberOfKeyFrames,
 														   out var numberOfBones);
 
-			
+
 			var size = BakeryUtils.NextPowerOfTwo(
 				(int)Math.Sqrt(numberOfBones * numberOfKeyFrames * MATRIX_ROWS_COUNT));
 			var texture = new Texture2D(size, size, TextureFormat.RGBAFloat, false) {
