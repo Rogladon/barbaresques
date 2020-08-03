@@ -20,99 +20,99 @@ namespace AnimBakery.Draw {
 		private static readonly int AnimationTextureSizeProperty = Shader.PropertyToID("animationTextureSize");
 		private static readonly int AnimationTextureProperty = Shader.PropertyToID("animationTexture");
 
-		private readonly uint[] indirectArgs = { 0, 0, 0, 0, 0 };
-		private readonly AnimComponent config;
-		public BakedData[] dataBase;
+		private readonly uint[] _indirectArgs = { 0, 0, 0, 0, 0 };
+		private readonly AnimComponent _config;
+		private BakedData[] _dataBase;
 
-		private ComputeBuffer[] argsBuffer;
-		private ComputeBuffer[] textureCoordinatesBuffer;
-		private ComputeBuffer[] objectRotationsBuffer;
-		private ComputeBuffer[] objectPositionsBuffer;
-		private float[] times;
-		int count = -1;
+		private ComputeBuffer[] _argsBuffer;
+		private ComputeBuffer[] _textureCoordinatesBuffer;
+		private ComputeBuffer[] _objectRotationsBuffer;
+		private ComputeBuffer[] _objectPositionsBuffer;
+		private float[] _times;
+		private int _count = -1;
 
 		public GPUAnimDrawer(BakedData[] bakery, AnimComponent config, List<Clip> clips) {
-			this.dataBase = bakery;
-			this.config = config;
-			InitBuffers();
+			this._dataBase = bakery;
+			this._config = config;
+			_InitBuffers();
 		}
 
-		private void InitBuffers() {
+		private void _InitBuffers() {
 			Dispose();
-			count = dataBase.Length;
-			argsBuffer = new ComputeBuffer[dataBase.Length];
-			objectRotationsBuffer = new ComputeBuffer[dataBase.Length];
-			objectPositionsBuffer = new ComputeBuffer[dataBase.Length];
-			textureCoordinatesBuffer = new ComputeBuffer[dataBase.Length];
-			for (int i = 0; i < count; i++) {
-				argsBuffer[i] = new ComputeBuffer(1, indirectArgs.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
+			_count = _dataBase.Length;
+			_argsBuffer = new ComputeBuffer[_dataBase.Length];
+			_objectRotationsBuffer = new ComputeBuffer[_dataBase.Length];
+			_objectPositionsBuffer = new ComputeBuffer[_dataBase.Length];
+			_textureCoordinatesBuffer = new ComputeBuffer[_dataBase.Length];
+			for (int i = 0; i < _count; i++) {
+				_argsBuffer[i] = new ComputeBuffer(1, _indirectArgs.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
 
-				objectRotationsBuffer[i] = new ComputeBuffer(1, sizeof(float) * 4);
-				objectPositionsBuffer[i] = new ComputeBuffer(1, sizeof(float) * 4);
-				textureCoordinatesBuffer[i] = new ComputeBuffer(1, sizeof(float));
+				_objectRotationsBuffer[i] = new ComputeBuffer(1, sizeof(float) * 4);
+				_objectPositionsBuffer[i] = new ComputeBuffer(1, sizeof(float) * 4);
+				_textureCoordinatesBuffer[i] = new ComputeBuffer(1, sizeof(float));
 			}
-			times = new float[count];
+			_times = new float[_count];
 
-			textureCoordinates = new NativeList<float>(1, Allocator.Persistent);
-			objectPositions = new NativeList<float4>(1, Allocator.Persistent);
-			objectRotations = new NativeList<quaternion>(1, Allocator.Persistent);
+			_textureCoordinates = new NativeList<float>(1, Allocator.Persistent);
+			_objectPositions = new NativeList<float4>(1, Allocator.Persistent);
+			_objectRotations = new NativeList<quaternion>(1, Allocator.Persistent);
 		}
 
-		NativeList<float> textureCoordinates;
-		NativeList<float4> objectPositions;
-		NativeList<quaternion> objectRotations;
+		NativeList<float> _textureCoordinates;
+		NativeList<float4> _objectPositions;
+		NativeList<quaternion> _objectRotations;
 
 		public void Draw(float deltaTime, float3 position, quaternion rotation, float scale = 1) {
-			for (int i = 0; i < dataBase.Length; i++) {
+			for (int i = 0; i < _dataBase.Length; i++) {
 				Profiler.BeginSample("Prepare shader dataBase[i]");
 
-				textureCoordinates.Clear();
-				objectPositions.Clear();
-				objectRotations.Clear();
+				_textureCoordinates.Clear();
+				_objectPositions.Clear();
+				_objectRotations.Clear();
 
 				var x = position.x;
 				var y = position.y;
 				var z = position.z;
 
-				var clip = dataBase[i][config.animationId];
-				var dt = deltaTime + deltaTime * (config.addAnimationDifference ? Random.Range(-0.5f, 0.5f) : 0);
+				var clip = _dataBase[i][_config.animationId];
+				var dt = deltaTime + deltaTime * (_config.addAnimationDifference ? Random.Range(-0.5f, 0.5f) : 0);
 
-				times[i] += dt * config.timeMultiplier;
-				if (times[i] > clip.ClipLength) times[i] %= clip.ClipLength;
+				_times[i] += dt * _config.timeMultiplier;
+				if (_times[i] > clip.ClipLength) _times[i] %= clip.ClipLength;
 
-				var normalizedTime = config.animated ? times[i] / clip.ClipLength : config.normalizedTime;
+				var normalizedTime = _config.animated ? _times[i] / clip.ClipLength : _config.normalizedTime;
 				var frameIndex = (int)((clip.FramesCount - 1) * normalizedTime);
 
-				textureCoordinates.Add(clip.Start + frameIndex * dataBase[i].BonesCount * 3.0f);
-				objectPositions.Add(new float4(x, y, z, scale));
-				objectRotations.Add(rotation);
+				_textureCoordinates.Add(clip.Start + frameIndex * _dataBase[i].BonesCount * 3.0f);
+				_objectPositions.Add(new float4(x, y, z, scale));
+				_objectRotations.Add(rotation);
 
 				Profiler.EndSample();
 
 				Profiler.BeginSample("Shader set dataBase[i]");
 
-				objectRotationsBuffer[i].SetData((NativeArray<quaternion>)objectRotations, 0, 0, 1);
-				objectPositionsBuffer[i].SetData((NativeArray<float4>)objectPositions, 0, 0, 1);
-				textureCoordinatesBuffer[i].SetData((NativeArray<float>)textureCoordinates, 0, 0, 1);
+				_objectRotationsBuffer[i].SetData((NativeArray<quaternion>)_objectRotations, 0, 0, 1);
+				_objectPositionsBuffer[i].SetData((NativeArray<float4>)_objectPositions, 0, 0, 1);
+				_textureCoordinatesBuffer[i].SetData((NativeArray<float>)_textureCoordinates, 0, 0, 1);
 
-				dataBase[i].Material.SetBuffer(TextureCoordinatesBufferProperty, textureCoordinatesBuffer[i]);
-				dataBase[i].Material.SetBuffer(ObjectPositionsBufferProperty, objectPositionsBuffer[i]);
-				dataBase[i].Material.SetBuffer(ObjectRotationsBufferProperty, objectRotationsBuffer[i]);
+				_dataBase[i].Material.SetBuffer(TextureCoordinatesBufferProperty, _textureCoordinatesBuffer[i]);
+				_dataBase[i].Material.SetBuffer(ObjectPositionsBufferProperty, _objectPositionsBuffer[i]);
+				_dataBase[i].Material.SetBuffer(ObjectRotationsBufferProperty, _objectRotationsBuffer[i]);
 
-				dataBase[i].Material.SetVector(AnimationTextureSizeProperty, new Vector2(dataBase[i].Texture.width, dataBase[i].Texture.height));
-				dataBase[i].Material.SetTexture(AnimationTextureProperty, dataBase[i].Texture);
+				_dataBase[i].Material.SetVector(AnimationTextureSizeProperty, new Vector2(_dataBase[i].Texture.width, _dataBase[i].Texture.height));
+				_dataBase[i].Material.SetTexture(AnimationTextureProperty, _dataBase[i].Texture);
 
 				Profiler.EndSample();
 
-				indirectArgs[0] = dataBase[i].Mesh.GetIndexCount(0);
-				indirectArgs[1] = (uint)1;
-				argsBuffer[i].SetData(indirectArgs);
+				_indirectArgs[0] = _dataBase[i].Mesh.GetIndexCount(0);
+				_indirectArgs[1] = (uint)1;
+				_argsBuffer[i].SetData(_indirectArgs);
 
-				Graphics.DrawMeshInstancedIndirect(dataBase[i].Mesh,
+				Graphics.DrawMeshInstancedIndirect(_dataBase[i].Mesh,
 					0,
-					dataBase[i].Material,
+					_dataBase[i].Material,
 					new Bounds(Vector3.zero, 1000 * Vector3.one),
-					argsBuffer[i],
+					_argsBuffer[i],
 					0,
 					new MaterialPropertyBlock());
 
@@ -120,16 +120,16 @@ namespace AnimBakery.Draw {
 		}
 
 		public void Dispose() {
-			if (textureCoordinates.IsCreated) textureCoordinates.Dispose();
-			if (objectPositions.IsCreated) objectPositions.Dispose();
-			if (objectRotations.IsCreated) objectRotations.Dispose();
+			if (_textureCoordinates.IsCreated) _textureCoordinates.Dispose();
+			if (_objectPositions.IsCreated) _objectPositions.Dispose();
+			if (_objectRotations.IsCreated) _objectRotations.Dispose();
 
-			if (count <= 0) return;
-			for (int i = 0; i < count; i++) {
-				argsBuffer[i]?.Dispose();
-				objectPositionsBuffer[i]?.Dispose();
-				objectRotationsBuffer[i]?.Dispose();
-				textureCoordinatesBuffer[i]?.Dispose();
+			if (_count <= 0) return;
+			for (int i = 0; i < _count; i++) {
+				_argsBuffer[i]?.Dispose();
+				_objectPositionsBuffer[i]?.Dispose();
+				_objectRotationsBuffer[i]?.Dispose();
+				_textureCoordinatesBuffer[i]?.Dispose();
 			}
 
 		}

@@ -4,36 +4,36 @@ using UnityEngine;
 
 namespace AnimBakery.Cook.Model {
 	public struct BakedData {
-		private Texture2D[] textures;
+		private Texture2D[] _textures;
 
-		private float frameRate;
-		private int bonesCount;
-		private List<AnimationClipData> animations;
-		private Dictionary<string, AnimationClipData> animationsDictionary;
-		private Mesh mesh;
-		private Material material;
-		public Material Material => material;
-		public Texture2D Texture => textures[0];
-		public Mesh Mesh => mesh;
+		private float _frameRate;
+		private int _bonesCount;
+		private List<AnimationClipData> _animations;
+		private Dictionary<string, AnimationClipData> _animationsDictionary;
+		private Mesh _mesh;
+		private Material _material;
+		public Material Material => _material;
+		public Texture2D Texture => _textures[0];
+		public Mesh Mesh => _mesh;
 
-		public float FrameRate => frameRate;
-		public int BonesCount => bonesCount;
-		public int Count => animations.Count;
-		public AnimationClipData this[int index] => animations[index];
-		public AnimationClipData this[string index] => animationsDictionary[index];
+		public float FrameRate => _frameRate;
+		public int BonesCount => _bonesCount;
+		public int Count => _animations.Count;
+		public AnimationClipData this[int index] => _animations[index];
+		public AnimationClipData this[string index] => _animationsDictionary[index];
 
-		public Texture2D GetTexture(int index) => index < textures.Length ? textures[index] : null;
+		public Texture2D GetTexture(int index) => index < _textures.Length ? _textures[index] : null;
 
 		public static BakedData Copy(BakedData data, Material mat) {
 			BakedData b;
-			b.textures = data.textures;
-			b.mesh = data.mesh;
-			b.material = mat;
-			b.frameRate = data.frameRate;
-			b.bonesCount = data.bonesCount;
-			b.animations = data.animations;
+			b._textures = data._textures;
+			b._mesh = data._mesh;
+			b._material = mat;
+			b._frameRate = data._frameRate;
+			b._bonesCount = data._bonesCount;
+			b._animations = data._animations;
 
-			b.animationsDictionary = data.animationsDictionary;
+			b._animationsDictionary = data._animationsDictionary;
 			return b;
 		}
 
@@ -43,16 +43,16 @@ namespace AnimBakery.Cook.Model {
 						  float frameRate,
 						  int bonesCount,
 						  List<AnimationClipData> animations) {
-			this.textures = textures;
-			this.mesh = mesh;
-			this.material = material;
-			this.frameRate = frameRate;
-			this.bonesCount = bonesCount;
-			this.animations = animations;
+			this._textures = textures;
+			this._mesh = mesh;
+			this._material = material;
+			this._frameRate = frameRate;
+			this._bonesCount = bonesCount;
+			this._animations = animations;
 
-			this.animationsDictionary = new Dictionary<string, AnimationClipData>();
+			this._animationsDictionary = new Dictionary<string, AnimationClipData>();
 			foreach (var clipData in animations)
-				animationsDictionary[clipData.Name] = clipData;
+				_animationsDictionary[clipData.Name] = clipData;
 		}
 
 
