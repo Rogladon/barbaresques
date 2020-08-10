@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace AnimBakery.Cook {
 	public class AnimationBakery : BaseBakery {
-		private readonly Animation animationComponent;
-		private readonly SkinnedMeshRenderer originalRenderer;
+		private readonly Animation _animationComponent;
+		private readonly SkinnedMeshRenderer _originalRenderer;
 
 		public AnimationBakery(SkinnedMeshRenderer originalRenderer, Animation animationComponent) {
 			if (animationComponent == null) {
@@ -22,8 +22,8 @@ namespace AnimBakery.Cook {
 				throw new ArgumentException("SkinnedMeshRenderer.Bones couldn't be null ");
 			}
 
-			this.animationComponent = animationComponent;
-			this.originalRenderer = originalRenderer;
+			this._animationComponent = animationComponent;
+			this._originalRenderer = originalRenderer;
 		}
 
 		protected override List<Matrix4x4[,]> SampleAnimationClips(
@@ -32,20 +32,20 @@ namespace AnimBakery.Cook {
 			out int numberOfKeyFrames,
 			out int numberOfBones) {
 			foreach (var i in clips) {
-				animationComponent.AddClip(i.clip, i.name);
+				_animationComponent.AddClip(i.clip, i.name);
 			}
-			List<AnimationClip> animationClips = animationComponent.GetAllAnimationClips();
+			List<AnimationClip> animationClips = _animationComponent.GetAllAnimationClips();
 			foreach (var clip in animationClips) {
-				animationComponent[clip.name].enabled = false;
-				animationComponent[clip.name].weight = 0f;
+				_animationComponent[clip.name].enabled = false;
+				_animationComponent[clip.name].weight = 0f;
 			}
 
 			numberOfKeyFrames = 0;
 			var sampledBoneMatrices = new List<Matrix4x4[,]>();
 			foreach (var animationClip in animationClips) {
 				var sampledMatrix = SampleAnimationClip(animationClip,
-					originalRenderer,
-					animationComponent,
+					_originalRenderer,
+					_animationComponent,
 					frameRate);
 				sampledBoneMatrices.Add(sampledMatrix);
 
@@ -58,11 +58,11 @@ namespace AnimBakery.Cook {
 		}
 
 		protected override Mesh CreateMesh() {
-			return CreateMesh(originalRenderer.sharedMesh);
+			return CreateMesh(_originalRenderer.sharedMesh);
 		}
 
 		protected override Material CreateMaterial() {
-			return new Material(originalRenderer.sharedMaterial);
+			return new Material(_originalRenderer.sharedMaterial);
 		}
 
 		private static Matrix4x4[,] SampleAnimationClip(

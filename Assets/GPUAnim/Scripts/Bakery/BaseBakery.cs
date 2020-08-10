@@ -116,15 +116,13 @@ namespace AnimBakery.Cook {
 			return data;
 		}
 
-		protected virtual void OnBeginBakeClips() {
-		}
+		protected virtual void OnBeginBakeClips() {}
 
 		protected abstract Mesh CreateMesh();
 
 		protected abstract Material CreateMaterial();
 
-		protected virtual void OnEndBakeClips() {
-		}
+		protected virtual void OnEndBakeClips() {}
 
 		public static Mesh CreateMesh(Mesh originalMesh) {
 			var newMesh = originalMesh.CopyMesh();
@@ -169,10 +167,10 @@ namespace AnimBakery.Cook {
 			int clipIndex, int keyframeIndex, int boneIndex) {
 			if (pixel != row && row != color) {
 				Debug.LogError("Error at (" + clipIndex + ", " + keyframeIndex + ", " + boneIndex + ")" +
-							   " expected " + BakeryUtils.Format(row) +
-							   " Texture(" + BakeryUtils.Format(index2D) +
-							   " but got " + BakeryUtils.Format(pixel) +
-							   " in color array " + BakeryUtils.Format(color));
+							   " expected " + row.ToString() +
+							   " Texture(" + index2D.ToString() +
+							   " but got " + pixel.ToString() +
+							   " in color array " + color.ToString());
 				return false;
 			}
 			return true;

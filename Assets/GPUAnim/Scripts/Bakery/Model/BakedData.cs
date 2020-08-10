@@ -37,12 +37,7 @@ namespace AnimBakery.Cook.Model {
 			return b;
 		}
 
-		private BakedData(Texture2D[] textures,
-						  Mesh mesh,
-						  Material material,
-						  float frameRate,
-						  int bonesCount,
-						  List<AnimationClipData> animations) {
+		private BakedData(Texture2D[] textures, Mesh mesh, Material material, float frameRate, int bonesCount, List<AnimationClipData> animations) {
 			this._textures = textures;
 			this._mesh = mesh;
 			this._material = material;
@@ -55,10 +50,8 @@ namespace AnimBakery.Cook.Model {
 				_animationsDictionary[clipData.Name] = clipData;
 		}
 
-
-
-		public static BakedDataBuilder Bulder(uint textCapasity = 1) {
-			return new BakedDataBuilder(textCapasity);
+		public static BakedDataBuilder Bulder(uint textCapacity = 1) {
+			return new BakedDataBuilder(textCapacity);
 		}
 
 		public class BakedDataBuilder {
@@ -69,8 +62,8 @@ namespace AnimBakery.Cook.Model {
 			private int bonesCount = -1;
 			private List<AnimationClipData> animations = new List<AnimationClipData>();
 
-			internal BakedDataBuilder(uint textCapasity) {
-				textures = new Texture2D[textCapasity];
+			internal BakedDataBuilder(uint textCapacity) {
+				textures = new Texture2D[textCapacity];
 			}
 
 			public BakedDataBuilder SetTexture(uint id, Texture2D texture) {
@@ -107,10 +100,10 @@ namespace AnimBakery.Cook.Model {
 				if (bonesCount == -1) throw new System.NullReferenceException("Bones count shouldn't be -1");
 				if (mesh == null) throw new System.NullReferenceException("Mesh shouldn't be null");
 				if (material == null) throw new System.NullReferenceException("Material shouldn't be null");
+
 				for (var index = 0; index < textures.Length; ++index)
 					if (textures[index] == null)
 						throw new System.NullReferenceException($"Texture {index} shouldn't be null");
-
 
 				return new BakedData(textures, mesh, material, frameRate, bonesCount, animations);
 			}
