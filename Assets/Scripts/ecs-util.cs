@@ -2,6 +2,18 @@ using System;
 using Unity.Entities;
 
 namespace Barbaresques {
+	[AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class, AllowMultiple = false)]
+	public sealed class TagComponentAttribute : Attribute {}
+
+	[AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class, AllowMultiple = false)]
+	public sealed class FlagComponentAttribute : Attribute {}
+
+	[AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class, AllowMultiple = false)]
+	public sealed class StateComponentAttribute : Attribute {}
+
+	[AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class, AllowMultiple = false)]
+	public sealed class ParameterComponentAttribute : Attribute {}
+
 	[AttributeUsage(AttributeTargets.All, AllowMultiple = false)]
 	public class AssociatedComponentAttribute : Attribute {
 		public Type type { get; private set; }

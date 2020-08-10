@@ -2,6 +2,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 
 namespace Barbaresques.Battle {
+	[StateComponent]
 	public struct Walking : IComponentData {
 		public float3 target;
 		public float speedFactor;
