@@ -132,17 +132,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2590418713886952630}
-  - component: {fileID: 227234369352104313}
-  - component: {fileID: 2590418713886952624}
-  - component: {fileID: 2590418713886952627}
-  - component: {fileID: 2590418713886952626}
-  - component: {fileID: 7233858083547444883}
+  - component: {fileID: 220744057213227873}
+  - component: {fileID: 8710032386194966426}
   - component: {fileID: 2590418713886952589}
+  - component: {fileID: 3942919171065123671}
   - component: {fileID: 3095453285440342908}
   - component: {fileID: 7786643266475772372}
-  - component: {fileID: 3302817878099284148}
-  - component: {fileID: 8710032386194966426}
-  - component: {fileID: 3942919171065123671}
   m_Layer: 0
   m_Name: Saberman
   m_TagString: Untagged
@@ -165,7 +160,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &227234369352104313
+--- !u!114 &220744057213227873
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -174,10 +169,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 2590418713886952591}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fcb9d5ce89897428abb1239bdec26bcd, type: 3}
+  m_Script: {fileID: 11500000, guid: 9403c926ef805470f8110dd1baf2bb93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &2590418713886952624
+  health: 95
+  maxHealth: 100
+  speed: 3
+--- !u!114 &8710032386194966426
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -186,49 +184,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2590418713886952591}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b07ba911145c49fe9eca655ccc84ece, type: 3}
+  m_Script: {fileID: 11500000, guid: 86dbb95d24f5743e3bb39e8fc9c16aa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 95
---- !u!114 &2590418713886952627
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2590418713886952591}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31fc41de7031d470e932ed2b6bb27ec4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  value: 100
---- !u!114 &2590418713886952626
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2590418713886952591}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ace9a09d961934570b11b95f70ecc8c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  value: 3
---- !u!114 &7233858083547444883
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2590418713886952591}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac1570003b3cf454ebe28fa217567d36, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  owner: {fileID: 0}
+  missilePrefab: {fileID: 5355108536735888339, guid: 87d15695fd3f94becbf14b776daee552, type: 3}
+  shotsPerMinute: 45
 --- !u!114 &2590418713886952589
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -241,6 +201,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7c82bdcc26fe4f16a104474732cea4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3942919171065123671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2590418713886952591}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0d2c67b4cd7ba943aaa2f23987d8964, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  frameRate: 30
+  timeMultiplier: 0.3
+  addAnimationDifference: 0
+  animated: 1
+  normalizedTime: 1
+  body: {fileID: 1208711806891268901}
+  clips:
+  - name: idle
+    clip: {fileID: -1386184631752016681, guid: 1b6119e94837a51439626615eed16756, type: 3}
+  - name: walk
+    clip: {fileID: 6815872723682837606, guid: 1b6119e94837a51439626615eed16756, type: 3}
+  - name: prepare
+    clip: {fileID: -4832299839164874545, guid: 1b6119e94837a51439626615eed16756, type: 3}
+  - name: shoot
+    clip: {fileID: 1986273104631883609, guid: 1b6119e94837a51439626615eed16756, type: 3}
 --- !u!114 &3095453285440342908
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -449,63 +436,6 @@ MonoBehaviour:
       m_Value: 0
   m_SerializedVersion: 1
   m_ConvexRadius_Deprecated: -1
---- !u!114 &3302817878099284148
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2590418713886952591}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60968fba901a4453cac78ad167dc99e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  axes:
-    x: 1
-    y: 0
-    z: 1
---- !u!114 &8710032386194966426
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2590418713886952591}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86dbb95d24f5743e3bb39e8fc9c16aa1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  missilePrefab: {fileID: 5355108536735888339, guid: 87d15695fd3f94becbf14b776daee552, type: 3}
-  shotsPerMinute: 45
---- !u!114 &3942919171065123671
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2590418713886952591}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0d2c67b4cd7ba943aaa2f23987d8964, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  frameRate: 30
-  timeMultiplier: 0.3
-  addAnimationDifference: 0
-  animated: 1
-  normalizedTime: 1
-  body: {fileID: 1208711806891268901}
-  clips:
-  - name: idle
-    clip: {fileID: -1386184631752016681, guid: 1b6119e94837a51439626615eed16756, type: 3}
-  - name: walk
-    clip: {fileID: 6815872723682837606, guid: 1b6119e94837a51439626615eed16756, type: 3}
-  - name: prepare
-    clip: {fileID: -4832299839164874545, guid: 1b6119e94837a51439626615eed16756, type: 3}
-  - name: shoot
-    clip: {fileID: 1986273104631883609, guid: 1b6119e94837a51439626615eed16756, type: 3}
 --- !u!1001 &2019685393298761332
 PrefabInstance:
   m_ObjectHideFlags: 0
