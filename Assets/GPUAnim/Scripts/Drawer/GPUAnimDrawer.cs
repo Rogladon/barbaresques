@@ -22,7 +22,7 @@ namespace AnimBakery.Draw {
 
 		private readonly uint[] _indirectArgs = { 0, 0, 0, 0, 0 };
 		private readonly AnimComponent _config;
-		private BakedData[] _dataBase;
+		private BakedData[] _bakedClips;
 
 		private ComputeBuffer[] _argsBuffer;
 		private ComputeBuffer[] _textureCoordinatesBuffer;
@@ -32,30 +32,34 @@ namespace AnimBakery.Draw {
 		private int _count = -1;
 
 		public GPUAnimDrawer(BakedData[] bakery, AnimComponent config, List<Clip> clips) {
-			this._dataBase = bakery;
+			this._bakedClips = bakery;
 			this._config = config;
 			_InitBuffers();
 		}
 
 		private void _InitBuffers() {
 			Dispose();
-			_count = _dataBase.Length;
-			_argsBuffer = new ComputeBuffer[_dataBase.Length];
-			_objectRotationsBuffer = new ComputeBuffer[_dataBase.Length];
-			_objectPositionsBuffer = new ComputeBuffer[_dataBase.Length];
-			_textureCoordinatesBuffer = new ComputeBuffer[_dataBase.Length];
+
+			_textureCoordinates = new NativeArray<float>(1, Allocator.Persistent);
+			_objectPositions = new NativeArray<float4>(1, Allocator.Persistent);
+			_objectRotations = new NativeArray<quaternion>(1, Allocator.Persistent);
+
+			_count = _bakedClips.Length;
+			_argsBuffer = new ComputeBuffer[_bakedClips.Length];
+			_objectRotationsBuffer = new ComputeBuffer[_bakedClips.Length];
+			_objectPositionsBuffer = new ComputeBuffer[_bakedClips.Length];
+			_textureCoordinatesBuffer = new ComputeBuffer[_bakedClips.Length];
 			for (int i = 0; i < _count; i++) {
 				_argsBuffer[i] = new ComputeBuffer(1, _indirectArgs.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
 
 				_objectRotationsBuffer[i] = new ComputeBuffer(1, sizeof(float) * 4);
 				_objectPositionsBuffer[i] = new ComputeBuffer(1, sizeof(float) * 4);
 				_textureCoordinatesBuffer[i] = new ComputeBuffer(1, sizeof(float));
+
+				_bakedClips[i].Material.SetVector(AnimationTextureSizeProperty, new Vector2(_bakedClips[i].Texture.width, _bakedClips[i].Texture.height));
+				_bakedClips[i].Material.SetTexture(AnimationTextureProperty, _bakedClips[i].Texture);
 			}
 			_times = new float[_count];
-
-			_textureCoordinates = new NativeArray<float>(1, Allocator.Persistent);
-			_objectPositions = new NativeArray<float4>(1, Allocator.Persistent);
-			_objectRotations = new NativeArray<quaternion>(1, Allocator.Persistent);
 
 			_mpb = new MaterialPropertyBlock();
 		}
@@ -66,14 +70,10 @@ namespace AnimBakery.Draw {
 		MaterialPropertyBlock _mpb;
 
 		public void Draw(float deltaTime, float3 position, quaternion rotation, float scale = 1) {
-			for (int i = 0; i < _dataBase.Length; i++) {
+			for (int i = 0; i < _bakedClips.Length; i++) {
 				Profiler.BeginSample("Prepare shader dataBase[i]");
 
-				var x = position.x;
-				var y = position.y;
-				var z = position.z;
-
-				var clip = _dataBase[i][_config.animationId];
+				var clip = _bakedClips[i][_config.animationId];
 				var dt = deltaTime + deltaTime * (_config.addAnimationDifference ? Random.Range(-0.5f, 0.5f) : 0);
 
 				_times[i] += dt * _config.timeMultiplier;
@@ -82,9 +82,9 @@ namespace AnimBakery.Draw {
 				var normalizedTime = _config.animated ? _times[i] / clip.ClipLength : _config.normalizedTime;
 				var frameIndex = (int)((clip.FramesCount - 1) * normalizedTime);
 
-				_textureCoordinates[0] = (clip.Start + frameIndex * _dataBase[i].BonesCount * 3.0f);
-				_objectPositions[0] = (new float4(x, y, z, scale));
-				_objectRotations[0] = (rotation);
+				_textureCoordinates[0] = (clip.Start + frameIndex * _bakedClips[i].BonesCount * 3.0f);
+				_objectPositions[0] = new float4(position, scale);
+				_objectRotations[0] = rotation;
 
 				Profiler.EndSample();
 
@@ -94,27 +94,23 @@ namespace AnimBakery.Draw {
 				_objectPositionsBuffer[i].SetData(_objectPositions, 0, 0, 1);
 				_textureCoordinatesBuffer[i].SetData(_textureCoordinates, 0, 0, 1);
 
-				_dataBase[i].Material.SetBuffer(TextureCoordinatesBufferProperty, _textureCoordinatesBuffer[i]);
-				_dataBase[i].Material.SetBuffer(ObjectPositionsBufferProperty, _objectPositionsBuffer[i]);
-				_dataBase[i].Material.SetBuffer(ObjectRotationsBufferProperty, _objectRotationsBuffer[i]);
-
-				_dataBase[i].Material.SetVector(AnimationTextureSizeProperty, new Vector2(_dataBase[i].Texture.width, _dataBase[i].Texture.height));
-				_dataBase[i].Material.SetTexture(AnimationTextureProperty, _dataBase[i].Texture);
+				_bakedClips[i].Material.SetBuffer(TextureCoordinatesBufferProperty, _textureCoordinatesBuffer[i]);
+				_bakedClips[i].Material.SetBuffer(ObjectPositionsBufferProperty, _objectPositionsBuffer[i]);
+				_bakedClips[i].Material.SetBuffer(ObjectRotationsBufferProperty, _objectRotationsBuffer[i]);
 
 				Profiler.EndSample();
 
-				_indirectArgs[0] = _dataBase[i].Mesh.GetIndexCount(0);
+				_indirectArgs[0] = _bakedClips[i].Mesh.GetIndexCount(0);
 				_indirectArgs[1] = (uint)1;
 				_argsBuffer[i].SetData(_indirectArgs);
 
-				Graphics.DrawMeshInstancedIndirect(_dataBase[i].Mesh,
+				Graphics.DrawMeshInstancedIndirect(_bakedClips[i].Mesh,
 					0,
-					_dataBase[i].Material,
+					_bakedClips[i].Material,
 					new Bounds(position, 10 * Vector3.one),
 					_argsBuffer[i],
 					0,
 					_mpb);
-
 			}
 		}
 

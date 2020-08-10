@@ -64,7 +64,7 @@ namespace Barbaresques.Battle {
 			}
 
 			for (int i = 0; i < entities.Length; i++) {
-				em.SetName(entities[i], "Unit: " + crowd.Index + "-" + i);
+				// em.SetName(entities[i], "Unit: " + crowd.Index + "-" + i);
 				em.AddComponentData(entities[i], new CrowdMember() {
 					crowd = crowd,
 					behavingPolicy = CrowdMemberBehavingPolicy.IDLE,
