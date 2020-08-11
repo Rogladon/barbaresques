@@ -16,12 +16,11 @@ namespace AnimBakery {
 		public bool animated = true;
 
 		public float normalizedTime = 1.0f;
-		private GPUAnimDrawer drawer;
 		public GameObject body;
 		public List<Clip> clips;
 
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem) {
-			Debug.Log(gameObject.name);
+			// Debug.Log(gameObject.name);
 			AnimComponent animComponent = new AnimComponent {
 				timeMultiplier = timeMultiplier,
 				animated = animated,
