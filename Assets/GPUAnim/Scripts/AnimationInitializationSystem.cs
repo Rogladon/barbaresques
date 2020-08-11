@@ -46,7 +46,7 @@ namespace AnimBakery {
 									timeMultiplier = aic.anim.timeMultiplier,
 									animationId = aic.anim.animationId,
 								};
-								Debug.Log($"{aic},{aic.bakery != null}");
+								// Debug.Log($"{aic},{aic.bakery != null}");
 								BakedData[] bakery = new BakedData[aic.bakery.Length];
 								for (int i = 0; i < bakery.Length; i++) {
 									Material m = Material.Instantiate(aic.bakery[i].Material);
@@ -57,6 +57,7 @@ namespace AnimBakery {
 								animIndex++;
 								_animComponents[aic] = anim;
 							}
+							got = true;
 						}
 						ecb.AddSharedComponent(e, anim);
 						ecb.RemoveComponent<AnimInitComponent>(e);
