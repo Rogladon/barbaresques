@@ -5,6 +5,6 @@ using System.Collections.Generic;
 
 namespace AnimBakery.Cook {
 	public interface IBakery {
-		BakedData BakeClips(List<Clip> clips, float frameRate = 30f);
+		BakedMeshData BakeClips(List<Clip> clips, float frameRate = 30f);
 	}
 }

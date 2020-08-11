@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 using AnimBakery.Cook;
-using AnimBakery.Draw;
 using AnimBakery.Cook.Model;
 using Unity.Transforms;
 namespace AnimBakery {
@@ -21,27 +20,26 @@ namespace AnimBakery {
 
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem) {
 			// Debug.Log(gameObject.name);
-			AnimComponent animComponent = new AnimComponent {
+
+			AnimInitComponent init = new AnimInitComponent {
+				bakery = Create(body),
+				// clips = clips,
+			};
+
+			dstManager.AddComponentData(entity, new AnimationConfig {
 				timeMultiplier = timeMultiplier,
 				animated = animated,
 				animationId = clips[0].name,
 				addAnimationDifference = addAnimationDifference,
 				normalizedTime = normalizedTime,
-				frameRate = frameRate,
-			};
-
-			AnimInitComponent init = new AnimInitComponent {
-				bakery = Create(body),
-				clips = clips,
-				anim = animComponent
-			};
-
+				// frameRate = frameRate,
+			});
 			dstManager.AddSharedComponentData(entity, init);
 		}
 
-		private BakedData[] Create(GameObject prototype) {
+		private BakedMeshData[] Create(GameObject prototype) {
 			var srms = prototype.GetComponentsInChildren<SkinnedMeshRenderer>();
-			BakedData[] bakery = new BakedData[srms.Length];
+			BakedMeshData[] bakery = new BakedMeshData[srms.Length];
 			for(int i = 0; i < srms.Length; i++) {
 				bakery[i] = new BakeryFactory(prototype, srms[i]).Create().BakeClips(clips, frameRate);
 			}

@@ -1,15 +1,17 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using Unity.Collections;
 using UnityEngine;
 
 namespace AnimBakery.Cook.Model {
-	public struct BakedData {
+	public struct BakedMeshData {
 		private Texture2D[] _textures;
 
 		private float _frameRate;
 		private int _bonesCount;
 		private List<AnimationClipData> _animations;
 		private Dictionary<string, AnimationClipData> _animationsDictionary;
+		private Dictionary<FixedString32, AnimationClipData> _animationsDictionaryFS;
 		private Mesh _mesh;
 		private Material _material;
 		public Material Material => _material;
@@ -21,11 +23,12 @@ namespace AnimBakery.Cook.Model {
 		public int Count => _animations.Count;
 		public AnimationClipData this[int index] => _animations[index];
 		public AnimationClipData this[string index] => _animationsDictionary[index];
+		public AnimationClipData this[FixedString32 index] => _animationsDictionaryFS[index];
 
 		public Texture2D GetTexture(int index) => index < _textures.Length ? _textures[index] : null;
 
-		public static BakedData Copy(BakedData data, Material mat) {
-			BakedData b;
+		public static BakedMeshData Copy(BakedMeshData data, Material mat) {
+			BakedMeshData b;
 			b._textures = data._textures;
 			b._mesh = data._mesh;
 			b._material = mat;
@@ -34,10 +37,12 @@ namespace AnimBakery.Cook.Model {
 			b._animations = data._animations;
 
 			b._animationsDictionary = data._animationsDictionary;
+			b._animationsDictionaryFS = data._animationsDictionaryFS;
+
 			return b;
 		}
 
-		private BakedData(Texture2D[] textures, Mesh mesh, Material material, float frameRate, int bonesCount, List<AnimationClipData> animations) {
+		private BakedMeshData(Texture2D[] textures, Mesh mesh, Material material, float frameRate, int bonesCount, List<AnimationClipData> animations) {
 			this._textures = textures;
 			this._mesh = mesh;
 			this._material = material;
@@ -46,8 +51,11 @@ namespace AnimBakery.Cook.Model {
 			this._animations = animations;
 
 			this._animationsDictionary = new Dictionary<string, AnimationClipData>();
-			foreach (var clipData in animations)
+			this._animationsDictionaryFS = new Dictionary<FixedString32, AnimationClipData>();
+			foreach (var clipData in animations) {
 				_animationsDictionary[clipData.Name] = clipData;
+				_animationsDictionaryFS[clipData.Name] = clipData;
+			}
 		}
 
 		public static BakedDataBuilder Builder(uint textCapacity = 1) {
@@ -96,7 +104,7 @@ namespace AnimBakery.Cook.Model {
 				return this;
 			}
 
-			public BakedData Build() {
+			public BakedMeshData Build() {
 				if (bonesCount == -1) throw new System.NullReferenceException("Bones count shouldn't be -1");
 				if (mesh == null) throw new System.NullReferenceException("Mesh shouldn't be null");
 				if (material == null) throw new System.NullReferenceException("Material shouldn't be null");
@@ -105,7 +113,7 @@ namespace AnimBakery.Cook.Model {
 					if (textures[index] == null)
 						throw new System.NullReferenceException($"Texture {index} shouldn't be null");
 
-				return new BakedData(textures, mesh, material, frameRate, bonesCount, animations);
+				return new BakedMeshData(textures, mesh, material, frameRate, bonesCount, animations);
 			}
 
 

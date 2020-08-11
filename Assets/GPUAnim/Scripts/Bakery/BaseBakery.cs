@@ -12,10 +12,10 @@ namespace AnimBakery.Cook {
 			out int numberOfKeyFrames,
 			out int numberOfBones);
 
-		public BakedData BakeClips(List<Clip> clips, float frameRate = 30f) {
+		public BakedMeshData BakeClips(List<Clip> clips, float frameRate = 30f) {
 			OnBeginBakeClips();
 
-			var bakedDataBuilder = BakedData.Builder(1)
+			var bakedDataBuilder = BakedMeshData.Builder(1)
 				.SetMaterial(CreateMaterial())
 				.SetMesh(CreateMesh())
 				.SetFrameRate(frameRate);
@@ -84,19 +84,19 @@ namespace AnimBakery.Cook {
 						var matrix = sampledBoneMatrices[clipIndex][keyframeIndex, boneIndex];
 
 						var color0 = textureColor[index];
-						var index2D0 = BakeryUtils.To2D(index, texture.width);
+						var index2D0 = To2D(index, texture.width);
 						var pixel0 = texture.GetPixel(index2D0.x, index2D0.y);
 						var row0 = (Color)matrix.GetRow(0);
 						index++;
 
 						var color1 = textureColor[index];
-						var index2D1 = BakeryUtils.To2D(index, texture.width);
+						var index2D1 = To2D(index, texture.width);
 						var pixel1 = texture.GetPixel(index2D1.x, index2D1.y);
 						var row1 = (Color)matrix.GetRow(1);
 						index++;
 
 						var color2 = textureColor[index];
-						var index2D2 = BakeryUtils.To2D(index, texture.width);
+						var index2D2 = To2D(index, texture.width);
 						var pixel2 = texture.GetPixel(index2D2.x, index2D2.y);
 						var row2 = (Color)matrix.GetRow(2);
 
@@ -173,6 +173,12 @@ namespace AnimBakery.Cook {
 				return false;
 			}
 			return true;
+		}
+
+		public static Vector2Int To2D(int index, int width) {
+			var y = index / width;
+			var x = index % width;
+			return new Vector2Int(x, y);
 		}
 	}
 }

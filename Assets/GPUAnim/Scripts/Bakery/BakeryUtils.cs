@@ -3,10 +3,7 @@ using System.Linq;
 using UnityEngine;
 
 namespace AnimBakery.Cook {
-	// тупое говно тупого говна
-	// Больше ютилити классов богу хаоса 
-	[System.Obsolete]
-	public static class BakeryUtils {
+	public static class BakeryExtensions {
 		public static int NextPowerOfTwo(this int v) {
 			v--;
 			v |= v >> 1;
@@ -37,16 +34,10 @@ namespace AnimBakery.Cook {
 			if (animation == null) return null;
 
 			var animationClips = new List<AnimationClip>();
-			foreach (AnimationState state in animation) {
+			foreach (UnityEngine.AnimationState state in animation) {
 				animationClips.Add(state.clip);
 			}
 			return animationClips;
-		}
-
-		public static Vector2Int To2D(int index, int width) {
-			var y = index / width;
-			var x = index % width;
-			return new Vector2Int(x, y);
 		}
 	}
 }
