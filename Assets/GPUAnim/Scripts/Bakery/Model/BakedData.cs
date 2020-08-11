@@ -50,7 +50,7 @@ namespace AnimBakery.Cook.Model {
 				_animationsDictionary[clipData.Name] = clipData;
 		}
 
-		public static BakedDataBuilder Bulder(uint textCapacity = 1) {
+		public static BakedDataBuilder Builder(uint textCapacity = 1) {
 			return new BakedDataBuilder(textCapacity);
 		}
 

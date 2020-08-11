@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: Saberman
   m_EditorClassIdentifier: 
   maintenancePerTurn: 2
+  prefab: {fileID: 2590418713886952591, guid: 12db60f2c881340d5aee04435441fa1a, type: 3}

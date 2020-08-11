@@ -15,7 +15,7 @@ namespace AnimBakery.Cook {
 		public BakedData BakeClips(List<Clip> clips, float frameRate = 30f) {
 			OnBeginBakeClips();
 
-			var bakedDataBuilder = BakedData.Bulder(1)
+			var bakedDataBuilder = BakedData.Builder(1)
 				.SetMaterial(CreateMaterial())
 				.SetMesh(CreateMesh())
 				.SetFrameRate(frameRate);
@@ -26,8 +26,7 @@ namespace AnimBakery.Cook {
 														   out var numberOfBones);
 
 
-			var size = BakeryUtils.NextPowerOfTwo(
-				(int)Math.Sqrt(numberOfBones * numberOfKeyFrames * MATRIX_ROWS_COUNT));
+			var size = ((int)Math.Sqrt(numberOfBones * numberOfKeyFrames * MATRIX_ROWS_COUNT)).NextPowerOfTwo();
 			var texture = new Texture2D(size, size, TextureFormat.RGBAFloat, false) {
 				wrapMode = TextureWrapMode.Clamp,
 				filterMode = FilterMode.Point,
@@ -125,7 +124,7 @@ namespace AnimBakery.Cook {
 		protected virtual void OnEndBakeClips() {}
 
 		public static Mesh CreateMesh(Mesh originalMesh) {
-			var newMesh = originalMesh.CopyMesh();
+			var newMesh = originalMesh.Copy();
 			var boneWeights = originalMesh.boneWeights;
 
 			var boneIds = new List<Vector4>(originalMesh.vertexCount);

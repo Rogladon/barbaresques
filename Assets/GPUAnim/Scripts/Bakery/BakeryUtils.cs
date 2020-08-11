@@ -7,7 +7,7 @@ namespace AnimBakery.Cook {
 	// Больше ютилити классов богу хаоса 
 	[System.Obsolete]
 	public static class BakeryUtils {
-		public static int NextPowerOfTwo(int v) {
+		public static int NextPowerOfTwo(this int v) {
 			v--;
 			v |= v >> 1;
 			v |= v >> 2;
@@ -18,7 +18,7 @@ namespace AnimBakery.Cook {
 			return v;
 		}
 
-		public static Mesh CopyMesh(this Mesh originalMesh) {
+		public static Mesh Copy(this Mesh originalMesh) {
 			var newMesh = new Mesh();
 			var vertices = originalMesh.vertices;
 
