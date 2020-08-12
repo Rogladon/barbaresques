@@ -1,5 +1,4 @@
-﻿Shader "GPUAnimationSkinning/InstancedSurfaceShader"
-{
+﻿Shader "GPUAnimationSkinning/InstancedSurfaceShader" {
 	Properties {
 		_Color ("Main Color", Color) = (1,1,1,1)
 		_SpecColor ("Specular Color", Color) = (0.5, 0.5, 0.5, 1)
@@ -10,9 +9,9 @@
 	SubShader { 
 		Tags { "RenderType"="Opaque" }
 		LOD 400
-			
+
 		CGPROGRAM
-		#pragma surface surf BlinnPhong addshadow
+		#pragma surface surf BlinnPhong noshadow
 		#pragma vertex vert 
 		#pragma multi_compile_instancing
 		#pragma instancing_options procedural:setup
@@ -21,24 +20,22 @@
 		#ifdef UNITY_PROCEDURAL_INSTANCING_ENABLED
 			#include "AnimationCore.cginc"
 		#endif    
-		
-		void setup()
-		{
+
+		void setup() {
 		#ifdef UNITY_PROCEDURAL_INSTANCING_ENABLED
 			unity_WorldToObject = unity_ObjectToWorld = TransformMatrix(unity_InstanceID);
 			unity_WorldToObject._14_24_34 *= -1;
 			unity_WorldToObject._11_22_33 = 1.0f / unity_WorldToObject._11_22_33;
 		#endif    
 		}
-					
-		void vert (inout appdata_full v) 
-		{
+
+		void vert (inout appdata_full v) {
 		#ifdef UNITY_PROCEDURAL_INSTANCING_ENABLED
 			float4x4 animationMatrix = AnimationMatrix (v.texcoord1, v.texcoord2, unity_InstanceID);
 			v.vertex = mul(animationMatrix, v.vertex);
 		#endif
 		}
-	
+
 		sampler2D _MainTex;
 		sampler2D _BumpMap;
 		fixed4 _Color;
@@ -48,7 +45,7 @@
 			float2 uv_MainTex;
 			float2 uv_BumpMap;
 		};
-			
+
 		void surf (Input IN, inout SurfaceOutput o) {
 			fixed4 tex = tex2D(_MainTex, IN.uv_MainTex);
 			o.Albedo = tex.rgb * _Color.rgb;
