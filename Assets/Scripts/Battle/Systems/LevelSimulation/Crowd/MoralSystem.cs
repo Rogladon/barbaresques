@@ -12,13 +12,14 @@ namespace Barbaresques.Battle {
 				})
 				.ScheduleParallel();
 
-			Entities
-				.ForEach((ref Moral m, in CrowdSystemState systemState) => {
-					if (systemState.membersCount < 1) {
-						m.value = -10000;
-					}
-				})
-				.ScheduleParallel();
+			// FIXME:
+			// Entities
+			// 	.ForEach((ref Moral m, in CrowdSystemState systemState) => {
+			// 		if (systemState.membersCount < 1) {
+			// 			m.value = -10000;
+			// 		}
+			// 	})
+			// 	.ScheduleParallel();
 		}
 	}
 }

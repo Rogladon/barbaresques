@@ -137,8 +137,8 @@ namespace Barbaresques.Battle {
 				.WithAll<CrowdMember>()
 				.ForEach((Entity entity, in CrowdMember crowdMember) => {
 					syncEcb.AddComponent(entity, new CrowdMemberSystemState() { _crowd = crowdMember.crowd });
-					if (crowdPopulationDiffs.ContainsKey(crowdMember.crowd)) {
-						crowdPopulationDiffs[crowdMember.crowd] = crowdPopulationDiffs[crowdMember.crowd] + 1;
+					if (crowdPopulationDiffs.TryGetValue(crowdMember.crowd, out int diff)) {
+						crowdPopulationDiffs[crowdMember.crowd] = diff + 1;
 					} else {
 						crowdPopulationDiffs[crowdMember.crowd] = 1;
 					}
@@ -149,8 +149,8 @@ namespace Barbaresques.Battle {
 				.WithAll<CrowdMemberSystemState>()
 				.WithNone<CrowdMember>()
 				.ForEach((Entity entity, in CrowdMemberSystemState systemState) => {
-					if (crowdPopulationDiffs.ContainsKey(systemState._crowd)) {
-						crowdPopulationDiffs[systemState._crowd] = crowdPopulationDiffs[systemState._crowd] - 1;
+					if (crowdPopulationDiffs.TryGetValue(systemState._crowd, out int diff)) {
+						crowdPopulationDiffs[systemState._crowd] = diff - 1;
 					} else {
 						crowdPopulationDiffs[systemState._crowd] = -1;
 					}
