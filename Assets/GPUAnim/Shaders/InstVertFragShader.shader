@@ -3,8 +3,14 @@
 		mainTex ("Albedo (RGB)", 2D) = "red" {}
 	}
 	SubShader {
+		Tags {
+			"RenderType"="Transparency"
+			"Queue" = "Transparent"
+			"IgnoreProjector" = "True"
+		}
 		Pass {
-			Tags {"LightMode"="ForwardBase"}
+			Cull Off
+			Blend SrcAlpha OneMinusSrcAlpha
 			CGPROGRAM
 
 			#pragma vertex vert
@@ -17,7 +23,6 @@
 	#if SHADER_TARGET >= 30
 			#include "AnimationCore.cginc"
 	#endif
-			#include "ColorCore.cginc"
 
 			sampler2D mainTex;
 
@@ -30,10 +35,10 @@
 				// SHADOW_COORDS(4)
 			};
 
-			v2f vert (appdata_full v, uint instanceID : SV_InstanceID) {  
+			v2f vert(appdata_full v, uint instanceID : SV_InstanceID) {  
 			#if SHADER_TARGET >= 30
-				float4x4 transformMatrix = TransformMatrix (instanceID);
-				float4x4 animationMatrix = AnimationMatrix (v.texcoord1, v.texcoord2, instanceID);
+				float4x4 transformMatrix = TransformMatrix(instanceID);
+				float4x4 animationMatrix = AnimationMatrix(v.texcoord1, v.texcoord2, instanceID);
 				 
 				float4 posWorld = mul(transformMatrix, mul(animationMatrix, v.vertex));
 			#else
@@ -44,7 +49,7 @@
 				float3 worldPosition = posWorld.xyz;
 				// float3 worldNormal   = v.normal;
 
-				// float3 ndotl   = saturate(dot(worldNormal, _WorldSpaceLightPos0.xyz));
+				// float3 ndotl = saturate(dot(worldNormal, _WorldSpaceLightPos0.xyz));
 				// float3 ambient = ShadeSH9(float4(worldNormal, 1.0f));
 				// float3 diffuse = (ndotl * _LightColor0.rgb);
 
@@ -58,12 +63,12 @@
 				return o;
 			}
 
-			fixed4 frag (v2f i) : SV_Target {
+			fixed4 frag(v2f i) : SV_Target {
 				// fixed shadow = SHADOW_ATTENUATION(i);
 				fixed4 albedo = tex2D(mainTex, i.uv_MainTex);
 				// float3 lighting = i.diffuse * shadow + i.ambient;
 				float3 lighting = fixed3(1,1,1);
-				fixed4 output = fixed4(albedo.rgb * i.color * lighting, albedo.w);
+				fixed4 output = fixed4(albedo.rgb * i.color * lighting, albedo.a);
 				// UNITY_APPLY_FOG(i.fogCoord, output);
 				return output;
 			}
