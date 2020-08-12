@@ -63,7 +63,7 @@ namespace AnimBakery {
 				_objectRotations.Clear();
 			}
 
-			public void Handle(float deltaTime, ref AnimationState ass, in Translation translation, in Rotation rotation, in AnimationConfig config) {
+			public void AddInstance(float deltaTime, ref AnimationState ass, in Translation translation, in Rotation rotation, in AnimationConfig config) {
 				float scale = 1;
 				_instancesCount++;
 				var pos = translation.Value;
@@ -173,7 +173,6 @@ namespace AnimBakery {
 				.WithStructuralChanges()
 				.ForEach((Entity e, in AnimationData data) => {
 					EntityManager.AddComponentData(e, new AnimationState {
-						// times = new NativeArray<float>(data.baked.Length, Allocator.Persistent),
 						time = 0
 					});
 				}).Run();
@@ -183,7 +182,6 @@ namespace AnimBakery {
 				.WithAll<AnimationState>()
 				.WithStructuralChanges()
 				.ForEach((Entity e, in AnimationState ass) => {
-					// ass.times.Dispose();
 					EntityManager.RemoveComponent<AnimationState>(e);
 				}).Run();
 
@@ -203,13 +201,14 @@ namespace AnimBakery {
 								renderer = amr;
 							} else {
 								renderer = new AnimatedMeshRenderer(animData);
+								_renderers[animData] = renderer;
 							}
 
 							renderer.Prepare();
 
 							configured = true;
 						}
-						renderer.Handle(delta, ref ass, translation, rotation, config);
+						renderer.AddInstance(delta, ref ass, translation, rotation, config);
 					})
 					.Run();
 

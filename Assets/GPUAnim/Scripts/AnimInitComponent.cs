@@ -11,7 +11,7 @@ namespace AnimBakery {
 		}
 
 		public override int GetHashCode() {
-			return bakery.GetHashCode();
+			return bakery == null ? 0 : bakery.GetHashCode();
 		}
 	}
 }

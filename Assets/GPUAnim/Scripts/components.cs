@@ -18,7 +18,7 @@ namespace AnimBakery {
 		public BakedMeshData[] baked;
 
 		public bool Equals(AnimationData other) => baked == other.baked;
-		public override int GetHashCode() => baked.GetHashCode();
+		public override int GetHashCode() => baked == null ? 0 : baked.GetHashCode();
 	}
 
 }

@@ -28,6 +28,7 @@ namespace AnimBakery {
 
 			AnimationData animData = new AnimationData();
 			foreach (AnimInitComponent aic in initComponents) {
+				Debug.Log($"{aic.GetHashCode()} {aic.bakery != null}");
 				bool got = false;
 
 				Entities.WithName("AnimationInit")
