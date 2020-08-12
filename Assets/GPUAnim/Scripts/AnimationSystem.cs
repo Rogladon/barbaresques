@@ -10,6 +10,7 @@ using Unity.Collections;
 using UnityEngine;
 using AnimBakery.Cook.Model;
 using UnityEngine.Profiling;
+using UnityEngine.Rendering;
 
 namespace AnimBakery {
 	public struct AnimationState : ISystemStateComponentData {
@@ -114,11 +115,14 @@ namespace AnimBakery {
 					Profiler.BeginSample(nameof(Graphics.DrawMeshInstancedIndirect));
 
 					Graphics.DrawMeshInstancedIndirect(_bakedMeshes[i].Mesh,
-						0,
+						0, // submeshIndex
 						_bakedMeshes[i].Material,
 						new Bounds(Vector3.zero, 1000 * Vector3.one),
 						_argsBuffer[i],
-						0);
+						0, // argsOffset
+						null, // properties
+						ShadowCastingMode.Off,
+						false); // receiveShadows
 
 					Profiler.EndSample();
 				}
