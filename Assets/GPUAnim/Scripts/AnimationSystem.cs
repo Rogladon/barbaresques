@@ -36,7 +36,6 @@ namespace AnimBakery {
 			List<float> _textureCoordinates;
 			List<float4> _objectPositions;
 			List<quaternion> _objectRotations;
-			MaterialPropertyBlock _mpb;
 
 			private AnimationData _data;
 
@@ -64,7 +63,7 @@ namespace AnimBakery {
 			}
 
 			public void AddInstance(float deltaTime, ref AnimationState ass, in Translation translation, in Rotation rotation, in AnimationConfig config) {
-				float scale = 1;
+				const float scale = 1;
 				_instancesCount++;
 				var pos = translation.Value;
 				var rot = rotation.Value;
@@ -107,7 +106,7 @@ namespace AnimBakery {
 					int submeshIndex = 0;
 
 					_indirectArgs[0] = _bakedMeshes[i].Mesh.GetIndexCount(submeshIndex);
-					_indirectArgs[1] = _instancesCount;
+					_indirectArgs[1] = (uint)(_instancesCount * _meshesCount);
 					_indirectArgs[2] = _bakedMeshes[i].Mesh.GetIndexStart(submeshIndex);
 					_indirectArgs[3] = _bakedMeshes[i].Mesh.GetBaseVertex(submeshIndex);
 					_argsBuffer[i].SetData(_indirectArgs);
@@ -119,8 +118,7 @@ namespace AnimBakery {
 						_bakedMeshes[i].Material,
 						new Bounds(Vector3.zero, 1000 * Vector3.one),
 						_argsBuffer[i],
-						0,
-						_mpb);
+						0);
 
 					Profiler.EndSample();
 				}
@@ -148,8 +146,6 @@ namespace AnimBakery {
 					_bakedMeshes[i].Material.SetVector(AnimationTextureSizeProperty, new Vector2(_bakedMeshes[i].Texture.width, _bakedMeshes[i].Texture.height));
 					_bakedMeshes[i].Material.SetTexture(AnimationTextureProperty, _bakedMeshes[i].Texture);
 				}
-
-				_mpb = new MaterialPropertyBlock();
 			}
 
 			public void Dispose() {
