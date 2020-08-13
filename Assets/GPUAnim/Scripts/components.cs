@@ -4,6 +4,7 @@ using Unity.Entities;
 using System;
 using Unity.Collections;
 using AnimBakery.Cook.Model;
+using Unity.Mathematics;
 
 namespace AnimBakery {
 	public struct AnimationConfig : IComponentData {
@@ -12,6 +13,7 @@ namespace AnimBakery {
 		public FixedString32 animationId;
 		public float timeMultiplier;
 		public float normalizedTime;
+		public float4 tint;
 	}
 
 	public struct AnimationData : ISharedComponentData, IEquatable<AnimationData> {

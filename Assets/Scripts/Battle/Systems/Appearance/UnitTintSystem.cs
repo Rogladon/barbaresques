@@ -1,3 +1,4 @@
+using AnimBakery;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Rendering;
@@ -59,6 +60,35 @@ namespace Barbaresques.Battle {
 				})
 				.ScheduleParallel();
 
+			Entities
+				.WithAll<UnitAppearance>()
+				.WithNone<UnitTint, Died>()
+				.ForEach((int entityInQueryIndex, Entity e, in OwnedByRealm obr) => {
+					if (obr.owner == Entity.Null)
+						return;
+					if (!HasComponent<Realm>(obr.owner))
+						return;
+					var realm = GetComponent<Realm>(obr.owner);
+					ecb.AddComponent(entityInQueryIndex, e, new UnitTint() { Value = new float4(realm.color.r, realm.color.g, realm.color.b, realm.color.a) });
+				})
+				.ScheduleParallel();
+
+			Entities
+				.WithAll<UnitAppearance>()
+				.WithNone<Died>()
+				.ForEach((int entityInQueryIndex, Entity e, ref UnitTint mc, in OwnedByRealm obr) => {
+					if (obr.owner == Entity.Null)
+						return;
+					if (!HasComponent<Realm>(obr.owner))
+						return;
+					var realm = GetComponent<Realm>(obr.owner);
+					mc.Value = new float4(realm.color.r, realm.color.g, realm.color.b, realm.color.a);
+					if (HasComponent<Died>(e)) {
+						mc.Value *= 0.25f;
+					}
+				})
+				.ScheduleParallel();
+
 			Entities.WithName("cleanup")
 				.WithNone<Parent>()
 				.WithAll<UnitTint>()
@@ -68,6 +98,8 @@ namespace Barbaresques.Battle {
 				.ScheduleParallel();
 
 			_endSimulationEcbSystem.AddJobHandleForProducer(Dependency);
+
+			Entities.WithAll<UnitAppearance>().ForEach((ref AnimationConfig config, in UnitTint ut) => { config.tint = ut.Value; }).ScheduleParallel();
 		}
 	}
 }

@@ -5,6 +5,8 @@ using UnityEngine;
 using AnimBakery.Cook;
 using AnimBakery.Cook.Model;
 using Unity.Transforms;
+using Unity.Mathematics;
+
 namespace AnimBakery {
 	public class AnimComponentAuthoring : MonoBehaviour, IConvertGameObjectToEntity {
 		public float frameRate = 30;
@@ -32,6 +34,7 @@ namespace AnimBakery {
 				animationId = clips[0].name,
 				addAnimationDifference = addAnimationDifference,
 				normalizedTime = normalizedTime,
+				tint = new float4(1,1,1,1),
 				// frameRate = frameRate,
 			});
 			dstManager.AddSharedComponentData(entity, init);

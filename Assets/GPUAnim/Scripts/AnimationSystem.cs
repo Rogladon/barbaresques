@@ -24,6 +24,8 @@ namespace AnimBakery {
 			private static readonly int ObjectPositionsBufferProperty = Shader.PropertyToID("objectPositionsBuffer");
 			private static readonly int ObjectRotationsBufferProperty = Shader.PropertyToID("objectRotationsBuffer");
 
+			private static readonly int ObjectTintsBufferProperty = Shader.PropertyToID("objectTintsBuffer");
+
 			private static readonly int AnimationTextureSizeProperty = Shader.PropertyToID("animationTextureSize");
 			private static readonly int AnimationTextureProperty = Shader.PropertyToID("animationTexture");
 
@@ -33,10 +35,12 @@ namespace AnimBakery {
 			private ComputeBuffer[] _textureCoordinatesBuffer;
 			private ComputeBuffer[] _objectRotationsBuffer;
 			private ComputeBuffer[] _objectPositionsBuffer;
+			private ComputeBuffer[] _objectTintsBuffer;
 
 			List<float> _textureCoordinates;
 			List<float4> _objectPositions;
 			List<quaternion> _objectRotations;
+			List<float4> _objectTints;
 
 			private AnimationData _data;
 
@@ -61,9 +65,10 @@ namespace AnimBakery {
 				_textureCoordinates.Clear();
 				_objectPositions.Clear();
 				_objectRotations.Clear();
+				_objectTints.Clear();
 			}
 
-			public void AddInstance(float deltaTime, ref AnimationState ass, in Translation translation, in Rotation rotation, in AnimationConfig config) {
+			public void AddInstance(float deltaTime, ref AnimationState ass, in Translation translation, in Rotation rotation, in AnimationConfig config, float4 color) {
 				const float scale = 1;
 				_instancesCount++;
 				var pos = translation.Value;
@@ -85,6 +90,7 @@ namespace AnimBakery {
 					_textureCoordinates.Add((clip.Start + frameIndex * _bakedMeshes[i].BonesCount * 3.0f));
 					_objectPositions.Add(new float4(pos, scale));
 					_objectRotations.Add(rot);
+					_objectTints.Add(color);
 
 					Profiler.EndSample();
 				}
@@ -97,10 +103,12 @@ namespace AnimBakery {
 					_objectRotationsBuffer[i].SetData(_objectRotations, 0, 0, _objectRotations.Count);
 					_objectPositionsBuffer[i].SetData(_objectPositions, 0, 0, _objectPositions.Count);
 					_textureCoordinatesBuffer[i].SetData(_textureCoordinates, 0, 0, _textureCoordinates.Count);
+					_objectTintsBuffer[i].SetData(_objectTints, 0, 0, _objectTints.Count);
 
 					_bakedMeshes[i].Material.SetBuffer(TextureCoordinatesBufferProperty, _textureCoordinatesBuffer[i]);
 					_bakedMeshes[i].Material.SetBuffer(ObjectPositionsBufferProperty, _objectPositionsBuffer[i]);
 					_bakedMeshes[i].Material.SetBuffer(ObjectRotationsBufferProperty, _objectRotationsBuffer[i]);
+					_bakedMeshes[i].Material.SetBuffer(ObjectTintsBufferProperty, _objectTintsBuffer[i]);
 
 					Profiler.EndSample();
 
@@ -135,16 +143,19 @@ namespace AnimBakery {
 				_objectPositions = new List<float4>();
 				_objectRotations = new List<quaternion>();
 				_textureCoordinates = new List<float>();
+				_objectTints = new List<float4>();
 
 				_argsBuffer = new ComputeBuffer[_meshesCount];
 				_objectRotationsBuffer = new ComputeBuffer[_meshesCount];
 				_objectPositionsBuffer = new ComputeBuffer[_meshesCount];
 				_textureCoordinatesBuffer = new ComputeBuffer[_meshesCount];
+				_objectTintsBuffer = new ComputeBuffer[_meshesCount];
 				for (int i = 0; i < _meshesCount; i++) {
 					_argsBuffer[i] = new ComputeBuffer(maxInstances, _indirectArgs.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
 
 					_objectRotationsBuffer[i] = new ComputeBuffer(maxInstances, sizeof(float) * 4);
 					_objectPositionsBuffer[i] = new ComputeBuffer(maxInstances, sizeof(float) * 4);
+					_objectTintsBuffer[i] = new ComputeBuffer(maxInstances, sizeof(float) * 4);
 					_textureCoordinatesBuffer[i] = new ComputeBuffer(maxInstances, sizeof(float));
 
 					_bakedMeshes[i].Material.SetVector(AnimationTextureSizeProperty, new Vector2(_bakedMeshes[i].Texture.width, _bakedMeshes[i].Texture.height));
@@ -208,7 +219,8 @@ namespace AnimBakery {
 
 							configured = true;
 						}
-						renderer.AddInstance(delta, ref ass, translation, rotation, config);
+						// WORKAROUND: тонирование вообще не тут как бы должно быть
+						renderer.AddInstance(delta, ref ass, translation, rotation, config, config.tint);
 					})
 					.Run();
 

@@ -1,6 +1,7 @@
 ﻿Shader "GPUAnimationSkinning/InstancedVertFragShader" {
 	Properties {
 		mainTex ("Albedo (RGB)", 2D) = "red" {}
+		hueShiftMask ("Hue shift mask", 2D) = "black" {}
 	}
 	SubShader {
 		Tags {
@@ -25,6 +26,7 @@
 	#endif
 
 			sampler2D mainTex;
+			sampler2D hueShiftMask;
 
 			struct v2f {
 				float4 pos        : SV_POSITION;
@@ -32,6 +34,7 @@
 				// float3 ambient    : TEXCOORD1;
 				// float3 diffuse    : TEXCOORD2;
 				float3 color      : TEXCOORD3;
+				uint instanceID : SV_INSTANCEID;
 				// SHADOW_COORDS(4)
 			};
 
@@ -60,16 +63,64 @@
 				// o.diffuse = diffuse;
 				o.color = color;
 				// TRANSFER_SHADOW(o)
+				o.instanceID = instanceID;
 				return o;
+			}
+
+			StructuredBuffer<float4> objectTintsBuffer;
+			fixed3 hsl2rgb(fixed3 HSL) {
+				float R = abs(HSL.x * 6.0 - 3.0) - 1.0;
+				float G = 2.0 - abs(HSL.x * 6.0 - 2.0);
+				float B = 2.0 - abs(HSL.x * 6.0 - 4.0);
+				fixed3 RGB = clamp(fixed3(R,G,B), 0.0, 1.0);
+				float C = (1.0 - abs(2.0 * HSL.z - 1.0)) * HSL.y;
+				return (RGB - 0.5) * C + HSL.z;
+			}
+			fixed3 rgb2hsl(in fixed3 c) {
+				float h = 0.0;
+				float s = 0.0;
+				float l = 0.0;
+				float r = c.r;
+				float g = c.g;
+				float b = c.b;
+				float cMin = min( r, min( g, b ) );
+				float cMax = max( r, max( g, b ) );
+
+				l = ( cMax + cMin ) / 2.0;
+				if ( cMax > cMin ) {
+					float cDelta = cMax - cMin;
+					
+					//s = l < .05 ? cDelta / ( cMax + cMin ) : cDelta / ( 2.0 - ( cMax + cMin ) ); Original
+					s = l < .0 ? cDelta / ( cMax + cMin ) : cDelta / ( 2.0 - ( cMax + cMin ) );
+					
+					if ( r == cMax ) {
+						h = ( g - b ) / cDelta;
+					} else if ( g == cMax ) {
+						h = 2.0 + ( b - r ) / cDelta;
+					} else {
+						h = 4.0 + ( r - g ) / cDelta;
+					}
+
+					if ( h < 0.0) {
+						h += 6.0;
+					}
+					h = h / 6.0;
+				}
+				return fixed3( h, s, l );
 			}
 
 			fixed4 frag(v2f i) : SV_Target {
 				// fixed shadow = SHADOW_ATTENUATION(i);
 				fixed4 albedo = tex2D(mainTex, i.uv_MainTex);
+				fixed4 hueShiftValue = tex2D(hueShiftMask, i.uv_MainTex);
+
+				float hueFactor = length(hueShiftValue.rgb) / length(fixed3(1,1,1));
+				fixed3 albedoHsl = rgb2hsl(albedo.rgb);
+				fixed3 tintHsl = rgb2hsl(objectTintsBuffer[i.instanceID].rgb);
+				fixed3 tintedColor = hsl2rgb(fixed3(tintHsl.x, albedoHsl.y, albedoHsl.z));
+				fixed3 color = hueFactor * tintedColor + (1 - hueFactor) * albedo.rgb;
 				// float3 lighting = i.diffuse * shadow + i.ambient;
-				float3 lighting = fixed3(1,1,1);
-				fixed4 output = fixed4(albedo.rgb * i.color * lighting, albedo.a);
-				// UNITY_APPLY_FOG(i.fogCoord, output);
+				fixed4 output = fixed4(color * i.color, albedo.a);
 				return output;
 			}
 
