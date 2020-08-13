@@ -12,18 +12,18 @@ namespace Barbaresques.Battle {
 		protected override void OnUpdate() {
 			Entities
 				.WithAll<Unit, Walking>()
-				.ForEach((ref AnimationConfig ac) => { ac.animationId = animationWalking; })
+				.ForEach((ref AnimationConfig ac, in Walking walking) => { ac.animationId = animationWalking; ac.timeMultiplier = walking.speedFactor; })
 				.ScheduleParallel();
 
 			Entities
 				.WithAll<Unit>()
 				.WithNone<Walking>()
-				.ForEach((ref AnimationConfig ac) => { ac.animationId = animationIdle; })
+				.ForEach((ref AnimationConfig ac) => { ac.animationId = animationIdle; ac.timeMultiplier = 1; })
 				.ScheduleParallel();
 
 			Entities
 				.WithAll<Unit, Attacking>()
-				.ForEach((ref AnimationConfig ac) => { ac.animationId = animationFire; })
+				.ForEach((ref AnimationConfig ac) => { ac.animationId = animationFire; ac.timeMultiplier = 1; })
 				.ScheduleParallel();
 		}
 	}

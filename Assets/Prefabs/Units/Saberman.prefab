@@ -10,8 +10,7 @@ Animation:
   m_Enabled: 1
   serializedVersion: 3
   m_Animation: {fileID: 0}
-  m_Animations:
-  - {fileID: 0}
+  m_Animations: []
   m_WrapMode: 0
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
@@ -67,7 +66,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 95
   maxHealth: 100
-  speed: 5
+  speed: 3
 --- !u!114 &8710032386194966426
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -106,8 +105,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0d2c67b4cd7ba943aaa2f23987d8964, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  frameRate: 30
-  timeMultiplier: 0.3
+  frameRate: 24
+  timeMultiplier: 1
   addAnimationDifference: 0
   animated: 1
   normalizedTime: 1
@@ -184,12 +183,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ShapeType: 3
   m_PrimitiveCenter:
-    x: 0
+    x: -0.2
     y: 1
-    z: 0
+    z: -0.15
   m_PrimitiveSize:
-    x: 1
-    y: 1
+    x: 0.8
+    y: 0.8
     z: 2
   m_PrimitiveOrientation:
     Value:
@@ -199,11 +198,11 @@ MonoBehaviour:
     RotationOrder: 4
   m_Capsule:
     Height: 2
-    Radius: 0.5
+    Radius: 0.4
     Axis: 2
   m_Cylinder:
     Height: 2
-    Radius: 0.5
+    Radius: 0.4
     Axis: 2
   m_CylinderSideCount: 10
   m_SphereRadius: 1
