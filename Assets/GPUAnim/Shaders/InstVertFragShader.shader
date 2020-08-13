@@ -4,7 +4,7 @@
 	}
 	SubShader {
 		Tags {
-			"RenderType"="Transparency"
+			"RenderType" = "Opaque"
 			"Queue" = "Transparent"
 			"IgnoreProjector" = "True"
 		}
