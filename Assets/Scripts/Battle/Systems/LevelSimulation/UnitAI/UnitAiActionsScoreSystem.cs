@@ -42,10 +42,13 @@ namespace Barbaresques.Battle {
 			Entities.WithAll<UnitAi, UnitAiDecision>()
 				.ForEach((ref UnitFollowCrowdScore followCrowdScore, in CrowdMember crowdMember, in CrowdMemberSystemState crowdMemberSystemState, in UnitAiDecision aiState, in Translation translation) => {
 					if ((crowdMember.behavingPolicy | CrowdMemberBehavingPolicy.FOLLOW) == crowdMember.behavingPolicy) {
-						if (math.length(crowdMember.targetLocation - translation.Value) > 10.0f) {
+						var l = math.length(crowdMember.targetLocation - translation.Value);
+						if (l > 10.0f) {
 							followCrowdScore.score = 10.0f;
-						} else {
+						} else if (l > 5.0f) {
 							followCrowdScore.score = 1.0f;
+						} else {
+							followCrowdScore.score = 0.0f;
 						}
 					} else {
 						followCrowdScore.score = 1.0f - ResponseCurve.Exponential(math.clamp(1.0f - followCrowdScore.score, 0.0f, 1.0f));
