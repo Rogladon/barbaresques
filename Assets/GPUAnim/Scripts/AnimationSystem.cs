@@ -15,6 +15,7 @@ using UnityEngine.Rendering;
 namespace AnimBakery {
 	public struct AnimationState : ISystemStateComponentData {
 		public float time;
+		public FixedString32 lastAnimationId;
 	}
 
 	[UpdateInGroup(typeof(PresentationSystemGroup))]
@@ -182,9 +183,10 @@ namespace AnimBakery {
 				.WithAll<AnimationConfig>()
 				.WithNone<AnimationState>()
 				.WithStructuralChanges()
-				.ForEach((Entity e, in AnimationData data) => {
+				.ForEach((Entity e, in AnimationData data, in AnimationConfig config) => {
 					EntityManager.AddComponentData(e, new AnimationState {
-						time = 0
+						time = 0,
+						lastAnimationId = config.animationId,
 					});
 				}).Run();
 
@@ -218,6 +220,10 @@ namespace AnimBakery {
 							renderer.Prepare();
 
 							configured = true;
+						}
+						if (config.animationId != ass.lastAnimationId) {
+							ass.time = 0;
+							ass.lastAnimationId = config.animationId;
 						}
 						// WORKAROUND: тонирование вообще не тут как бы должно быть
 						renderer.AddInstance(delta, ref ass, translation, rotation, config, config.tint);
