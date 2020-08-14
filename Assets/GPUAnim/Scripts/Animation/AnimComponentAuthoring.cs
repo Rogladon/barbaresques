@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
-using AnimBakery.Cook;
-using AnimBakery.Cook.Model;
+using Barbarian.Animations.Cook;
 using Unity.Transforms;
 using Unity.Mathematics;
 
-namespace AnimBakery {
+namespace Barbarian.Animations {
 	public class AnimComponentAuthoring : MonoBehaviour, IConvertGameObjectToEntity {
 		public float frameRate = 30;
 
@@ -41,10 +40,10 @@ namespace AnimBakery {
 		}
 
 		private BakedMeshData[] Create(GameObject prototype) {
-			var srms = prototype.GetComponentsInChildren<SkinnedMeshRenderer>();
-			BakedMeshData[] bakery = new BakedMeshData[srms.Length];
-			for(int i = 0; i < srms.Length; i++) {
-				bakery[i] = new BakeryFactory(prototype, srms[i]).Create().BakeClips(clips, frameRate);
+			var meshRenderers = prototype.GetComponentsInChildren<SkinnedMeshRenderer>();
+			BakedMeshData[] bakery = new BakedMeshData[meshRenderers.Length];
+			for(int i = 0; i < meshRenderers.Length; i++) {
+				bakery[i] = new BakeryFactory(prototype, meshRenderers[i]).Create().BakeClips(clips, frameRate);
 			}
 			return bakery;
 		}

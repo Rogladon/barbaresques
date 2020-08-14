@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
-namespace AnimBakery.Cook {
+namespace Barbarian.Animations.Cook {
 	public static class BakeryExtensions {
 		public static int NextPowerOfTwo(this int v) {
 			v--;

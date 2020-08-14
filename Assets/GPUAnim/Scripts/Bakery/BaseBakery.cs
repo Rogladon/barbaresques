@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using AnimBakery.Cook.Model;
 using UnityEngine;
 
-namespace AnimBakery.Cook {
+namespace Barbarian.Animations.Cook {
 	public abstract class BaseBakery : IBakery {
 		private const int MATRIX_ROWS_COUNT = 3;
 
@@ -20,10 +19,7 @@ namespace AnimBakery.Cook {
 				.SetMesh(CreateMesh())
 				.SetFrameRate(frameRate);
 
-			var sampledBoneMatrices = SampleAnimationClips(frameRate,
-														   clips,
-														   out var numberOfKeyFrames,
-														   out var numberOfBones);
+			var sampledBoneMatrices = SampleAnimationClips(frameRate, clips, out var numberOfKeyFrames, out var numberOfBones);
 
 
 			var size = ((int)Math.Sqrt(numberOfBones * numberOfKeyFrames * MATRIX_ROWS_COUNT)).NextPowerOfTwo();
@@ -60,11 +56,7 @@ namespace AnimBakery.Cook {
 				var start = clipOffset;
 				var end = clipOffset + (framesCount - 1) * MATRIX_ROWS_COUNT;
 
-				var clipData = AnimationClipData.Create(clip,
-														name,
-														start,
-														end,
-														framesCount);
+				var clipData = AnimationClipData.Create(clip, name, start, end, framesCount);
 
 				bakedDataBuilder.AddClip(clipData);
 
@@ -145,14 +137,14 @@ namespace AnimBakery.Cook {
 					x = bonesWeightsSorted[0].Item1,
 					y = bonesWeightsSorted[1].Item1,
 					z = bonesWeightsSorted[2].Item1,
-					w = bonesWeightsSorted[3].Item1
+					w = bonesWeightsSorted[3].Item1,
 				});
 
 				boneInfluences.Add(new Vector4 {
 					x = bonesWeightsSorted[0].Item2,
 					y = bonesWeightsSorted[1].Item2,
 					z = bonesWeightsSorted[2].Item2,
-					w = bonesWeightsSorted[3].Item2
+					w = bonesWeightsSorted[3].Item2,
 				});
 			}
 
@@ -165,11 +157,13 @@ namespace AnimBakery.Cook {
 		private static bool Verify(Color pixel, Color row, Color color, Vector2Int index2D,
 			int clipIndex, int keyframeIndex, int boneIndex) {
 			if (pixel != row && row != color) {
-				Debug.LogError("Error at (" + clipIndex + ", " + keyframeIndex + ", " + boneIndex + ")" +
-							   " expected " + row.ToString() +
-							   " Texture(" + index2D.ToString() +
-							   " but got " + pixel.ToString() +
-							   " in color array " + color.ToString());
+				Debug.LogError(
+					"Error at (" + clipIndex + ", " + keyframeIndex + ", " + boneIndex + ")"
+					+ " expected " + row.ToString()
+					+ " Texture(" + index2D.ToString()
+					+ " but got " + pixel.ToString()
+					+ " in color array " + color.ToString()
+				);
 				return false;
 			}
 			return true;

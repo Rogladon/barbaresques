@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using Unity.Entities;
 using System;
 using Unity.Collections;
-using AnimBakery.Cook.Model;
 using Unity.Mathematics;
+using Barbarian.Animations.Cook;
 
-namespace AnimBakery {
+namespace Barbarian.Animations {
 	public struct AnimationConfig : IComponentData {
 		public bool animated;
 		public bool addAnimationDifference;

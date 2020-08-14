@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace AnimBakery.Cook {
+namespace Barbarian.Animations.Cook {
 	public class BakeryFactory {
 		private readonly SkinnedMeshRenderer _skinnedMeshRenderer;
 		private readonly Animation _animation;

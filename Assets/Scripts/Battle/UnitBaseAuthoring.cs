@@ -4,7 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace AnimBakery {
+namespace Barbarian.Animations {
 	public class UnitBaseAuthoring : MonoBehaviour, IConvertGameObjectToEntity {
 		public int health;
 		public int maxHealth;

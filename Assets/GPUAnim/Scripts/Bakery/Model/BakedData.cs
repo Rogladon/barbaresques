@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 using Unity.Collections;
 using UnityEngine;
 
-namespace AnimBakery.Cook.Model {
+namespace Barbarian.Animations.Cook {
 	public struct BakedMeshData {
 		private Texture2D[] _textures;
 

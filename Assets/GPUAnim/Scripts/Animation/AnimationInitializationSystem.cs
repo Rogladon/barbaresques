@@ -1,12 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Unity.Entities;
-using Unity.Transforms;
-using Unity.Mathematics;
-using AnimBakery.Cook;
+using Barbarian.Animations.Cook;
 using UnityEngine;
-using AnimBakery.Cook.Model;
-namespace AnimBakery {
+
+namespace Barbarian.Animations {
 	public class AnimInitSystem : SystemBase {
 		private EndSimulationEntityCommandBufferSystem _endSimulationEcbSystem;
 

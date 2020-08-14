@@ -1,4 +1,4 @@
-using AnimBakery;
+using Barbarian.Animations;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Rendering;

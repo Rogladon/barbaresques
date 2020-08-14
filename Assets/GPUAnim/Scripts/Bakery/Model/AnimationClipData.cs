@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace AnimBakery.Cook.Model {
+namespace Barbarian.Animations.Cook {
 	public struct AnimationClipData {
 		private AnimationClip _clip;
 		private string _name;
@@ -8,18 +8,13 @@ namespace AnimBakery.Cook.Model {
 		private int _start;
 		private int _end;
 
-		public static AnimationClipData Create(
-			AnimationClip clip,
-			string name,
-			int start,
-			int end,
-			int frameCount) {
+		public static AnimationClipData Create(AnimationClip clip, string name, int start, int end, int frameCount) {
 			return new AnimationClipData {
 				_clip = clip,
 				_start = start,
 				_end = end,
 				_framesCount = frameCount,
-				_name = name
+				_name = name,
 			};
 		}
 

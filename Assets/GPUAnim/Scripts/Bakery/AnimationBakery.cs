@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AnimBakery.Cook {
+namespace Barbarian.Animations.Cook {
 	public class AnimationBakery : BaseBakery {
 		private readonly Animation _animationComponent;
 		private readonly SkinnedMeshRenderer _originalRenderer;
@@ -26,11 +26,7 @@ namespace AnimBakery.Cook {
 			this._originalRenderer = originalRenderer;
 		}
 
-		protected override List<Matrix4x4[,]> SampleAnimationClips(
-			float frameRate,
-			List<Clip> clips,
-			out int numberOfKeyFrames,
-			out int numberOfBones) {
+		protected override List<Matrix4x4[,]> SampleAnimationClips(float frameRate, List<Clip> clips, out int numberOfKeyFrames, out int numberOfBones) {
 			foreach (var i in clips) {
 				_animationComponent.AddClip(i.clip, i.name);
 			}
@@ -43,10 +39,7 @@ namespace AnimBakery.Cook {
 			numberOfKeyFrames = 0;
 			var sampledBoneMatrices = new List<Matrix4x4[,]>();
 			foreach (var animationClip in animationClips) {
-				var sampledMatrix = SampleAnimationClip(animationClip,
-					_originalRenderer,
-					_animationComponent,
-					frameRate);
+				var sampledMatrix = SampleAnimationClip(animationClip, _originalRenderer, _animationComponent, frameRate);
 				sampledBoneMatrices.Add(sampledMatrix);
 
 				numberOfKeyFrames += sampledMatrix.GetLength(0);
@@ -65,14 +58,9 @@ namespace AnimBakery.Cook {
 			return new Material(_originalRenderer.sharedMaterial);
 		}
 
-		private static Matrix4x4[,] SampleAnimationClip(
-			AnimationClip clip,
-			SkinnedMeshRenderer renderer,
-			Animation animation,
-			float frameRate) {
+		private static Matrix4x4[,] SampleAnimationClip(AnimationClip clip, SkinnedMeshRenderer renderer, Animation animation, float frameRate) {
 			var boneMatrices = new Matrix4x4[Mathf.CeilToInt(frameRate * clip.length), renderer.bones.Length];
 			var bakingState = animation[clip.name];
-
 
 			bakingState.enabled = true;
 			bakingState.weight = 1f;
@@ -83,8 +71,7 @@ namespace AnimBakery.Cook {
 				animation.Sample();
 
 				for (var boneIndex = 0; boneIndex < renderer.bones.Length; boneIndex++) {
-					boneMatrices[frameIndex, boneIndex] = renderer.bones[boneIndex].localToWorldMatrix *
-														  renderer.sharedMesh.bindposes[boneIndex];
+					boneMatrices[frameIndex, boneIndex] = renderer.bones[boneIndex].localToWorldMatrix * renderer.sharedMesh.bindposes[boneIndex];
 				}
 			}
 

@@ -1,8 +1,8 @@
 ﻿using System;
+using Barbarian.Animations.Cook;
 using Unity.Entities;
-using AnimBakery.Cook.Model;
 
-namespace AnimBakery {
+namespace Barbarian.Animations {
 	public struct AnimInitComponent : ISharedComponentData, IEquatable<AnimInitComponent> {
 		public BakedMeshData[] bakery;
 

@@ -8,11 +8,11 @@ using Unity.Transforms;
 using Unity.Mathematics;
 using Unity.Collections;
 using UnityEngine;
-using AnimBakery.Cook.Model;
 using UnityEngine.Profiling;
 using UnityEngine.Rendering;
+using Barbarian.Animations.Cook;
 
-namespace AnimBakery {
+namespace Barbarian.Animations {
 	public struct AnimationState : ISystemStateComponentData {
 		public float time;
 		public FixedString32 lastAnimationId;
